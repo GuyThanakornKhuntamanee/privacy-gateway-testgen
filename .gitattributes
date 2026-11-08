@@ -1,0 +1,9 @@
+# Keep text files LF so manifest hashes and generated datasets are stable
+# across Windows checkouts.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary

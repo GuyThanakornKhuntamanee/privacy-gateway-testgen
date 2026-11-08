@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "dataset_version": "0.1.0",
+  "seed": 7,
+  "total_samples": 140,
+  "splits": {
+    "train": 0.8,
+    "validation": 0.1,
+    "test": 0.1
+  },
+  "distributions": {
+    "domain": {"pii": 0.30, "payment": 0.25, "secrets": 0.25, "infrastructure": 0.20},
+    "language": {"th": 0.45, "en": 0.25, "mixed": 0.30},
+    "length": {"short": 0.30, "medium": 0.40, "long": 0.30},
+    "difficulty": {"1": 0.12, "2": 0.20, "3": 0.25, "4": 0.25, "5": 0.18},
+    "negative_ratio": 0.20,
+    "multi_domain_ratio": 0.35,
+    "entity_density": {"1": 0.35, "2": 0.30, "3": 0.20, "4": 0.15}
+  },
+  "near_duplicate_threshold": 0.98,
+  "policy_file": "policy.default.json",
+  "quality_gates": {
+    "schema_validity": 1.0,
+    "span_accuracy": 1.0,
+    "max_exact_duplicate_rate": 0.0,
+    "max_near_duplicate_rate": 0.05,
+    "required_domains": ["pii", "payment", "secrets", "infrastructure"],
+    "min_domain_share": 0.05,
+    "required_languages": ["th", "en", "mixed"],
+    "min_language_share": 0.08,
+    "required_lengths": ["short", "medium", "long"],
+    "min_length_share": 0.08,
+    "required_difficulties": [1, 2, 3, 4, 5],
+    "min_difficulty_share": 0.04,
+    "min_entity_types": 25,
+    "negative_ratio_tolerance": 0.12,
+    "min_multi_domain_share": 0.12,
+    "require_all_actions": true,
+    "require_split_integrity": true,
+    "require_reproducibility": true
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "dataset_version": "0.1.0",
+  "failed_gates": [],
+  "gates": [
+    {
+      "name": "schema_validity",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "span_accuracy",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "exact_duplicate_rate",
+      "passed": true,
+      "requirement": "<= 0.0",
+      "value": 0.0
+    },
+    {
+      "name": "near_duplicate_rate",
+      "passed": true,
+      "requirement": "<= 0.05",
+      "value": 0.0
+    },
+    {
+      "name": "domain:pii",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.45
+    },
+    {
+      "name": "domain:payment",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.2786
+    },
+    {
+      "name": "domain:secrets",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.2214
+    },
+    {
+      "name": "domain:infrastructure",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.2071
+    },
+    {
+      "name": "language:th",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.4786
+    },
+    {
+      "name": "language:en",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.2643
+    },
+    {
+      "name": "language:mixed",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.2571
+    },
+    {
+      "name": "length:short",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.3714
+    },
+    {
+      "name": "length:medium",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.3929
+    },
+    {
+      "name": "length:long",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.2357
+    },
+    {
+      "name": "difficulty:1",
+      "passed": true,
+      "requirement": ">= 0.04",
+      "value": 0.3714
+    },
+    {
+      "name": "difficulty:2",
+      "passed": true,
+      "requirement": ">= 0.04",
+      "value": 0.1143
+    },
+    {
+      "name": "difficulty:3",
+      "passed": true,
+      "requirement": ">= 0.04",
+      "value": 0.2357
+    },
+    {
+      "name": "difficulty:4",
+      "passed": true,
+      "requirement": ">= 0.04",
+      "value": 0.2214
+    },
+    {
+      "name": "difficulty:5",
+      "passed": true,
+      "requirement": ">= 0.04",
+      "value": 0.0571
+    },
+    {
+      "name": "entity_type_coverage",
+      "passed": true,
+      "requirement": ">= 25",
+      "value": 31
+    },
+    {
+      "name": "negative_ratio",
+      "passed": true,
+      "requirement": "0.2 +/- 0.12",
+      "value": 0.2143
+    },
+    {
+      "name": "multi_domain_share",
+      "passed": true,
+      "requirement": ">= 0.12",
+      "value": 0.2857
+    },
+    {
+      "name": "action_coverage",
+      "passed": true,
+      "requirement": "all actions; missing=[]",
+      "value": [
+        "ALLOW",
+        "BLOCK",
+        "LOCAL_ONLY",
+        "MASK",
+        "REDACT",
+        "TOKENIZE"
+      ]
+    },
+    {
+      "name": "split_integrity",
+      "passed": true,
+      "requirement": "no template family or exact prompt crosses splits",
+      "value": {
+        "family_overlap": [],
+        "prompt_overlap": []
+      }
+    },
+    {
+      "name": "reproducibility",
+      "passed": true,
+      "requirement": "two runs with the same seed are byte-identical",
+      "value": true
+    }
+  ],
+  "known_limitations": [
+    "Template-family isolation keeps validation/test prompts out of training, but a small dataset therefore has fewer template families per split.",
+    "Negative lookalikes may still be flagged by pattern-only detectors; that is the intended false-positive probe, not a label error.",
+    "Thai names, addresses and organisations are synthetic combinations that could coincidentally match real entities.",
+    "Only documented test card BINs are used. No PCI DSS compliance is claimed or implied.",
+    "The default policy file is an illustrative test configuration, not legal advice.",
+    "LLM-generated prompts are not produced by this tool; imported annotations must be checked with the separate verification command before they are trusted.",
+    "No performance, latency or production-readiness claim is made by the evaluator.",
+    "Language, length, difficulty and domain weights are preferences, not exact quotas: prompt length and difficulty are coupled to the available template families, so the configured distribution can drift. The evaluator reports configured-vs-measured deltas."
+  ],
+  "metrics": {
+    "action_counts": {
+      "ALLOW": 30,
+      "BLOCK": 31,
+      "LOCAL_ONLY": 29,
+      "MASK": 13,
+      "REDACT": 33,
+      "TOKENIZE": 4
+    },
+    "difficulty_shares": {
+      "1": 0.3714,
+      "2": 0.1143,
+      "3": 0.2357,
+      "4": 0.2214,
+      "5": 0.0571
+    },
+    "distribution_fidelity": {
+      "difficulty": {
+        "delta": {
+          "1": 0.2514,
+          "2": -0.0857,
+          "3": -0.0143,
+          "4": -0.0286,
+          "5": -0.1229
+        },
+        "measured": {
+          "1": 0.3714,
+          "2": 0.1143,
+          "3": 0.2357,
+          "4": 0.2214,
+          "5": 0.0571
+        },
+        "target": {
+          "1": 0.12,
+          "2": 0.2,
+          "3": 0.25,
+          "4": 0.25,
+          "5": 0.18
+        }
+      },
+      "domain": {
+        "delta": {
+          "infrastructure": 0.0071,
+          "payment": 0.0286,
+          "pii": 0.15,
+          "secrets": -0.0286
+        },
+        "measured": {
+          "infrastructure": 0.2071,
+          "payment": 0.2786,
+          "pii": 0.45,
+          "secrets": 0.2214
+        },
+        "target": {
+          "infrastructure": 0.2,
+          "payment": 0.25,
+          "pii": 0.3,
+          "secrets": 0.25
+        }
+      },
+      "language": {
+        "delta": {
+          "en": 0.0143,
+          "mixed": -0.0429,
+          "th": 0.0286
+        },
+        "measured": {
+          "en": 0.2643,
+          "mixed": 0.2571,
+          "th": 0.4786
+        },
+        "target": {
+          "en": 0.25,
+          "mixed": 0.3,
+          "th": 0.45
+        }
+      },
+      "length": {
+        "delta": {
+          "long": -0.0643,
+          "medium": -0.0071,
+          "short": 0.0714
+        },
+        "measured": {
+          "long": 0.2357,
+          "medium": 0.3929,
+          "short": 0.3714
+        },
+        "target": {
+          "long": 0.3,
+          "medium": 0.4,
+          "short": 0.3
+        }
+      },
+      "max_abs_delta": 0.2514
+    },
+    "domain_shares": {
+      "infrastructure": 0.2071,
+      "payment": 0.2786,
+      "pii": 0.45,
+      "secrets": 0.2214
+    },
+    "duplicates": {
+      "cross_split_examples": [],
+      "cross_split_near_duplicate_pairs": 0,
+      "exact_duplicate_cases": 0,
+      "exact_duplicate_rate": 0.0,
+      "examples": [],
+      "near_duplicate_cases": 0,
+      "near_duplicate_pairs": 0,
+      "near_duplicate_rate": 0.0,
+      "threshold": 0.98
+    },
+    "entity_type_count": 31,
+    "entity_types": [
+      "access_token",
+      "api_key",
+      "card_expiry_date",
+      "card_verification_value",
+      "cardholder_name",
+      "cloud_access_key",
+      "cloud_resource_id",
+      "connection_string",
+      "database_credential",
+      "database_endpoint",
+      "date_of_birth",
+      "email_address",
+      "gps_coordinates",
+      "health_condition",
+      "internal_hostname",
+      "internal_ipv4",
+      "internal_url",
+      "jwt_token",
+      "patient_id",
+      "payment_authorization_code",
+      "payment_card_number",
+      "payment_token",
+      "payment_transaction_reference",
+      "refresh_token",
+      "ssh_private_key",
+      "terraform_configuration",
+      "thai_address",
+      "thai_name",
+      "thai_national_id",
+      "thai_phone",
+      "webhook_secret"
+    ],
+    "language_shares": {
+      "en": 0.2643,
+      "mixed": 0.2571,
+      "th": 0.4786
+    },
+    "length_shares": {
+      "long": 0.2357,
+      "medium": 0.3929,
+      "short": 0.3714
+    },
+    "multi_domain_share": 0.2857,
+    "negative_ratio": 0.2143,
+    "reproducible": true,
+    "schema_validity": 1.0,
+    "span_accuracy": 1.0,
+    "split_counts": {
+      "test": 14,
+      "train": 112,
+      "validation": 14
+    },
+    "split_integrity": {
+      "cross_split_near_duplicate_pairs": 0,
+      "family_overlap": [],
+      "passed": true,
+      "prompt_overlap": []
+    },
+    "structure_counts": {
+      "chat": 3,
+      "code": 16,
+      "email": 6,
+      "json": 15,
+      "log": 4,
+      "markdown": 6,
+      "report": 11,
+      "sql": 7,
+      "table": 1,
+      "unstructured": 69,
+      "yaml": 2
+    },
+    "target_negative_ratio": 0.2,
+    "validation_issue_cases": 0,
+    "validation_issues": []
+  },
+  "passed": true,
+  "recommended_improvements": [
+    "Add organisation-specific entity factories and policy files before deployment.",
+    "Grow the template inventory when validation/test diversity matters more than dataset size.",
+    "Run the manual review workflow for any LLM-authored cases before using them as ground truth.",
+    "Re-run this evaluator after every template, factory or policy change."
+  ],
+  "schema_version": "1.0",
+  "seed": 7,
+  "total_cases": 140
+}

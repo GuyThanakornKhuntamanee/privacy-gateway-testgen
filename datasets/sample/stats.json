@@ -1,0 +1,100 @@
+{
+  "by_action": {
+    "ALLOW": 30,
+    "BLOCK": 31,
+    "LOCAL_ONLY": 29,
+    "MASK": 13,
+    "REDACT": 33,
+    "TOKENIZE": 4
+  },
+  "by_difficulty": {
+    "1": 52,
+    "2": 16,
+    "3": 33,
+    "4": 31,
+    "5": 8
+  },
+  "by_domain": {
+    "infrastructure": 29,
+    "payment": 39,
+    "pii": 63,
+    "secrets": 31
+  },
+  "by_entity_type": {
+    "access_token": 8,
+    "api_key": 19,
+    "card_expiry_date": 31,
+    "card_verification_value": 3,
+    "cardholder_name": 3,
+    "cloud_access_key": 2,
+    "cloud_resource_id": 2,
+    "connection_string": 4,
+    "database_credential": 4,
+    "database_endpoint": 10,
+    "date_of_birth": 1,
+    "email_address": 42,
+    "gps_coordinates": 12,
+    "health_condition": 1,
+    "internal_hostname": 22,
+    "internal_ipv4": 29,
+    "internal_url": 2,
+    "jwt_token": 5,
+    "patient_id": 1,
+    "payment_authorization_code": 3,
+    "payment_card_number": 39,
+    "payment_token": 15,
+    "payment_transaction_reference": 35,
+    "refresh_token": 5,
+    "ssh_private_key": 4,
+    "terraform_configuration": 8,
+    "thai_address": 9,
+    "thai_name": 43,
+    "thai_national_id": 42,
+    "thai_phone": 21,
+    "webhook_secret": 4
+  },
+  "by_language": {
+    "en": 37,
+    "mixed": 36,
+    "th": 67
+  },
+  "by_length": {
+    "long": 33,
+    "medium": 55,
+    "short": 52
+  },
+  "by_polarity": {
+    "negative": 30,
+    "positive": 110
+  },
+  "by_split": {
+    "test": 14,
+    "train": 112,
+    "validation": 14
+  },
+  "by_structure": {
+    "chat": 3,
+    "code": 16,
+    "email": 6,
+    "json": 15,
+    "log": 4,
+    "markdown": 6,
+    "report": 11,
+    "sql": 7,
+    "table": 1,
+    "unstructured": 69,
+    "yaml": 2
+  },
+  "by_style": {
+    "contextual": 60,
+    "medium": 6,
+    "mixed_domain": 6,
+    "negative": 30,
+    "short": 38
+  },
+  "mean_entities_per_case": 4.143,
+  "multi_domain_cases": 40,
+  "negative_cases": 30,
+  "positive_cases": 110,
+  "total_cases": 140
+}

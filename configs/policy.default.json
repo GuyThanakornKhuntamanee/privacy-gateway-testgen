@@ -1,0 +1,45 @@
+{
+  "action_order": ["ALLOW", "MASK", "TOKENIZE", "REDACT", "LOCAL_ONLY", "BLOCK"],
+  "scenarios": {
+    "external_assistant": {
+      "description": "Prompt is forwarded to an external chat assistant.",
+      "routing": "external",
+      "min_action": "ALLOW",
+      "weight": 3
+    },
+    "external_rag": {
+      "description": "Prompt is used in an external retrieval-augmented generation pipeline.",
+      "routing": "external",
+      "min_action": "ALLOW",
+      "weight": 2
+    },
+    "local_model": {
+      "description": "Prompt stays on a locally hosted model.",
+      "routing": "local",
+      "min_action": "ALLOW",
+      "weight": 2
+    },
+    "no_external_transfer": {
+      "description": "Sensitive content may not leave the local environment.",
+      "routing": "local",
+      "min_action": "LOCAL_ONLY",
+      "weight": 2
+    },
+    "restricted_workflow": {
+      "description": "External processing is allowed only after at least masking.",
+      "routing": "external",
+      "min_action": "MASK",
+      "weight": 2
+    }
+  },
+  "rules": [
+    {"id": "pii.default", "domains": ["pii"], "action": "MASK"},
+    {"id": "pii.name_redaction", "entity_types": ["thai_name"], "action": "REDACT"},
+    {"id": "pii.health", "entity_types": ["health_condition", "patient_id"], "action": "REDACT"},
+    {"id": "payment.card", "entity_types": ["payment_card_number", "card_verification_value"], "action": "TOKENIZE"},
+    {"id": "payment.default", "domains": ["payment"], "action": "TOKENIZE"},
+    {"id": "secrets.default", "domains": ["secrets"], "action": "BLOCK"},
+    {"id": "infra.default", "domains": ["infrastructure"], "action": "LOCAL_ONLY"},
+    {"id": "infra.routing", "entity_types": ["firewall_rule", "routing_configuration"], "action": "REDACT"}
+  ]
+}

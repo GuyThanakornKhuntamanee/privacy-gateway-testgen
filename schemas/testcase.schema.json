@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/privacy-gateway-testgen/testcase.schema.json",
+  "title": "Privacy Gateway Test Case",
+  "type": "object",
+  "required": [
+    "schema_version", "test_id", "prompt", "language", "domains", "entities",
+    "entity_types", "detection_expected", "classification_expected",
+    "policy_decision_expected", "action_expected", "routing_expected",
+    "transformation_expected", "difficulty", "test_category", "test_objective", "rationale",
+    "tags", "generation_method", "verification_status", "prompt_length",
+    "prompt_length_class", "prompt_style", "prompt_styles", "context_complexity",
+    "structure", "polarity", "domain_scope", "structured", "detection_mode",
+    "edge_case", "adversarial", "split", "policy_scenario", "policy_rule_ids",
+    "output_leakage_check_expected", "token_restoration_expected",
+    "audit_log_expected",
+    "template_id", "template_family", "dataset_version", "seed",
+    "char_offset_convention"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "test_id": {"type": "string", "minLength": 1},
+    "prompt": {"type": "string", "minLength": 1},
+    "language": {"enum": ["th", "en", "mixed"]},
+    "domains": {
+      "type": "array",
+      "items": {"enum": ["pii", "payment", "secrets", "infrastructure"]},
+      "uniqueItems": true
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_type", "domain", "character_start", "character_end",
+          "exact_entity_value", "detection_expected", "classification_expected", "valid"
+        ],
+        "properties": {
+          "domain": {"enum": ["pii", "payment", "secrets", "infrastructure", "lookalike"]},
+          "entity_type": {"type": "string", "minLength": 1},
+          "character_start": {"type": "integer", "minimum": 0},
+          "character_end": {"type": "integer", "minimum": 1},
+          "exact_entity_value": {"type": "string", "minLength": 1},
+          "detection_expected": {"type": "boolean"},
+          "classification_expected": {"type": ["string", "null"]},
+          "valid": {"type": "boolean"},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "entity_types": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "detection_expected": {"type": "boolean"},
+    "classification_expected": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "policy_scenario": {"type": "string", "minLength": 1},
+    "policy_decision_expected": {"enum": ["ALLOW", "MASK", "TOKENIZE", "REDACT", "LOCAL_ONLY", "BLOCK"]},
+    "action_expected": {
+      "type": "object",
+      "additionalProperties": {"enum": ["ALLOW", "MASK", "TOKENIZE", "REDACT", "LOCAL_ONLY", "BLOCK"]}
+    },
+    "routing_expected": {"enum": ["external", "local", "blocked"]},
+    "transformation_expected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entity_type", "action"],
+        "properties": {
+          "entity_type": {"type": "string"},
+          "action": {"enum": ["ALLOW", "MASK", "TOKENIZE", "REDACT", "LOCAL_ONLY", "BLOCK"]}
+        }
+      }
+    },
+    "policy_rule_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "output_leakage_check_expected": {"type": "boolean"},
+    "token_restoration_expected": {"enum": ["authorized_context_only", "not_applicable"]},
+    "audit_log_expected": {
+      "type": "object",
+      "required": ["record_fields", "forbidden_fields"],
+      "properties": {
+        "record_fields": {"type": "array", "items": {"type": "string"}},
+        "forbidden_fields": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "difficulty": {"type": "integer", "minimum": 1, "maximum": 5},
+    "test_category": {"enum": ["single_domain", "multi_domain", "negative", "adversarial"]},
+    "test_objective": {"enum": ["detection_and_policy", "contextual_detection", "cross_domain_policy", "false_positive", "adversarial_robustness"]},
+    "rationale": {"type": "string", "minLength": 1},
+    "tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "generation_method": {"type": "string", "minLength": 1},
+    "verification_status": {"enum": ["verified_spans", "verified_manual", "unverified"]},
+    "prompt_length": {"type": "integer", "minimum": 1},
+    "prompt_length_class": {"enum": ["short", "medium", "long"]},
+    "prompt_style": {"enum": ["short", "medium", "long", "contextual", "mixed_domain", "negative"]},
+    "prompt_styles": {
+      "type": "array",
+      "items": {"enum": ["short", "medium", "long", "contextual", "mixed_domain", "negative"]},
+      "uniqueItems": true
+    },
+    "context_complexity": {"enum": ["low", "medium", "high"]},
+    "structure": {"enum": ["unstructured", "email", "chat", "report", "markdown", "json", "yaml", "sql", "log", "table", "code", "terraform"]},
+    "polarity": {"enum": ["positive", "negative"]},
+    "domain_scope": {"enum": ["none", "single_domain", "multi_domain"]},
+    "structured": {"type": "boolean"},
+    "detection_mode": {"enum": ["deterministic", "contextual"]},
+    "edge_case": {"type": "boolean"},
+    "adversarial": {"type": "boolean"},
+    "split": {"enum": ["train", "validation", "test"]},
+    "template_id": {"type": "string"},
+    "template_family": {"type": "string"},
+    "dataset_version": {"type": "string"},
+    "seed": {"type": "integer"},
+    "char_offset_convention": {"const": "unicode_codepoints_0_based_end_exclusive"}
+  }
+}

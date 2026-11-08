@@ -1,0 +1,35 @@
+{
+  "skill_name": "privacy-gateway-testgen",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We are evaluating our DLP gateway next week and need a reproducible 120-case synthetic dataset with Thai and English prompts covering PII, card payments, API keys and internal infrastructure. Keep about 20% negative cases, produce JSONL and JSON, validate it, and tell me the exact gate results. Seed it with 4242.",
+      "expected_output": "Uses the privacy-gateway-testgen CLI (generate/validate/evaluate), writes a dataset with all four domains and JSONL/JSON artifacts plus a manifest, reports real pass/fail gates and coverage, and does not hand-write annotations or claim compliance.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our privacy filter has a bad false-positive problem with 13-digit order numbers and 16-digit references that are not real national IDs or cards. Build me a negative-case dataset for that, including malformed and placeholder values, and show which cases are deliberately ambiguous. Put the output in a folder I can hand to QA.",
+      "expected_output": "Generates negative/lookalike cases (invalid national IDs, Luhn-invalid card-shaped numbers, reserved phones, placeholders), explains that detection_expected is false and why ambiguity notes exist, validates spans, and reports duplicate/negative coverage results.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I need long Thai-English enterprise prompts where a leaked API key, an internal database endpoint and a customer national ID appear together inside exported logs and Kubernetes YAML. Generate a test set and tell me the expected policy actions, including which cases must be blocked and which must stay local.",
+      "expected_output": "Generates long/mixed-domain/contextual cases, uses exact spans for entities inside logs/YAML, reports strictest-action policy expectations and routing (blocked/local), runs validation/evaluation, and keeps all credentials synthetic.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "A colleague generated this JSONL of privacy test cases with an LLM and the character offsets look wrong for some Thai strings. Check it, repair only what is unambiguous, and tell me which cases still need human review. Do not silently mark the LLM labels as ground truth.",
+      "expected_output": "Runs the verify stage (optionally --repair), repairs only unique occurrences, reports unresolved/ambiguous spans and semantics-unverified cases, leaves verification_status untrusted until review, and explains that span verification is not semantic verification.",
+      "files": ["fixtures/broken-annotations.jsonl"]
+    },
+    {
+      "id": 5,
+      "prompt": "Audit the sample dataset in this repo. I want to know whether the schema, spans, policy labels, duplicates, split isolation and coverage gates actually pass. Do not change the dataset; give me the measured numbers and any known limitations.",
+      "expected_output": "Runs validate and evaluate (or reads the generated reports), reports actual gate values and failed gates if any, verifies spans and policy labels, avoids regenerating or hand-editing data, and states limitations rather than claiming production readiness.",
+      "files": []
+    }
+  ]
+}
