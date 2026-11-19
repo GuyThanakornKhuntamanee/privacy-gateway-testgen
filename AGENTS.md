@@ -15,7 +15,7 @@ PYTHONPATH=src python -m privacy_gateway_testgen verify-v2 --dataset datasets/v2
 PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2
 ```
 
-112 tests, ~20 s, standard library only. A change is done when all pass and the
+130 tests, ~42 s, standard library only. A change is done when all pass and the
 `datasets/sample`, `datasets/v2-sample` and `reports/` diffs are intended.
 
 ## Invariants
@@ -35,6 +35,15 @@ PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2
   `reports/` exactly; regenerate them when a change alters output.
 - **OCR is not assumed.** Image/scanned-PDF cases are layout-verified and
   marked `verified_partial` unless an OCR engine actually ran.
+- **Per-attachment language.** A case may mix Thai and English attachments;
+  `mixed` must contain both scripts in the same file. PDF/images are Latin-only:
+  route Thai to DOCX/XLSX/TXT, record `language_routing`, and fail rather than
+  write `?`.
+- **One scenario per case.** Shared people, hosts, IDs, dates and transactions
+  come from `v2/scenario.py`; `cross_file_links` and `consistency_checks` are
+  validated, not assumed.
+- **Structure references resolve.** A prompt may cite a sheet/page/section/row
+  only when the referenced attachment structure proves it exists.
 
 ## Where to look
 

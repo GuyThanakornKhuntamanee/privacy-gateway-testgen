@@ -1,5 +1,5 @@
 {
-  "dataset_version": "2.0.0",
+  "dataset_version": "2.1.0",
   "failed_gates": [],
   "gates": [
     {
@@ -57,12 +57,11 @@
       "value": [
         "csv",
         "docx",
-        "jpeg",
         "jpg",
         "json",
         "md",
         "pdf",
-        "pptx",
+        "png",
         "txt",
         "xlsx"
       ]
@@ -71,7 +70,7 @@
       "name": "archetype_coverage",
       "passed": true,
       "requirement": ">= 8",
-      "value": 29
+      "value": 32
     },
     {
       "name": "persona_coverage",
@@ -83,7 +82,7 @@
       "name": "intent_coverage",
       "passed": true,
       "requirement": ">= 8",
-      "value": 20
+      "value": 19
     },
     {
       "name": "language_coverage",
@@ -94,6 +93,77 @@
         "mixed",
         "th"
       ]
+    },
+    {
+      "name": "attachment_language_coverage",
+      "passed": true,
+      "requirement": ">= 2 languages",
+      "value": {
+        "en": 29,
+        "mixed": 21,
+        "th": 12
+      }
+    },
+    {
+      "name": "language_matrix_coverage",
+      "passed": true,
+      "requirement": ">= 4 prompt/attachment pairs",
+      "value": {
+        "en->en": 4,
+        "en->mixed": 4,
+        "en->prompt_only": 9,
+        "en->th": 6,
+        "mixed->en": 11,
+        "mixed->mixed": 1,
+        "mixed->prompt_only": 4,
+        "mixed->th": 2,
+        "th->en": 14,
+        "th->mixed": 16,
+        "th->prompt_only": 13,
+        "th->th": 4
+      }
+    },
+    {
+      "name": "mixed_language_script",
+      "passed": true,
+      "requirement": "all mixed attachments contain Thai and English script",
+      "value": 1.0
+    },
+    {
+      "name": "structure_reference_resolution",
+      "passed": true,
+      "requirement": "all structure references resolve",
+      "value": 1.0
+    },
+    {
+      "name": "structure_reference_share",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.2222
+    },
+    {
+      "name": "multi_file_share",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.1667
+    },
+    {
+      "name": "cross_file_link_coverage",
+      "passed": true,
+      "requirement": ">= 1 cases",
+      "value": 6
+    },
+    {
+      "name": "same_archetype_bundle_coverage",
+      "passed": true,
+      "requirement": ">= 1 cases",
+      "value": 3
+    },
+    {
+      "name": "cross_file_consistency",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
     },
     {
       "name": "domain_coverage",
@@ -110,37 +180,37 @@
       "name": "negative_share",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.25
+      "value": 0.1528
     },
     {
       "name": "multi_domain_share",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.1806
+      "value": 0.1389
     },
     {
       "name": "attachment_share",
       "passed": true,
       "requirement": ">= 0.35",
-      "value": 0.7222
+      "value": 0.6389
     },
     {
       "name": "ocr_case_coverage",
       "passed": true,
       "requirement": ">= 1",
-      "value": 5
+      "value": 8
     },
     {
       "name": "opening_repetition",
       "passed": true,
       "requirement": "<= 0.35",
-      "value": 0.0278
+      "value": 0.0139
     },
     {
       "name": "repeated_phrase_rate",
       "passed": true,
       "requirement": "<= 0.2",
-      "value": 0.0972
+      "value": 0.1389
     },
     {
       "name": "archetype_concentration",
@@ -162,89 +232,110 @@
     }
   ],
   "known_limitations": [
-    "The PDF renderer uses built-in WinAnsi fonts; PDF attachment content is Latin/English. Thai PDF content is routed to DOCX/XLSX/TXT instead.",
-    "Image text uses a bitmap font and Latin script only. Thai OCR images are out of scope for v2.0.",
+    "PDF content is English/Latin only because the standard-library PDF writer uses built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT and the routing is recorded on the attachment.",
+    "Image text uses a bitmap Latin font. Thai image OCR is not supported; Thai image scenarios are routed to English with an explicit language_routing field.",
     "Image and scanned-PDF annotations are verified at render-layout level. No third-party OCR engine is run in the test suite, so OCR accuracy is not claimed.",
     "PPTX speaker notes and native PowerPoint tables are not emitted; slide body text and later-slide placement are supported.",
     "YAML/TOML/INI/ENV verification uses the generator's strict subset parser, not PyYAML or tomllib.",
     "Archives, password-protected containers, audio, video, executables and recursive archive extraction are out of scope.",
     "Template-family isolation is enforced for file bundles; a very small dataset consequently has fewer families in validation/test.",
     "The default policy file is an illustrative test configuration, not legal advice or a compliance certification.",
-    "All entities are synthetic. Coincidental similarity to a real person, host or company is possible but not intended."
+    "All entities are synthetic. Coincidental similarity to a real person, host or company is possible but not intended.",
+    "Cross-file consistency is validated on the generated scenario plan and annotations, not by executing a downstream gateway."
   ],
   "manifest": {
     "dataset_id": "pgt2-7-real-world-enterprise",
     "generated_at": "2026-01-01T00:00:00Z",
-    "generator_version": "0.2.0",
+    "generator_version": "0.3.0",
     "profile": "real-world-enterprise",
-    "schema_version": "2.0",
+    "schema_version": "2.1",
     "seed": 7,
     "total_cases": 72,
-    "total_files": 70
+    "total_files": 62
   },
   "metrics": {
     "action_counts": {
-      "ALLOW": 18,
-      "BLOCK": 12,
-      "LOCAL_ONLY": 13,
-      "REDACT": 16,
-      "TOKENIZE": 13
+      "ALLOW": 11,
+      "BLOCK": 13,
+      "LOCAL_ONLY": 17,
+      "REDACT": 22,
+      "TOKENIZE": 9
     },
-    "ambiguous_ratio": 0.1389,
+    "ambiguous_ratio": 0.125,
     "archetype_concentration": 0.1111,
     "archetype_shares": {
       "appointment_list": 0.0139,
-      "bank_statement": 0.0278,
+      "bank_statement": 0.0139,
+      "candidate_evaluation": 0.0139,
       "customer_complaint": 0.0139,
-      "customer_export": 0.0556,
-      "cv": 0.0139,
-      "employee_list": 0.0833,
+      "customer_contract": 0.0139,
+      "customer_export": 0.0139,
+      "cv": 0.0278,
+      "employee_list": 0.0972,
       "employment_contract": 0.0139,
       "expense_report": 0.0139,
-      "internal_memo": 0.0139,
-      "invoice": 0.0417,
-      "lab_result": 0.0278,
-      "leave_request": 0.0278,
-      "management_deck": 0.0556,
-      "meeting_minutes": 0.1111,
-      "order_export": 0.0139,
-      "payroll": 0.0278,
-      "prescription": 0.0139,
-      "purchase_order": 0.0694,
-      "quotation": 0.0278,
-      "risk_report": 0.0278,
-      "scanned_medical_report": 0.0139,
+      "internal_memo": 0.0278,
+      "invoice": 0.0139,
+      "lab_result": 0.0139,
+      "management_deck": 0.0139,
+      "medical_report": 0.0139,
+      "meeting_minutes": 0.0417,
+      "nda": 0.0139,
+      "patient_list": 0.0139,
+      "payroll": 0.0417,
+      "quotation": 0.0139,
+      "risk_report": 0.0139,
+      "sales_pipeline": 0.0278,
+      "screenshot_chat": 0.0278,
       "screenshot_email": 0.0278,
       "screenshot_form": 0.0139,
-      "screenshot_receipt": 0.0139,
-      "strategy_report": 0.0278,
-      "supplier_agreement": 0.0278,
-      "support_ticket": 0.0833,
-      "transaction_export": 0.0278,
-      "xml_export": 0.0417
+      "screenshot_id": 0.0139,
+      "screenshot_receipt": 0.0278,
+      "supplier_agreement": 0.0139,
+      "support_ticket": 0.1111,
+      "transaction_export": 0.0556,
+      "vendor_list": 0.0139,
+      "xml_export": 0.0278
     },
     "attachment_count_distribution": {
-      "0": 20,
-      "1": 38,
-      "2": 10,
+      "0": 26,
+      "1": 34,
+      "2": 8,
       "3": 4
     },
-    "attachment_share": 0.7222,
+    "attachment_language_shares": {
+      "en": 0.4677,
+      "mixed": 0.3387,
+      "th": 0.1935
+    },
+    "attachment_share": 0.6389,
+    "bundle_kinds": {
+      "multi_file": 9,
+      "old_new": 2,
+      "prompt_only": 26,
+      "same_archetype": 1,
+      "single_file": 34
+    },
+    "consistency_checks": 156,
+    "consistency_passed": 156,
+    "consistency_rate": 1.0,
+    "cross_file_link_cases": 6,
+    "cross_file_links": 20,
     "detection_evaluated": false,
     "detection_note": "No detector or gateway was run; these metrics cover file ingestion and annotation provenance only.",
     "difficulty_shares": {
-      "1": 0.1528,
-      "2": 0.1528,
-      "3": 0.2639,
-      "4": 0.2778,
-      "5": 0.1528
+      "1": 0.0556,
+      "2": 0.2083,
+      "3": 0.2778,
+      "4": 0.2917,
+      "5": 0.1667
     },
     "document_duplicate_rate": 0.0,
     "domain_shares": {
-      "infrastructure": 0.1528,
-      "payment": 0.2778,
-      "pii": 0.3333,
-      "secrets": 0.1667
+      "infrastructure": 0.1667,
+      "payment": 0.2639,
+      "pii": 0.3889,
+      "secrets": 0.1806
     },
     "duplicates": {
       "cross_split_examples": [],
@@ -258,209 +349,233 @@
       "threshold": 0.96
     },
     "entity_density_distribution": {
-      "0": 6,
-      "1-3": 38,
-      "4-6": 12,
-      "7+": 16
+      "0": 2,
+      "1-3": 34,
+      "4-6": 9,
+      "7+": 27
     },
     "entity_location_accuracy": 1.0,
     "extraction_accuracy": 1.0,
     "extraction_failures": 0,
     "extraction_methods": {
-      "direct_text": 12,
-      "ocr": 5,
-      "office_parser": 29,
-      "pdf_text": 9,
-      "structured_parser": 11
+      "direct_text": 10,
+      "ocr": 8,
+      "office_parser": 12,
+      "pdf_text": 8,
+      "structured_parser": 15
     },
     "file_open_rate": 1.0,
     "file_type_counts": {
-      "csv": 7,
-      "docx": 18,
-      "jpeg": 1,
-      "jpg": 3,
-      "json": 5,
+      "csv": 8,
+      "docx": 12,
+      "jpg": 4,
+      "json": 8,
       "md": 2,
       "pdf": 10,
-      "pptx": 4,
-      "txt": 10,
-      "xlsx": 10
+      "png": 5,
+      "txt": 9,
+      "xlsx": 4
     },
     "file_type_shares": {
-      "csv": 0.0972,
-      "docx": 0.2361,
-      "jpeg": 0.0139,
-      "jpg": 0.0417,
-      "json": 0.0556,
+      "csv": 0.1111,
+      "docx": 0.125,
+      "jpg": 0.0556,
+      "json": 0.0972,
       "md": 0.0278,
-      "pdf": 0.125,
-      "pptx": 0.0556,
-      "txt": 0.1389,
-      "xlsx": 0.1389
+      "pdf": 0.1111,
+      "png": 0.0694,
+      "txt": 0.1111,
+      "xlsx": 0.0556
     },
     "intent_shares": {
-      "analyze": 0.0417,
-      "answer_questions": 0.0278,
-      "calculate": 0.0556,
+      "answer_questions": 0.0556,
+      "calculate": 0.0694,
       "check_code": 0.0139,
       "classify": 0.0278,
-      "compare": 0.0972,
+      "compare": 0.0417,
       "convert_format": 0.0139,
-      "create_chart": 0.0278,
-      "draft_email": 0.0972,
-      "explain_error": 0.0833,
-      "extract_fields": 0.125,
-      "find_anomalies": 0.0139,
-      "find_missing": 0.0694,
-      "inspect_config": 0.0139,
+      "draft_email": 0.0556,
+      "explain_error": 0.0139,
+      "extract_fields": 0.0556,
+      "find_anomalies": 0.125,
+      "find_missing": 0.0278,
+      "inspect_config": 0.0694,
       "modify_document": 0.0139,
       "prepare_report": 0.0556,
-      "review_document": 0.0694,
-      "summarize": 0.1111,
-      "translate": 0.0139,
+      "review_document": 0.0972,
+      "rewrite": 0.0417,
+      "summarize": 0.1667,
+      "translate": 0.0278,
       "troubleshoot": 0.0278
     },
-    "language_shares": {
-      "en": 0.2222,
-      "mixed": 0.3333,
-      "th": 0.4444
+    "language_matrix": {
+      "en->en": 4,
+      "en->mixed": 4,
+      "en->prompt_only": 9,
+      "en->th": 6,
+      "mixed->en": 11,
+      "mixed->mixed": 1,
+      "mixed->prompt_only": 4,
+      "mixed->th": 2,
+      "th->en": 14,
+      "th->mixed": 16,
+      "th->prompt_only": 13,
+      "th->th": 4
     },
-    "multi_domain_share": 0.1806,
-    "negative_ratio": 0.25,
-    "ocr_cases": 5,
+    "language_matrix_combinations": 12,
+    "language_shares": {
+      "en": 0.2639,
+      "mixed": 0.1944,
+      "th": 0.5417
+    },
+    "mixed_attachments": 21,
+    "mixed_attachments_verified": 21,
+    "mixed_script_rate": 1.0,
+    "multi_domain_share": 0.1389,
+    "multi_file_cases": 12,
+    "multi_file_share": 0.1667,
+    "negative_ratio": 0.1528,
+    "ocr_cases": 8,
     "openings": {
       "top": [
         {
-          "count": 2,
-          "opening": "take a look"
-        },
-        {
-          "count": 2,
-          "opening": "this one is"
+          "count": 1,
+          "opening": "พี่ครับ อันนี้มันยังไม่ได้เลย. ทีมภายนอกขอมาด่วน."
         },
         {
           "count": 1,
-          "opening": "เอาสองอันนี้ ทำ summary."
+          "opening": "พี่คะ อันนี้ อยู่ในแนบ"
         },
         {
           "count": 1,
-          "opening": "อันนี้มัน สรุปเป็น bullet."
+          "opening": "อันนี้มันยังไม่ได้เย. ดู บรรทัดที่"
         },
         {
           "count": 1,
-          "opening": "please use this"
+          "opening": "หา anomaly ให้หน่อย"
         },
         {
           "count": 1,
-          "opening": "สองไฟล์นี้ draft an"
+          "opening": "ยังไม่ได้เลย ช่วยดูที🙏. คือเมื่อคืน"
         },
         {
           "count": 1,
-          "opening": "งงกับ support_ticket.docx นี้"
+          "opening": "cv.pdf, bank_statement.pdf ช่วยสรุปให้หน่อย"
         },
         {
           "count": 1,
-          "opening": "อันนี้ support_ticket.json ล่าสุด"
+          "opening": "รบกวนช่วย อันนี้ อันนี้"
         },
         {
           "count": 1,
-          "opening": "help me รีวิวให้ทีว่ามีอะไรต้องแก้"
+          "opening": "this one what"
         },
         {
           "count": 1,
-          "opening": "อันนี้ของลูกค้า when you"
+          "opening": "เอาสองอันนี้ เช็กค่าพวกนี้ให้ที. ทีมภายนอกขอมาด่วน."
+        },
+        {
+          "count": 1,
+          "opening": "ร่างอีเมลให้หน่อย ให้หน่อย. ไม่แน่ใจว่าใช่ไฟล์เดียวกันไหม"
         }
       ],
-      "top_share": 0.0278,
-      "unique": 70
+      "top_share": 0.0139,
+      "unique": 72
     },
     "persona_shares": {
-      "accountant": 0.0833,
-      "analyst": 0.0972,
-      "compliance": 0.0278,
-      "developer": 0.0694,
-      "devops": 0.0694,
-      "executive_assistant": 0.0556,
-      "finance": 0.0694,
-      "healthcare_admin": 0.0139,
+      "accountant": 0.0556,
+      "analyst": 0.0556,
+      "compliance": 0.0417,
+      "developer": 0.0556,
+      "devops": 0.0417,
+      "executive_assistant": 0.0417,
+      "finance": 0.1528,
+      "healthcare_admin": 0.0417,
       "hr": 0.0556,
-      "intern": 0.0139,
-      "manager": 0.0556,
-      "operations": 0.0694,
-      "sales": 0.0833,
-      "security_engineer": 0.0833,
-      "support": 0.0972,
-      "sysadmin": 0.0556
+      "intern": 0.0278,
+      "manager": 0.0972,
+      "operations": 0.0833,
+      "sales": 0.0139,
+      "security_engineer": 0.0417,
+      "support": 0.125,
+      "sysadmin": 0.0694
     },
     "prompt_length": {
-      "max": 1251,
-      "mean": 237.99,
-      "min": 20,
-      "stdev": 287.27
+      "max": 1603,
+      "mean": 323.57,
+      "min": 29,
+      "stdev": 369.42
     },
     "prompt_span_accuracy": 1.0,
     "repeated_phrases": {
       "top": [
         {
-          "count": 7,
+          "count": 10,
+          "phrase": "- confirm the migration"
+        },
+        {
+          "count": 10,
+          "phrase": "location: internal video call"
+        },
+        {
+          "count": 10,
+          "phrase": "- remove the old"
+        },
+        {
+          "count": 10,
+          "phrase": "the old deployment credential."
+        },
+        {
+          "count": 10,
+          "phrase": "confirm the migration window."
+        },
+        {
+          "count": 10,
+          "phrase": "remove the old deployment"
+        },
+        {
+          "count": 10,
+          "phrase": "| location: internal video"
+        },
+        {
+          "count": 10,
+          "phrase": "old deployment credential. ```"
+        },
+        {
+          "count": 10,
+          "phrase": "the migration window. -"
+        },
+        {
+          "count": 9,
           "phrase": "boss wants it by"
-        },
-        {
-          "count": 7,
-          "phrase": "the customer tried twice"
-        },
-        {
-          "count": 7,
-          "phrase": "the service health dashboard"
-        },
-        {
-          "count": 7,
-          "phrase": "review the gateway log."
-        },
-        {
-          "count": 7,
-          "phrase": "an error. the customer"
-        },
-        {
-          "count": 7,
-          "phrase": "the checkout page shows"
-        },
-        {
-          "count": 7,
-          "phrase": "tried twice and is"
-        },
-        {
-          "count": 7,
-          "phrase": "``` support ticket #48219"
-        },
-        {
-          "count": 7,
-          "phrase": "and review the gateway"
-        },
-        {
-          "count": 7,
-          "phrase": "step: confirm the service"
         }
       ],
-      "top_share": 0.0972
+      "top_share": 0.1389
     },
     "reproducible": true,
+    "routed_attachments": 19,
     "safety": {
       "issue_count": 0,
       "issues": [],
       "passed": true
     },
+    "same_archetype_bundle_cases": 3,
     "schema_validity": 1.0,
     "split_counts": {
       "test": 7,
       "train": 58,
       "validation": 7
     },
+    "structure_reference_cases": 16,
+    "structure_reference_share": 0.2222,
+    "structure_references_resolved": 17,
+    "structure_references_total": 17,
+    "structure_resolution_rate": 1.0,
     "validation_issue_cases": 0,
     "validation_issues": [],
     "verification_status": {
-      "verified": 67,
-      "verified_partial": 5
+      "verified": 64,
+      "verified_partial": 8
     }
   },
   "passed": true,
@@ -471,22 +586,22 @@
     "Use a larger seed/count when a profile must show every file family in every split.",
     "Review any case marked verified_partial before treating OCR-oriented labels as authoritative."
   ],
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "seed": 7,
   "total_cases": 72,
-  "total_files": 70,
+  "total_files": 62,
   "verification": {
     "cases": 72,
     "dataset_dir": "D:\\Chula\\CEDT\\Capstone_Project_I\\privacy-gateway-testgen\\datasets\\v2-sample",
     "file_open_rate": 1.0,
-    "files": 70,
+    "files": 62,
     "issues": [],
-    "manifest_checks": 77,
+    "manifest_checks": 69,
     "passed": true,
     "statuses": {
-      "verified": 65,
-      "verified_layout": 5
+      "verified": 53,
+      "verified_layout": 9
     },
-    "verified_files": 70
+    "verified_files": 62
   }
 }

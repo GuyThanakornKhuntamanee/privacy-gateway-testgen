@@ -14,7 +14,9 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence
 from ..entities import EntityPool
 from ..models import Entity
 from .docmodel import Doc, DocBuilder, cell
+from .localization import format_currency, format_date, label as localize_label
 from .org import OrgProfile, Person
+from .scenario import ScenarioPlan, safe_negative as _safe_negative
 
 RENDERERS_ALL_TEXT = ("txt", "md", "docx", "pdf")
 TABLE_RENDERERS = ("csv", "xlsx", "docx", "pdf", "txt")
@@ -24,58 +26,6 @@ LOG_RENDERERS = ("log", "txt", "md", "json", "png", "jpg")
 CODE_RENDERERS = ("py", "js", "ts", "java", "go", "txt", "md", "png", "jpg")
 IMAGE_RENDERERS = ("png", "jpg", "jpeg")
 SLIDE_RENDERERS = ("pptx", "pdf")
-
-
-def _safe_negative(rng: random.Random, entity_type: str) -> Entity:
-    """A hard negative that resembles the field but is not sensitive data."""
-    if entity_type in ("email_address",):
-        return Entity("lookalike", "public_contact_email", "contact@example.com",
-                      detection_expected=False, note="reserved example domain, public contact")
-    if entity_type in ("thai_phone",):
-        return Entity("lookalike", "reserved_fictional_phone", "+1-555-0100",
-                      detection_expected=False, note="reserved fictional telephone range")
-    if entity_type in ("thai_name",):
-        return Entity("lookalike", "placeholder_person_name", "Example Contact",
-                      detection_expected=False, note="placeholder, not a real person")
-    if entity_type in ("thai_national_id", "patient_id", "passport_number"):
-        value = rng.choice(["1234567890123", "ORD-2026-441920", "DOC-EXAMPLE-001"])
-        return Entity("lookalike", "identifier_lookalike", value, detection_expected=False,
-                      note="identifier-shaped value with no personal-data context")
-    if entity_type == "thai_address":
-        return Entity("lookalike", "public_address_example", "Example Tower, 1 Example Road",
-                      detection_expected=False, note="fictional public place")
-    if entity_type == "date_of_birth":
-        return Entity("lookalike", "document_date", "2026-01-15",
-                      detection_expected=False, note="ordinary document date")
-    if entity_type == "payment_card_number":
-        return Entity("lookalike", "invalid_card_number", "4111 1111 1111 1112",
-                      valid=False, detection_expected=False, note="card-shaped but fails Luhn")
-    if entity_type in ("card_expiry_date", "card_verification_value"):
-        return Entity("lookalike", "document_number", "REF-2026-0192",
-                      detection_expected=False, note="ordinary reference number")
-    if entity_type in ("bank_account_number", "payment_transaction_reference"):
-        return Entity("lookalike", "order_id", f"ORD-2026-{rng.randint(100000, 999999)}",
-                      detection_expected=False, note="ordinary business identifier")
-    if entity_type in ("api_key", "access_token", "refresh_token", "oauth_client_secret",
-                       "password", "database_credential", "connection_string",
-                       "cloud_access_key", "cloud_secret_key", "webhook_secret",
-                       "encryption_key", "env_var_secret", "config_credential",
-                       "jwt_token", "service_account_credential", "ssh_private_key", "tls_private_key"):
-        return Entity("lookalike", "placeholder_secret", rng.choice(
-            ["YOUR_API_KEY_HERE", "<REDACTED>", "changeme", "${DB_PASSWORD}", "********"]
-        ), valid=False, detection_expected=False, note="placeholder, no secret value present")
-    if entity_type in ("internal_ipv4", "internal_ipv6", "private_network"):
-        return Entity("lookalike", "documentation_ip_address", rng.choice(
-            ["192.0.2.10", "198.51.100.25", "203.0.113.77"]
-        ), detection_expected=False, note="RFC 5737 documentation range")
-    if entity_type in ("internal_hostname", "internal_dns_name", "database_endpoint"):
-        return Entity("lookalike", "public_domain", "docs.example.org",
-                      detection_expected=False, note="reserved example domain")
-    if entity_type in ("internal_url",):
-        return Entity("lookalike", "public_domain", "https://www.example.org/help",
-                      detection_expected=False, note="public documentation URL")
-    return Entity("lookalike", "example_identifier", f"EXAMPLE-{rng.randint(1000, 9999)}",
-                  detection_expected=False, note="non-sensitive example value")
 
 
 @dataclass
@@ -91,16 +41,46 @@ class BuildContext:
     doc_language: str = "en"
     image_style: str = "scan"
     ocr_difficulty: int = 2
+    scenario: Optional[ScenarioPlan] = None
+    variant: int = 1
+    attachment_id: str = "ATT-001"
 
     def wants(self, domain: str) -> bool:
         return domain in self.domains
 
+    def shared(self, domain: str, entity_type: Optional[str] = None,
+               key: Optional[str] = None) -> Entity:
+        if self.scenario is None:
+            raise RuntimeError("BuildContext.shared requires a ScenarioPlan")
+        return self.scenario.shared(domain, entity_type, key)
+
+    def label(self, value: str) -> str:
+        return localize_label(value, self.doc_language)
+
+    def money(self, amount: float) -> str:
+        return format_currency(amount, self.doc_language,
+                               self.scenario.currency_mode if self.scenario else "thb")
+
+    def date(self, value) -> str:
+        return format_date(value, self.doc_language,
+                           self.scenario.thai_date_mode if self.scenario else "be")
+
+    def check(self, name: str, passed: bool, details: dict) -> None:
+        if self.scenario is not None:
+            self.scenario.record_check(name, passed, details, self.attachment_id)
+
+    def csv_delimiter(self) -> str:
+        return self.rng.choices([",", ";", "\t"], weights=[0.72, 0.20, 0.08], k=1)[0]
+
     def entity(self, domain: str, types: Optional[Sequence[str]] = None) -> Entity:
         if self.negative and not self.ambiguous:
-            return _safe_negative(self.rng, self._type_for(domain, types))
+            return self._latin(_safe_negative(self.rng, self._type_for(domain, types)))
         if self.ambiguous and self.rng.random() < 0.3:
-            return _safe_negative(self.rng, self._type_for(domain, types))
-        return self.pool.draw(domain, self._pick_type(domain, types))
+            return self._latin(_safe_negative(self.rng, self._type_for(domain, types)))
+        return self._latin(self.pool.draw(domain, self._pick_type(domain, types)))
+
+    def _latin(self, entity: Entity) -> Entity:
+        return self.scenario.latinize(entity) if self.scenario is not None else entity
 
     def _type_for(self, domain: str, types: Optional[Sequence[str]]) -> str:
         if types:
@@ -123,7 +103,7 @@ class BuildContext:
             return f"Contact {index + 1}"
         if self.negative and not self.ambiguous:
             return f"Contact {index + 1}"
-        return person.name
+        return self._latin(person.name)
 
     def person_email(self, person: Person, index: int = 0) -> Entity | str:
         if not self.wants("pii"):
@@ -148,7 +128,7 @@ class BuildContext:
         if value is None:
             value = self.pool.draw(domain, self.rng.choice(types))
             setattr(person, attr, value)
-        return value
+        return self._latin(value)
 
 
 @dataclass(frozen=True)
@@ -194,19 +174,19 @@ def _people_rows(ctx: BuildContext, people: Sequence[Person], fields: Sequence[s
             elif field_name == "card_expiry":
                 row.append(ctx.entity("payment", ["card_expiry_date"]))
             elif field_name == "transaction":
-                row.append(ctx.entity("payment", ["payment_transaction_reference"]))
+                row.append(ctx.shared("payment", "payment_transaction_reference", f"txn_{index}"))
             elif field_name == "amount":
                 row.append(f"{ctx.rng.randrange(1200, 98000):,}.00")
             elif field_name == "host":
-                row.append(ctx.entity("infrastructure", ["internal_hostname"]))
+                row.append(ctx.shared("infrastructure", "internal_hostname", f"host_{index % 4}"))
             elif field_name == "ip":
-                row.append(ctx.entity("infrastructure", ["internal_ipv4"]))
+                row.append(ctx.shared("infrastructure", "internal_ipv4", f"ip_{index % 4}"))
             elif field_name == "db":
-                row.append(ctx.entity("infrastructure", ["database_endpoint"]))
+                row.append(ctx.shared("infrastructure", "database_endpoint", "db_endpoint"))
             elif field_name == "url":
-                row.append(ctx.entity("infrastructure", ["internal_url"]))
+                row.append(ctx.shared("infrastructure", "internal_url", "url"))
             elif field_name == "secret":
-                row.append(ctx.entity("secrets"))
+                row.append(ctx.shared("secrets", "api_key", "api_key"))
             else:
                 row.append(field_name)
         rows.append(row)
@@ -228,8 +208,8 @@ def _employee_list(ctx: BuildContext) -> Doc:
         fields.append("bank"); headers.append("bank_account")
     builder.table(headers, _people_rows(ctx, ctx.org.employees, fields), title="Employees")
     if ctx.wants("infrastructure"):
-        rows = [[ctx.entity("infrastructure", ["internal_hostname"]),
-                 ctx.entity("infrastructure", ["internal_ipv4"]),
+        rows = [[ctx.shared("infrastructure", "internal_hostname", f"host_{index}"),
+                 ctx.shared("infrastructure", "internal_ipv4", f"ip_{index}"),
                  ctx.person_email(ctx.org.employees[index], index)] for index in range(4)]
         builder.table(["hostname", "private_ip", "owner_email"], rows, title="Asset assignment")
     builder.note("Generated test document. Values are synthetic and non-functional.")
@@ -248,16 +228,28 @@ def _payroll(ctx: BuildContext) -> Doc:
     fields += ["amount", "amount", "amount"]
     headers += ["gross", "tax", "net"]
     rows = _people_rows(ctx, ctx.org.employees, fields)
+    total_gross = 0
+    total_tax = 0
+    arithmetic_ok = True
     for index, row in enumerate(rows):
         gross = ctx.rng.randrange(35000, 110000)
         tax = int(gross * 0.05)
+        net = gross - tax
         offset = len(row) - 3
         row[offset] = f"{gross:,}.00"
         row[offset + 1] = f"{tax:,}.00"
-        row[offset + 2] = f"{gross - tax:,}.00"
+        row[offset + 2] = f"{net:,}.00"
+        arithmetic_ok = arithmetic_ok and (gross - tax == net)
+        total_gross += gross
+        total_tax += tax
     builder.table(headers, rows, title="Payroll")
+    ctx.check("payroll_arithmetic", arithmetic_ok, {
+        "rows": len(rows), "gross_total": total_gross, "tax_total": total_tax,
+        "net_total": total_gross - total_tax,
+    })
     if ctx.wants("secrets"):
-        builder.para("Bank transfer integration credential: ", ctx.entity("secrets", ["api_key"]))
+        builder.para("Bank transfer integration credential: ",
+                     ctx.shared("secrets", "api_key", "payroll_api_key"))
     return builder.build(header=cell(f"{ctx.org.name} - Finance"),
                          footer=cell("Synthetic payroll - not real employee data"))
 
@@ -276,7 +268,7 @@ def _customer_export(ctx: BuildContext) -> Doc:
         row.insert(0, f"CUS-{1000 + index}")
     builder.table(["customer_id"] + headers, rows, title="Customers")
     builder.note("Exported for a synthetic customer-success review.")
-    return builder.build(delimiter=",")
+    return builder.build(delimiter=ctx.csv_delimiter())
 
 
 def _transaction_export(ctx: BuildContext) -> Doc:
@@ -294,14 +286,14 @@ def _transaction_export(ctx: BuildContext) -> Doc:
             ctx.rng.choice(["settled", "settled", "pending", "refunded"]),
         ]
         if ctx.wants("payment"):
-            row[0:0] = [ctx.entity("payment", ["payment_transaction_reference"])]
-            row.extend([ctx.entity("payment", ["payment_card_number"]),
+            row[0:0] = [ctx.shared("payment", "payment_transaction_reference", f"txn_{index}")]
+            row.extend([ctx.shared("payment", "payment_card_number", "corp_card"),
                         ctx.entity("payment", ["payment_authorization_code"])])
         rows.append(row)
     if ctx.wants("payment"):
         headers = ["transaction_ref"] + headers + ["card", "auth_code"]
     builder.table(headers, rows, title="Transactions")
-    return builder.build()
+    return builder.build(delimiter=ctx.csv_delimiter())
 
 
 def _patient_list(ctx: BuildContext) -> Doc:
@@ -329,8 +321,10 @@ def _server_inventory(ctx: BuildContext) -> Doc:
     rows = []
     for index in range(len(ctx.org.hosts)):
         rows.append([
-            ctx.entity("infrastructure", ["internal_hostname"]) if ctx.wants("infrastructure") else "app-host",
-            ctx.entity("infrastructure", ["internal_ipv4"]) if ctx.wants("infrastructure") else "192.0.2.10",
+            ctx.shared("infrastructure", "internal_hostname", f"host_{index}")
+            if ctx.wants("infrastructure") else "app-host",
+            ctx.shared("infrastructure", "internal_ipv4", f"ip_{index}")
+            if ctx.wants("infrastructure") else "192.0.2.10",
             ctx.rng.choice(["api", "worker", "database", "gateway"]),
             ctx.person_email(ctx.org.employees[index % len(ctx.org.employees)], index),
             ctx.rng.choice(["production", "staging"]),
@@ -365,12 +359,14 @@ def _access_records(ctx: BuildContext) -> Doc:
         rows.append([
             f"2026-03-{10 + index:02d}T09:{10 + index:02d}:00Z",
             ctx.person_email(person, index),
-            ctx.entity("infrastructure", ["internal_ipv4"]) if ctx.wants("infrastructure") else "192.0.2.10",
-            ctx.entity("infrastructure", ["internal_hostname"]) if ctx.wants("infrastructure") else "docs.example.org",
+            ctx.shared("infrastructure", "internal_ipv4", f"ip_{index % 4}")
+            if ctx.wants("infrastructure") else "192.0.2.10",
+            ctx.shared("infrastructure", "internal_hostname", f"host_{index % 4}")
+            if ctx.wants("infrastructure") else "docs.example.org",
             ctx.rng.choice(["read", "write", "delete", "login"]),
         ])
     builder.table(["timestamp", "user", "source_ip", "resource", "action"], rows, title="Access events")
-    return builder.build()
+    return builder.build(delimiter=ctx.csv_delimiter())
 
 
 def _vendor_list(ctx: BuildContext) -> Doc:
@@ -393,18 +389,47 @@ def _vendor_list(ctx: BuildContext) -> Doc:
 def _bank_statement(ctx: BuildContext) -> Doc:
     builder = DocBuilder("bank_statement", "Bank statement", "bank_statement_2026-03.pdf", ctx.doc_language)
     builder.heading("Synthetic bank statement")
-    builder.para("Account holder: ", ctx.person_name(ctx.org.employees[0]),
-                 " | Account: ", ctx.entity("payment", ["bank_account_number"]) if ctx.wants("payment") else "XXXX-0000")
+    opening = ctx.rng.randrange(80000, 220000, 100)
+    holder = ctx.person_name(ctx.org.employees[0])
+    account = (ctx.shared("payment", "bank_account_number", "statement_account")
+               if ctx.wants("payment") else "XXXX-0000")
+    builder.para("Account holder: ", holder, " | Account: ", account)
+    builder.para("Opening balance: ", ctx.money(opening), "  |  Date: ", ctx.date("2026-03-01"))
     rows = []
-    for index in range(8):
+    balance = opening
+    movements = []
+    for index in range(ctx.rng.choice((7, 8, 9, 10))):
+        direction = ctx.rng.choice(["credit", "credit", "debit"])
+        amount = ctx.rng.randrange(150, 26000)
+        balance += amount if direction == "credit" else -amount
+        if balance < 0:
+            direction = "credit"
+            balance += amount * 2
+        reference = (ctx.shared("payment", "payment_transaction_reference", f"stmt_txn_{index}")
+                     if ctx.wants("payment") else f"REF-{1000 + index}")
+        movements.append((amount, direction, balance))
         rows.append([
-            f"2026-03-{10 + index:02d}",
+            ctx.date(f"2026-03-{10 + index:02d}"),
             ctx.rng.choice(["card settlement", "transfer", "refund", "service fee"]),
-            ctx.entity("payment", ["payment_transaction_reference"]) if ctx.wants("payment") else f"REF-{1000 + index}",
-            f"{ctx.rng.randrange(100, 80000):,}.00",
-            f"{ctx.rng.randrange(1000, 900000):,}.00",
+            reference,
+            ctx.rng.choice(["credit", "debit"]),
+            ctx.money(amount),
+            ctx.money(balance),
         ])
-    builder.table(["date", "description", "reference", "amount", "balance"], rows, title="Transactions")
+    # Keep the type column aligned with the running-balance calculation.
+    for row, (amount, direction, _balance) in zip(rows, movements):
+        row[3] = direction
+    builder.table(["date", "description", "reference", "type", "amount", "balance"],
+                  rows, title="Transactions")
+    expected = opening
+    for amount, direction, balance in movements:
+        expected += amount if direction == "credit" else -amount
+        if expected != balance:
+            break
+    ctx.check("statement_running_balance", expected == balance and balance >= 0, {
+        "opening_balance": opening, "closing_balance": balance,
+        "movements": len(movements),
+    })
     builder.para("Statement generated for synthetic testing. Not a real bank document.")
     return builder.build(header=cell("Synthetic Bank - Example Only"))
 
@@ -459,32 +484,51 @@ def _order_export(ctx: BuildContext) -> Doc:
 
 def _finance_document(ctx: BuildContext, kind: str) -> Doc:
     filename = f"{kind}_2026-03.pdf"
-    builder = DocBuilder(kind, kind.replace("_", " ").title(), filename, ctx.doc_language)
-    builder.heading(kind.replace("_", " ").title())
+    label = kind.replace("_", " ").title()
+    builder = DocBuilder(kind, label, filename, ctx.doc_language)
+    builder.heading(label)
     customer = ctx.org.customers[0]
-    number = f"{kind[:3].upper()}-2026-{ctx.rng.randint(1000, 9999)}"
-    builder.para("Reference: ", number, "  |  Date: 2026-03-18  |  Due: 2026-04-17")
+    number = ctx.scenario.invoice_number(kind) if ctx.scenario else f"{kind[:3].upper()}-2026-1000"
+    builder.para("Reference: ", number, "  |  Date: ", ctx.date(ctx.scenario.issue_date if ctx.scenario else "2026-03-18"),
+                 "  |  Due: ", ctx.date(ctx.scenario.due_date if ctx.scenario else "2026-04-17"))
     builder.para("Bill to: ", ctx.person_name(customer), " | ", ctx.person_email(customer))
     if ctx.wants("pii"):
         builder.para("Address: ", ctx.person_field(customer, "address", "pii", ["thai_address"]))
     rows = []
+    item_count = ctx.rng.choice((3, 4, 4, 5, 6))
     for item in ctx.rng.sample(["Wireless Keyboard", "USB-C Dock", "Noise-cancelling Headset",
-                                "27-inch Monitor", "Ergonomic Chair", "Portable SSD 1TB"], k=4):
+                                "27-inch Monitor", "Ergonomic Chair", "Portable SSD 1TB",
+                                "Network Switch 24-port", "Webcam 1080p"], k=item_count):
         quantity = ctx.rng.randint(1, 8)
         unit = ctx.rng.randrange(1200, 18000)
         rows.append([item, quantity, f"{unit:,}.00", f"{quantity * unit:,}.00"])
     subtotal = sum(int(row[3].replace(",", "").replace(".00", "")) for row in rows)
-    tax = int(subtotal * 0.07)
+    tax = int(round(subtotal * 0.07))
+    total = subtotal + tax
     builder.table(["description", "quantity", "unit_price", "line_total"], rows, title="Items")
-    builder.para(f"Subtotal: {subtotal:,}.00   VAT 7%: {tax:,}.00   Total: {subtotal + tax:,}.00")
+    builder.para(f"Subtotal: {subtotal:,}.00   VAT 7%: {tax:,}.00   Total: {total:,}.00")
+    line_sum = sum(int(row[3].replace(",", "").replace(".00", "")) for row in rows)
+    due_ok = True
+    if ctx.scenario is not None:
+        due_ok = ctx.scenario.due_date > ctx.scenario.issue_date
+    ctx.check("invoice_arithmetic", line_sum == subtotal and subtotal + tax == total, {
+        "line_items": len(rows), "subtotal": subtotal, "tax": tax, "total": total,
+    })
+    ctx.check("invoice_due_date", due_ok, {
+        "issue_date": ctx.scenario.issue_date if ctx.scenario else "2026-03-18",
+        "due_date": ctx.scenario.due_date if ctx.scenario else "2026-04-17",
+        "terms_days": ctx.scenario.payment_terms_days if ctx.scenario else 30,
+    })
     if ctx.wants("payment"):
-        builder.para("Card on file: ", ctx.entity("payment", ["payment_card_number"]),
+        builder.para("Transaction reference: ",
+                     ctx.shared("payment", "payment_transaction_reference", "txn_0"))
+        builder.para("Card on file: ", ctx.shared("payment", "payment_card_number", "corp_card"),
                      "  Expiry: ", ctx.entity("payment", ["card_expiry_date"]),
                      "  Authorization: ", ctx.entity("payment", ["payment_authorization_code"]))
     if ctx.wants("secrets"):
-        builder.para("Payment gateway key: ", ctx.entity("secrets", ["api_key"]))
+        builder.para("Payment gateway key: ", ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("infrastructure"):
-        builder.para("Billing service endpoint: ", ctx.entity("infrastructure", ["internal_url"]))
+        builder.para("Billing service endpoint: ", ctx.shared("infrastructure", "internal_url", "url"))
     builder.para("Synthetic example document. Not a real invoice or payment instruction.")
     return builder.build(header=cell(f"{ctx.org.name} - Finance"),
                          footer=cell("Synthetic example - all values are fictional"))
@@ -507,12 +551,13 @@ def _contract(ctx: BuildContext, kind: str) -> Doc:
     builder.heading("2. Confidentiality")
     builder.para("The parties shall protect confidential information and may disclose it only to authorised staff.")
     if ctx.wants("secrets"):
-        builder.para("Integration credential referenced in schedule A: ", ctx.entity("secrets", ["api_key"]))
+        builder.para("Integration credential referenced in schedule A: ",
+                     ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("payment"):
-        builder.para("Payment account: ", ctx.entity("payment", ["bank_account_number"]),
-                     " Reference: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("Payment account: ", ctx.shared("payment", "bank_account_number", "contract_account"),
+                     " Reference: ", ctx.shared("payment", "payment_transaction_reference", "txn_0"))
     if ctx.wants("infrastructure"):
-        builder.para("Internal service: ", ctx.entity("infrastructure", ["internal_url"]))
+        builder.para("Internal service: ", ctx.shared("infrastructure", "internal_url", "url"))
     builder.heading("3. Signatures")
     builder.para("Signed for ", ctx.org.name, " by ", ctx.person_name(ctx.org.employees[1]), " on 2026-03-18.")
     return builder.build(header=cell("Confidential - synthetic example"))
@@ -538,37 +583,48 @@ def _cv(ctx: BuildContext) -> Doc:
 def _incident_report(ctx: BuildContext) -> Doc:
     builder = DocBuilder("incident_report", "Incident report", "incident_report.docx", ctx.doc_language)
     reporter = ctx.org.employees[0]
+    incident_id = ctx.scenario.incident_id if ctx.scenario else "INC-2026-0318"
     builder.heading("Incident report - API authentication failures")
-    builder.para("Incident ID: INC-2026-0318  |  Reported by: ", ctx.person_name(reporter),
+    builder.para("Incident ID: ", incident_id, "  |  Reported by: ", ctx.person_name(reporter),
                  " (", ctx.person_email(reporter), ")")
+    builder.para("Date: ", ctx.date("2026-03-18"), "  |  Request ID: ",
+                 ctx.scenario.request_id(0) if ctx.scenario else "req-10231")
     builder.heading("Summary")
     builder.para("At 09:12 the API gateway returned 502 responses for requests to the order service. "
                  "The application could not connect to the database after the previous deployment.")
     if ctx.wants("infrastructure"):
-        builder.para("Affected host: ", ctx.entity("infrastructure", ["internal_hostname"]),
-                     " (", ctx.entity("infrastructure", ["internal_ipv4"]), ")")
-        builder.para("Database endpoint: ", ctx.entity("infrastructure", ["database_endpoint"]),
-                     "  Network: ", ctx.entity("infrastructure", ["private_network"]))
-        builder.para("Service URL: ", ctx.entity("infrastructure", ["internal_url"]))
+        builder.para("Affected host: ", ctx.shared("infrastructure", "internal_hostname", "host_0"),
+                     " (", ctx.shared("infrastructure", "internal_ipv4", "ip_0"), ")")
+        builder.para("Database endpoint: ", ctx.shared("infrastructure", "database_endpoint", "db_endpoint"),
+                     "  Network: ", ctx.shared("infrastructure", "private_network", "network"))
+        builder.para("Service URL: ", ctx.shared("infrastructure", "internal_url", "url"))
     if ctx.wants("secrets"):
         builder.para("The deployment log printed the following credential while retrying: ",
-                     ctx.entity("secrets", ["database_credential"]))
-        builder.para("Connection string in the failed job: ", ctx.entity("secrets", ["connection_string"]))
+                     ctx.shared("secrets", "database_credential", "db_credential"))
+        builder.para("Connection string in the failed job: ",
+                     ctx.shared("secrets", "connection_string", "db_connection_string"))
     if ctx.wants("payment"):
-        builder.para("Payment retry queue reference: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("Payment retry queue reference: ",
+                     ctx.shared("payment", "payment_transaction_reference", "txn_0"))
+    if ctx.rng.random() < 0.5:
+        builder.heading("Impact")
+        builder.para("Checkout requests failed for approximately 29 minutes. "
+                     "No payment was captured twice; the retry queue was drained after rollback.")
     builder.heading("Timeline")
     builder.bullet("09:12 - alerts fired for elevated 5xx responses.")
     builder.bullet("09:18 - on-call engineer reproduced the failure on the application host.")
     builder.bullet("09:41 - rollback completed and traffic returned to normal.")
     builder.heading("Follow-up")
     builder.para("Rotate the exposed credential, review deployment logging, and add a config check.")
+    ctx.check("incident_timeline", True, {"start": ctx.scenario.timestamp(0) if ctx.scenario else "2026-03-18T09:12:00Z",
+                                          "end": ctx.scenario.timestamp(10) if ctx.scenario else "2026-03-18T09:42:00Z"})
     return builder.build(header=cell("Internal - synthetic incident"))
 
 
 def _meeting_minutes(ctx: BuildContext) -> Doc:
     builder = DocBuilder("meeting_minutes", "Meeting minutes", "meeting_minutes.docx", ctx.doc_language)
     builder.heading("Platform weekly - meeting minutes")
-    builder.para("Date: 2026-03-18  |  Location: internal video call")
+    builder.para("Date: ", ctx.date("2026-03-18"), "  |  Location: internal video call")
     attendees = ctx.org.employees[:3]
     builder.heading("Attendees")
     for index, person in enumerate(attendees):
@@ -577,13 +633,17 @@ def _meeting_minutes(ctx: BuildContext) -> Doc:
     builder.para("The team reviewed the deployment checklist and the customer migration plan. "
                  "One action remains open for the database owner.")
     if ctx.wants("infrastructure"):
-        builder.para("Migration target: ", ctx.entity("infrastructure", ["database_endpoint"]),
-                     " via ", ctx.entity("infrastructure", ["internal_url"]))
+        builder.para("Migration target: ", ctx.shared("infrastructure", "database_endpoint", "db_endpoint"),
+                     " via ", ctx.shared("infrastructure", "internal_url", "url"))
     if ctx.wants("secrets"):
         builder.para("The shared integration key was pasted in chat during the demo: ",
-                     ctx.entity("secrets", ["api_key"]))
+                     ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("payment"):
-        builder.para("Finance noted a pending transaction: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("Finance noted a pending transaction: ",
+                     ctx.shared("payment", "payment_transaction_reference", "txn_0"))
+    if ctx.rng.random() < 0.5:
+        builder.heading("Risks")
+        builder.para("The migration window overlaps a finance close. The team will confirm the rollback owner.")
     builder.heading("Action items")
     builder.bullet("Owner: ", ctx.person_name(attendees[1]), " - confirm the migration window.")
     builder.bullet("Owner: ", ctx.person_name(attendees[2]), " - remove the old deployment credential.")
@@ -599,9 +659,10 @@ def _memo(ctx: BuildContext) -> Doc:
     if ctx.wants("pii"):
         builder.para("Account owner contact: ", ctx.person_email(ctx.org.employees[3]))
     if ctx.wants("secrets"):
-        builder.para("Temporary review credential: ", ctx.entity("secrets", ["password"]))
+        builder.para("Temporary review credential: ",
+                     ctx.shared("secrets", "password", "review_password"))
     if ctx.wants("infrastructure"):
-        builder.para("Review scope: ", ctx.entity("infrastructure", ["private_network"]))
+        builder.para("Review scope: ", ctx.shared("infrastructure", "private_network", "network"))
     builder.para("Synthetic memo for policy testing.")
     return builder.build(header=cell("Internal memo"))
 
@@ -618,7 +679,7 @@ def _strategy_report(ctx: BuildContext) -> Doc:
                      " (", ctx.person_email(ctx.org.customers[0]), ")")
         builder.para("Customer address for the pilot: ", ctx.person_field(ctx.org.customers[0], "address", "pii", ["thai_address"]))
     if ctx.wants("payment"):
-        builder.para("Expected booking: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("Expected booking: ", ctx.shared("payment", "payment_transaction_reference", "txn_0"))
     if ctx.wants("infrastructure"):
         builder.para("Platform capacity: ", ctx.entity("infrastructure", ["system_architecture"]))
     builder.heading("Risks")
@@ -636,9 +697,10 @@ def _risk_report(ctx: BuildContext) -> Doc:
     ]
     builder.table(["risk", "description", "rating", "owner"], rows, title="Risks")
     if ctx.wants("secrets"):
-        builder.para("Example exposed value: ", ctx.entity("secrets", ["api_key"]))
+        builder.para("Example exposed value: ", ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("infrastructure"):
-        builder.para("Database endpoint in scope: ", ctx.entity("infrastructure", ["database_endpoint"]))
+        builder.para("Database endpoint in scope: ",
+                     ctx.shared("infrastructure", "database_endpoint", "db_endpoint"))
     if ctx.wants("pii"):
         builder.para("Risk owner: ", ctx.person_name(ctx.org.employees[2]), " - ", ctx.person_email(ctx.org.employees[2]))
     return builder.build(header=cell("Risk committee - synthetic"))
@@ -647,19 +709,23 @@ def _risk_report(ctx: BuildContext) -> Doc:
 def _support_ticket(ctx: BuildContext) -> Doc:
     builder = DocBuilder("support_ticket", "Support ticket", "support_ticket.txt", ctx.doc_language)
     customer = ctx.org.customers[1]
-    builder.heading("Support ticket #48219")
+    ticket_id = ctx.scenario.ticket_id if ctx.scenario else "#48219"
+    builder.heading(f"Support ticket {ticket_id}")
     builder.para("Requester: ", ctx.person_name(customer, 1), " <", ctx.person_email(customer, 1), ">")
     if ctx.wants("pii"):
         builder.para("Phone: ", ctx.person_phone(customer, 1), "  Account: ", f"CUS-{ctx.rng.randint(100, 999)}")
     builder.para("Issue: after the latest release the checkout page shows an error. "
                  "The customer tried twice and is waiting for an update.")
+    builder.para("Request ID: ", ctx.scenario.request_id(1) if ctx.scenario else "req-20482")
     if ctx.wants("infrastructure"):
-        builder.para("Request from ", ctx.entity("infrastructure", ["internal_ipv4"]),
-                     " to ", ctx.entity("infrastructure", ["internal_url"]), " returned 502.")
+        builder.para("Request from ", ctx.shared("infrastructure", "internal_ipv4", "ip_0"),
+                     " to ", ctx.shared("infrastructure", "internal_url", "url"), " returned 502.")
     if ctx.wants("secrets"):
-        builder.para("Browser console showed request header: ", ctx.entity("secrets", ["access_token"]))
+        builder.para("Browser console showed request header: ",
+                     ctx.shared("secrets", "access_token", "access_token"))
     if ctx.wants("payment"):
-        builder.para("Failed order reference: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("Failed order reference: ",
+                     ctx.shared("payment", "payment_transaction_reference", "txn_0"))
     builder.para("Suggested next step: confirm the service health dashboard and review the gateway log.")
     return builder.build(header=cell("Synthetic support queue"))
 
@@ -675,7 +741,7 @@ def _customer_complaint(ctx: BuildContext) -> Doc:
     builder.para("The parcel arrived three days late and the packaging was damaged. "
                  "Please confirm the replacement process.")
     if ctx.wants("payment"):
-        builder.para("Order reference: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("Order reference: ", ctx.shared("payment", "payment_transaction_reference", "txn_0"))
     return builder.build()
 
 
@@ -686,7 +752,8 @@ def _leave_request(ctx: BuildContext) -> Doc:
     builder.para("Employee: ", ctx.person_name(employee), "  |  Email: ", ctx.person_email(employee))
     if ctx.wants("pii"):
         builder.para("National ID: ", ctx.person_field(employee, "national_id", "pii", ["thai_national_id"]))
-    builder.para("Leave type: annual  |  Dates: 2026-04-06 to 2026-04-10  |  Days: 5")
+    builder.para("Leave type: annual  |  Dates: ", ctx.date("2026-04-06"), " to ",
+                 ctx.date("2026-04-10"), "  |  Days: 5")
     builder.para("Reason: family trip. Coverage arranged with the platform team.")
     builder.para("Approved by: ", ctx.person_name(ctx.org.employees[0]))
     return builder.build(header=cell("HR - synthetic form"))
@@ -757,12 +824,13 @@ def _architecture_notes(ctx: BuildContext) -> Doc:
     builder.para("Traffic enters through a public load balancer and reaches the API service. "
                  "Workers consume the queue and store results in PostgreSQL.")
     if ctx.wants("infrastructure"):
-        builder.bullet("Edge router: ", ctx.entity("infrastructure", ["internal_ipv4"]))
-        builder.bullet("API host: ", ctx.entity("infrastructure", ["internal_hostname"]))
-        builder.bullet("Database: ", ctx.entity("infrastructure", ["database_endpoint"]))
-        builder.bullet("Service URL: ", ctx.entity("infrastructure", ["internal_url"]))
+        builder.bullet("Edge router: ", ctx.shared("infrastructure", "internal_ipv4", "ip_0"))
+        builder.bullet("API host: ", ctx.shared("infrastructure", "internal_hostname", "host_0"))
+        builder.bullet("Database: ", ctx.shared("infrastructure", "database_endpoint", "db_endpoint"))
+        builder.bullet("Service URL: ", ctx.shared("infrastructure", "internal_url", "url"))
     if ctx.wants("secrets"):
-        builder.para("The worker uses this integration credential: ", ctx.entity("secrets", ["api_key"]))
+        builder.para("The worker uses this integration credential: ",
+                     ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("pii"):
         builder.para("Platform owner: ", ctx.person_name(ctx.org.employees[0]), " (", ctx.person_email(ctx.org.employees[0]), ")")
     return builder.build(header=cell("Engineering notes - synthetic"))
@@ -773,13 +841,15 @@ def _troubleshooting_notes(ctx: BuildContext) -> Doc:
     builder.heading("Troubleshooting notes - prod database")
     builder.para("Symptom: the API starts but readiness checks fail. Local environment works.")
     if ctx.wants("infrastructure"):
-        builder.bullet("Resolved database endpoint: ", ctx.entity("infrastructure", ["database_endpoint"]))
-        builder.bullet("Application host: ", ctx.entity("infrastructure", ["internal_ipv4"]))
-        builder.bullet("Internal service: ", ctx.entity("infrastructure", ["internal_url"]))
+        builder.bullet("Resolved database endpoint: ", ctx.shared("infrastructure", "database_endpoint", "db_endpoint"))
+        builder.bullet("Application host: ", ctx.shared("infrastructure", "internal_ipv4", "ip_0"))
+        builder.bullet("Internal service: ", ctx.shared("infrastructure", "internal_url", "url"))
     if ctx.wants("secrets"):
-        builder.para("The current environment file contains: ", ctx.entity("secrets", ["database_credential"]))
+        builder.para("The current environment file contains: ",
+                     ctx.shared("secrets", "database_credential", "db_credential"))
     if ctx.wants("payment"):
-        builder.para("A payment retry job is also failing: ", ctx.entity("payment", ["payment_transaction_reference"]))
+        builder.para("A payment retry job is also failing: ",
+                     ctx.shared("payment", "payment_transaction_reference", "txn_0"))
     builder.para("Next step: verify DNS resolution and the database security group.")
     return builder.build()
 
@@ -798,14 +868,14 @@ def _env_config(ctx: BuildContext) -> Doc:
         "LOG_LEVEL": "info",
     }
     if ctx.wants("infrastructure"):
-        record["DB_HOST"] = ctx.entity("infrastructure", ["database_endpoint"])
-        record["REDIS_HOST"] = ctx.entity("infrastructure", ["internal_hostname"])
-        record["API_BASE_URL"] = ctx.entity("infrastructure", ["internal_url"])
+        record["DB_HOST"] = ctx.shared("infrastructure", "database_endpoint", "db_endpoint")
+        record["REDIS_HOST"] = ctx.shared("infrastructure", "internal_hostname", "host_1")
+        record["API_BASE_URL"] = ctx.shared("infrastructure", "internal_url", "url")
     if ctx.wants("secrets"):
         record["DB_USER"] = "example_app"
-        record["DB_PASSWORD"] = ctx.entity("secrets", ["password"])
-        record["API_KEY"] = ctx.entity("secrets", ["api_key"])
-        record["JWT_SECRET"] = ctx.entity("secrets", ["jwt_token"])
+        record["DB_PASSWORD"] = ctx.shared("secrets", "password", "db_password")
+        record["API_KEY"] = ctx.shared("secrets", "api_key", "api_key")
+        record["JWT_SECRET"] = ctx.shared("secrets", "jwt_token", "jwt")
     builder.record(record)
     builder.para("Never commit real environment files. This example is non-functional.")
     return builder.build()
@@ -820,13 +890,13 @@ def _app_config(ctx: BuildContext) -> Doc:
     }
     database: Dict[str, Any] = {"engine": "postgresql", "port": 5432}
     if ctx.wants("infrastructure"):
-        database["host"] = ctx.entity("infrastructure", ["database_endpoint"])
-        database["replica"] = ctx.entity("infrastructure", ["internal_hostname"])
-        record["service_url"] = ctx.entity("infrastructure", ["internal_url"])
+        database["host"] = ctx.shared("infrastructure", "database_endpoint", "db_endpoint")
+        database["replica"] = ctx.shared("infrastructure", "internal_hostname", "host_1")
+        record["service_url"] = ctx.shared("infrastructure", "internal_url", "url")
     if ctx.wants("secrets"):
         database["username"] = "example_app"
-        database["password"] = ctx.entity("secrets", ["password"])
-        record["api_key"] = ctx.entity("secrets", ["api_key"])
+        database["password"] = ctx.shared("secrets", "password", "db_password")
+        record["api_key"] = ctx.shared("secrets", "api_key", "api_key")
     record["database"] = database
     builder.record(record)
     return builder.build()
@@ -843,10 +913,10 @@ def _k8s_manifest(ctx: BuildContext) -> Doc:
     }
     env: List[Any] = [{"name": "APP_ENV", "value": "production"}]
     if ctx.wants("secrets"):
-        env.append({"name": "DB_PASSWORD", "value": ctx.entity("secrets", ["password"])})
-        env.append({"name": "API_KEY", "value": ctx.entity("secrets", ["api_key"])})
+        env.append({"name": "DB_PASSWORD", "value": ctx.shared("secrets", "password", "db_password")})
+        env.append({"name": "API_KEY", "value": ctx.shared("secrets", "api_key", "api_key")})
     if ctx.wants("infrastructure"):
-        env.append({"name": "DB_HOST", "value": ctx.entity("infrastructure", ["database_endpoint"])})
+        env.append({"name": "DB_HOST", "value": ctx.shared("infrastructure", "database_endpoint", "db_endpoint")})
     record["spec"]["template"] = {"spec": {"containers": [{"name": "api", "image": f"registry.{ctx.org.slug}.example/orders:1.4.2", "env": env}]}}
     builder.record(record)
     return builder.build()
@@ -864,12 +934,13 @@ def _docker_compose(ctx: BuildContext) -> Doc:
     }
     if ctx.wants("secrets"):
         record["services"]["api"]["environment"] = {
-            "DB_PASSWORD": ctx.entity("secrets", ["password"]),
-            "API_KEY": ctx.entity("secrets", ["api_key"]),
+            "DB_PASSWORD": ctx.shared("secrets", "password", "db_password"),
+            "API_KEY": ctx.shared("secrets", "api_key", "api_key"),
         }
     if ctx.wants("infrastructure"):
         record["services"]["api"]["environment"] = record["services"]["api"].get("environment", {})
-        record["services"]["api"]["environment"]["DB_HOST"] = ctx.entity("infrastructure", ["database_endpoint"])
+        record["services"]["api"]["environment"]["DB_HOST"] = ctx.shared(
+            "infrastructure", "database_endpoint", "db_endpoint")
     builder.record(record)
     return builder.build()
 
@@ -884,9 +955,9 @@ def _terraform_config(ctx: BuildContext) -> Doc:
         '  instance_class = "db.t3.medium"',
     ]
     if ctx.wants("infrastructure"):
-        lines.append(["  identifier = \"", ctx.entity("infrastructure", ["internal_hostname"]), "\""])
+        lines.append(["  identifier = \"", ctx.shared("infrastructure", "internal_hostname", "host_0"), "\""])
     if ctx.wants("secrets"):
-        lines.append(["  password   = \"", ctx.entity("secrets", ["password"]), "\""])
+        lines.append(["  password   = \"", ctx.shared("secrets", "password", "db_password"), "\""])
     lines.append("  skip_final_snapshot = true")
     lines.append("}")
     builder.code(lines)
@@ -898,10 +969,10 @@ def _database_config(ctx: BuildContext) -> Doc:
     builder.heading("Database configuration")
     record: Dict[str, Any] = {"database": {"engine": "postgresql", "port": 5432, "pool_size": 20}}
     if ctx.wants("infrastructure"):
-        record["database"]["host"] = ctx.entity("infrastructure", ["database_endpoint"])
+        record["database"]["host"] = ctx.shared("infrastructure", "database_endpoint", "db_endpoint")
     if ctx.wants("secrets"):
         record["database"]["user"] = "example_app"
-        record["database"]["password"] = ctx.entity("secrets", ["password"])
+        record["database"]["password"] = ctx.shared("secrets", "password", "db_password")
     record["database"]["ssl_mode"] = "require"
     builder.record(record)
     return builder.build()
@@ -943,9 +1014,9 @@ def _api_payload(ctx: BuildContext) -> Doc:
         })
     record["customer"] = customer
     if ctx.wants("secrets"):
-        record["signature"] = ctx.entity("secrets", ["webhook_secret"])
+        record["signature"] = ctx.shared("secrets", "webhook_secret", "webhook_secret")
     if ctx.wants("infrastructure"):
-        record["source_ip"] = ctx.entity("infrastructure", ["internal_ipv4"])
+        record["source_ip"] = ctx.shared("infrastructure", "internal_ipv4", "ip_0")
     builder.record(record)
     return builder.build(xml_root="event")
 
@@ -965,7 +1036,7 @@ def _xml_export(ctx: BuildContext) -> Doc:
             "reference": ctx.entity("payment", ["payment_transaction_reference"]),
         }
     if ctx.wants("secrets"):
-        record["token"] = ctx.entity("secrets", ["access_token"])
+        record["token"] = ctx.shared("secrets", "access_token", "access_token")
     builder.record(record)
     return builder.build(xml_root="customerExport")
 
@@ -981,10 +1052,11 @@ def _sql_export(ctx: BuildContext) -> Doc:
             ctx.person_name(person, index), "', '", ctx.person_email(person, index), "', '", ctx.person_phone(person, index), "');",
         ])
     if ctx.wants("payment"):
-        lines.append(["INSERT INTO payments VALUES ('", ctx.entity("payment", ["payment_transaction_reference"]),
-                      "', '", ctx.entity("payment", ["payment_card_number"]), "');"])
+        lines.append(["INSERT INTO payments VALUES ('", ctx.shared("payment", "payment_transaction_reference", "txn_0"),
+                      "', '", ctx.shared("payment", "payment_card_number", "corp_card"), "');"])
     if ctx.wants("secrets"):
-        lines.append(["INSERT INTO config VALUES ('API_KEY', '", ctx.entity("secrets", ["api_key"]), "');"])
+        lines.append(["INSERT INTO config VALUES ('API_KEY', '",
+                      ctx.shared("secrets", "api_key", "api_key"), "');"])
     builder.code(lines)
     return builder.build()
 
@@ -998,8 +1070,8 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
             "import os",
             "import requests",
             "",
-            "DB_HOST = ", ctx.entity("infrastructure", ["database_endpoint"]) if ctx.wants("infrastructure") else "os.getenv('DB_HOST')",
-            "API_KEY = ", ctx.entity("secrets", ["api_key"]) if ctx.wants("secrets") else "os.getenv('API_KEY')",
+            "DB_HOST = ", ctx.shared("infrastructure", "database_endpoint", "db_endpoint") if ctx.wants("infrastructure") else "os.getenv('DB_HOST')",
+            "API_KEY = ", ctx.shared("secrets", "api_key", "api_key") if ctx.wants("secrets") else "os.getenv('API_KEY')",
             "",
             "def fetch_customer(customer_id):",
             "    url = f\"https://api.example.org/v1/customers/{customer_id}\"",
@@ -1011,8 +1083,12 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
     elif ext in ("js", "ts"):
         lines = [
             "const axios = require('axios');",
-            f"const dbHost = '{ctx.entity('infrastructure', ['database_endpoint']).value if ctx.wants('infrastructure') else 'localhost'}';",
-            f"const apiKey = '{ctx.entity('secrets', ['api_key']).value if ctx.wants('secrets') else 'process.env.API_KEY'}';",
+            "const dbHost = '",
+            ctx.shared("infrastructure", "database_endpoint", "db_endpoint") if ctx.wants("infrastructure") else "localhost",
+            "';",
+            "const apiKey = '",
+            ctx.shared("secrets", "api_key", "api_key") if ctx.wants("secrets") else "process.env.API_KEY",
+            "';",
             "async function fetchCustomer(id) {",
             "  return axios.get(`https://api.example.org/v1/customers/${id}`, { headers: { Authorization: apiKey } });",
             "}",
@@ -1021,15 +1097,23 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
         lines = [
             "package main",
             'import ("fmt"; "net/http")',
-            f'const dbHost = "{ctx.entity("infrastructure", ["database_endpoint"]).value if ctx.wants("infrastructure") else "localhost"}"',
-            f'const apiKey = "{ctx.entity("secrets", ["api_key"]).value if ctx.wants("secrets") else "example"}"',
+            'const dbHost = "',
+            ctx.shared("infrastructure", "database_endpoint", "db_endpoint") if ctx.wants("infrastructure") else "localhost",
+            '"',
+            'const apiKey = "',
+            ctx.shared("secrets", "api_key", "api_key") if ctx.wants("secrets") else "example",
+            '"',
             "func main() { fmt.Println(dbHost, apiKey) }",
         ]
     elif ext == "java":
         lines = [
             "public class App {",
-            f'  private static final String DB_HOST = "{ctx.entity("infrastructure", ["database_endpoint"]).value if ctx.wants("infrastructure") else "localhost"}";',
-            f'  private static final String API_KEY = "{ctx.entity("secrets", ["api_key"]).value if ctx.wants("secrets") else "example"}";',
+            '  private static final String DB_HOST = "',
+            ctx.shared("infrastructure", "database_endpoint", "db_endpoint") if ctx.wants("infrastructure") else "localhost",
+            '";',
+            '  private static final String API_KEY = "',
+            ctx.shared("secrets", "api_key", "api_key") if ctx.wants("secrets") else "example",
+            '";',
             "  public static void main(String[] args) { System.out.println(DB_HOST); }",
             "}",
         ]
@@ -1042,40 +1126,59 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
 def _log_lines(ctx: BuildContext, kind: str) -> Doc:
     builder = DocBuilder(kind, "Application log", f"{kind}.log", ctx.doc_language)
     builder.heading(f"{kind} - synthetic")
+    log_format = ctx.rng.choice(("iso", "iso", "bracket", "json"))
 
-    def infra(types: Sequence[str], fallback: str) -> Any:
-        return ctx.entity("infrastructure", types) if ctx.wants("infrastructure") else fallback
+    def infra(types: Sequence[str], key: str, fallback: str) -> Any:
+        return ctx.shared("infrastructure", types[0], key) if ctx.wants("infrastructure") else fallback
+
+    def stamp(index: int) -> str:
+        timestamp = ctx.scenario.timestamp(index) if ctx.scenario else f"2026-03-18T09:{12 + index:02d}:00Z"
+        if log_format != "bracket":
+            return timestamp
+        return timestamp.replace("-", "/")[:11].replace("T", ":") + f"{index:02d} +0000"
 
     lines: List[Any] = []
     for index in range(8):
         person = ctx.org.employees[index % len(ctx.org.employees)]
-        timestamp = f"2026-03-18T09:{12 + index:02d}:{index * 7 % 60:02d}Z"
+        timestamp = stamp(index)
+        request_id = ctx.scenario.request_id(index) if ctx.scenario else f"req-{10000 + index}"
         if kind == "auth_log":
-            lines.append([
-                timestamp, " INFO auth ", ctx.person_email(person, index), " from ",
-                infra(["internal_ipv4"], "192.0.2.10"), " result=success request_id=req-",
-                str(ctx.rng.randint(10000, 99999)),
-            ])
+            parts: List[Any] = [timestamp, " INFO auth ", ctx.person_email(person, index), " from ",
+                                infra(["internal_ipv4"], f"ip_{index % 4}", "192.0.2.10"),
+                                " result=success request_id=", request_id]
         elif kind == "api_gateway_log":
-            lines.append([
-                timestamp, " INFO gateway method=POST path=", infra(["internal_url"], "/api/v1/orders"),
-                " status=502 source=", infra(["internal_ipv4"], "192.0.2.10"), " request_id=req-",
-                str(ctx.rng.randint(10000, 99999)),
-            ])
+            parts = [timestamp, " INFO gateway method=POST path=",
+                     infra(["internal_url"], "url", "/api/v1/orders"),
+                     " status=502 source=", infra(["internal_ipv4"], f"ip_{index % 4}", "192.0.2.10"),
+                     " request_id=", request_id]
         elif kind == "deployment_log":
-            lines.append([
-                timestamp, " INFO deploy host=", infra(["internal_hostname"], "app-host"),
-                " image=orders-api:1.4.2 status=started db=", infra(["database_endpoint"], "db.example.org:5432"),
-            ])
+            parts = [timestamp, " INFO deploy host=",
+                     infra(["internal_hostname"], f"host_{index % 4}", "app-host"),
+                     " image=orders-api:1.4.2 status=started db=",
+                     infra(["database_endpoint"], "db_endpoint", "db.example.org:5432"),
+                     " request_id=", request_id]
         else:
-            lines.append([
-                timestamp, " INFO worker request_id=req-", str(ctx.rng.randint(10000, 99999)),
-                " user=", ctx.person_email(person, index), " client_ip=", infra(["internal_ipv4"], "192.0.2.10"),
-                " msg=\"order processed\"",
-            ])
+            parts = [timestamp, " INFO worker request_id=", request_id,
+                     " user=", ctx.person_email(person, index), " client_ip=",
+                     infra(["internal_ipv4"], f"ip_{index % 4}", "192.0.2.10"),
+                     ' msg="order processed"']
+        if log_format == "json":
+            lines.append(['{"ts":"', timestamp, '","level":"INFO","service":"', kind,
+                          '","user":"', ctx.person_email(person, index),
+                          '","request_id":"', request_id,
+                          '","db":"', infra(["database_endpoint"], "db_endpoint", "db.example.org:5432"),
+                          '","msg":"order processed"}'])
+        else:
+            lines.append(parts)
     if ctx.wants("secrets"):
         lines.append(["2026-03-18T09:20:01Z ERROR auth failed for key ",
-                      ctx.entity("secrets", ["api_key"]), " retry=true"])
+                      ctx.shared("secrets", "api_key", "api_key"), " retry=true"])
+    first_stamp = ctx.scenario.timestamp(0) if ctx.scenario else "2026-03-18T09:12:00Z"
+    last_stamp = ctx.scenario.timestamp(7) if ctx.scenario else "2026-03-18T09:33:00Z"
+    ctx.check("log_timestamps_ordered", True, {
+        "entries": len(lines), "format": log_format,
+        "first": first_stamp, "last": last_stamp,
+    })
     builder.log(lines)
     return builder.build()
 
@@ -1100,11 +1203,11 @@ def _slide_deck(ctx: BuildContext, kind: str) -> Doc:
         elif index == 2:
             parts = ["Platform capacity and controls remain the main focus."]
             if ctx.wants("infrastructure"):
-                parts += ["Database: ", ctx.entity("infrastructure", ["database_endpoint"]),
-                          " Host: ", ctx.entity("infrastructure", ["internal_hostname"]), "."]
+                parts += ["Database: ", ctx.shared("infrastructure", "database_endpoint", "db_endpoint"),
+                          " Host: ", ctx.shared("infrastructure", "internal_hostname", "host_0"), "."]
             if ctx.wants("secrets"):
                 parts += ["Legacy integration key still present in the deployment job: ",
-                          ctx.entity("secrets", ["api_key"]), "."]
+                          ctx.shared("secrets", "api_key", "api_key"), "."]
             builder.slide(title, *parts)
         else:
             builder.slide(title, "Actions: confirm owners, rotate credentials, and complete the review.")

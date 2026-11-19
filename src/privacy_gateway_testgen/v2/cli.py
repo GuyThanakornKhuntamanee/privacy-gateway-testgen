@@ -11,6 +11,7 @@ from ..v2.archetypes import ARCHETYPES
 from ..v2.config import load_profiles, load_v2_config
 from ..v2.evaluate import evaluate_v2, markdown_report_v2
 from ..v2.generate import V2Generator, compute_stats, export_v2_dataset
+from ..v2.localization import language_capability
 from ..v2.verify import verify_dataset_directory
 from .validation import validate_dataset_v2
 
@@ -196,6 +197,9 @@ def cmd_list_archetypes_v2(args) -> int:
             "category": item.category,
             "domains": list(item.domains),
             "renderers": list(item.renderers),
+            "language_capabilities": {
+                renderer: list(language_capability(renderer)) for renderer in item.renderers
+            },
             "difficulty": item.difficulty,
             "rationale": item.rationale,
         }

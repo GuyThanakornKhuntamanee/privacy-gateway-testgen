@@ -29,10 +29,16 @@ def _escape(text: str) -> str:
 
 
 def _latin(text: str) -> str:
-    # Built-in fonts are WinAnsi.  PDF documents are generated with Latin
-    # content; this guard keeps accidental Thai characters from corrupting the
-    # content stream while remaining honest about the limitation.
-    return "".join(ch if 32 <= ord(ch) < 127 else "?" for ch in text)
+    # Built-in fonts are WinAnsi.  PDF documents are generated with English
+    # content; refusing non-Latin text prevents a silent "?" replacement from
+    # ever becoming ground truth.  Thai PDF is routed to DOCX/XLSX/TXT.
+    unsupported = sorted({ch for ch in text if ord(ch) > 126 or ord(ch) < 32})
+    if unsupported:
+        raise ValueError(
+            "PDF renderer is Latin-only; unsupported characters "
+            f"{''.join(unsupported[:8])!r} must be routed to DOCX/XLSX/TXT"
+        )
+    return text
 
 
 def _wrap(text: str, max_chars: int) -> List[Tuple[int, int]]:

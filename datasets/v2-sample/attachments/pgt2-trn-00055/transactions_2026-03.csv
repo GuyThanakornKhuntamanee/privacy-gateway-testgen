@@ -1,8 +1,0 @@
-date,customer,email,amount,status
-2026-03-10,Contact 1,contact1@example.com,"18,576.00",settled
-2026-03-11,Contact 2,contact2@example.com,"3,027.00",settled
-2026-03-12,Contact 3,contact3@example.com,"15,184.00",pending
-2026-03-13,Contact 4,contact4@example.com,"18,272.00",settled
-2026-03-14,Contact 5,contact5@example.com,"16,495.00",settled
-2026-03-15,Contact 6,contact6@example.com,"18,351.00",pending
-2026-03-16,Contact 7,contact7@example.com,"13,878.00",refunded

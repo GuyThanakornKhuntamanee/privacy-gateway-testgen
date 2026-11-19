@@ -42,6 +42,7 @@
     "description": "Thai-first language mix with Thai office and customer documents.",
     "distributions": {
       "language": {"th": 0.68, "en": 0.08, "mixed": 0.24},
+      "attachment_language": {"th": 0.62, "en": 0.12, "mixed": 0.26},
       "persona": {
         "hr": 0.14, "finance": 0.13, "accountant": 0.10, "support": 0.12,
         "sales": 0.10, "manager": 0.10, "executive_assistant": 0.08,

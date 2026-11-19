@@ -33,12 +33,27 @@ python -m pip install -e .
 5. **A file is not verified when it renders.** For v2, reopen it with a parser,
    resolve every recorded location, and mark image/scanned-PDF cases
    `verified_partial` unless an OCR engine actually ran.
+6. **One scenario per case.** Shared people, hosts, database endpoints, IDs,
+   timestamps and transactions come from `v2/scenario.py`. Do not draw a fresh
+   value for a field that another attachment is supposed to reference.
+7. **Language is per attachment.** Use `ctx.doc_language` and the localization
+   layer; a `mixed` document must contain both Thai and English script. PDF and
+   image renderers are Latin-only and raise on Thai text; route instead of
+   substituting `?`.
+8. **Structure references must resolve.** A prompt may cite a sheet, page,
+   section, row, slide or key only when the attachment's `structure` proves it
+   exists.
 
 ## Adding a v2 document archetype
 
 1. Add a builder in `src/privacy_gateway_testgen/v2/archetypes.py` using
    `DocBuilder`. Insert entities through `.para`, `.table` and `.record`; never
-   append `entity.value` directly.
+   append `entity.value` directly. Use `ctx.shared(...)` for values another
+   attachment must match, and `ctx.date()` / `ctx.money()` for Thai-aware
+   formatting.
+2. Write static labels in English; `localize_doc` (called by the generator)
+   translates headings, headers, prose and notes without touching entity spans.
+   Add new labels to `v2/localization.py` when needed.
 2. Declare the real category, domains, supported renderers, difficulty and
    rationale in the `ARCHETYPES` registry. Keep the builder's output consistent
    with that declaration.

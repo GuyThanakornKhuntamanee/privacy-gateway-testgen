@@ -218,7 +218,7 @@ def build_parser() -> argparse.ArgumentParser:
     list_domains = sub.add_parser("list-domains", help="print domains, entity types and templates")
     list_domains.set_defaults(func=cmd_list_domains)
 
-    generate_v2 = sub.add_parser("generate-v2", help="generate a file-aware schema 2.0 dataset")
+    generate_v2 = sub.add_parser("generate-v2", help="generate a file-aware schema 2.1 dataset")
     generate_v2.add_argument("--config", default="configs/v2/default.json")
     generate_v2.add_argument("--profile")
     generate_v2.add_argument("--out", default="datasets/v2-sample")

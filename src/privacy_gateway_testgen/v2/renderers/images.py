@@ -144,6 +144,11 @@ class Canvas:
              color: Tuple[int, int, int] = COLORS["black"]) -> int:
         cursor = x
         for char in text.upper():
+            if char != "•" and char not in FONT_5X7:
+                raise ValueError(
+                    f"image renderer is Latin-only; unsupported character {char!r} "
+                    "must be routed to DOCX/XLSX/TXT"
+                )
             glyph = FONT_5X7.get(char, FONT_5X7.get("?", FONT_5X7[" "]))
             for row_index, row in enumerate(glyph):
                 for col_index, bit in enumerate(row):
@@ -437,7 +442,8 @@ def _doc_lines(doc: Doc, max_chars: int) -> List[dict]:
                     ))
         elif block.kind == "table":
             header = " | ".join(block.headers)
-            lines.append({"text": header, "placements": [], "kind": "header"})
+            for piece in Canvas(10, 10).wrap(header, max_chars):
+                lines.append({"text": piece, "placements": [], "kind": "header"})
             for row in block.rows:
                 text = " | ".join(cell.text for cell in row)
                 placements = []
@@ -447,7 +453,19 @@ def _doc_lines(doc: Doc, max_chars: int) -> List[dict]:
                         placements.append((placement.entity, column_start + placement.start,
                                            column_start + placement.end, placement.role))
                     column_start += len(cell.text) + 3
-                lines.append({"text": text, "placements": placements, "kind": "body"})
+                cursor = 0
+                for piece in Canvas(10, 10).wrap(text, max_chars):
+                    start = text.find(piece, cursor)
+                    if start < 0:
+                        start = cursor
+                    end = start + len(piece)
+                    clipped = []
+                    for entity, item_start, item_end, role in placements:
+                        if item_start < end and item_end > start:
+                            clipped.append((entity, max(0, item_start - start),
+                                            min(len(piece), item_end - start), role))
+                    lines.append({"text": piece, "placements": clipped, "kind": "body"})
+                    cursor = end + 1
     if doc.record is not None and not any(block.kind in ("code", "log", "table") for block in doc.blocks):
         def flatten(value: Any, prefix: str = "") -> List[tuple]:
             pairs: List[tuple] = []
@@ -566,13 +584,15 @@ def render_raster(doc: Doc, style: str = "scan", difficulty: int = 2) -> dict:
         else:
             x_draw = x
         canvas.text(x_draw, y, line["text"], line_scale, color)
-        text_width = canvas.text_width(line["text"], line_scale)
+        text_width = min(canvas.text_width(line["text"], line_scale), max(1, width - x_draw))
         bbox = [x_draw, y, text_width, line_height - 4]
         placements = []
         for entity, start, end, role in line["placements"]:
+            left = x_draw + start * 6 * line_scale
             placements.append({
                 "entity": entity, "role": role,
-                "bbox": [x_draw + start * 6 * line_scale, y, max(1, (end - start) * 6 * line_scale), line_height - 4],
+                "bbox": [left, y, max(1, min((end - start) * 6 * line_scale, max(1, width - left))),
+                         line_height - 4],
             })
         output_lines.append({"text": line["text"], "bbox": bbox, "placements": placements})
         y += line_height

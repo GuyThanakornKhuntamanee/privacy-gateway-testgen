@@ -1,8 +1,0 @@
-transaction_ref,date,customer,email,amount,status,card,auth_code
-TXN-2026-10430438,2026-03-10,Contact 1,contact1@example.com,"19,485.00",settled,378282456867975,AUTH-X195CB
-TXN-2026-35451223,2026-03-11,Contact 2,contact2@example.com,"1,494.00",pending,4242428498697526,AUTH-2ZFUFR
-TXN-2026-16928455,2026-03-12,Contact 3,contact3@example.com,"22,859.00",settled,6011118982383790,AUTH-YWPOMD
-TXN-2026-21840420,2026-03-13,Contact 4,contact4@example.com,"6,152.00",refunded,4111111693344601,AUTH-9HRNXE
-TXN-2026-70061776,2026-03-14,Contact 5,contact5@example.com,"18,944.00",settled,5555552972503120,AUTH-IJMJFI
-TXN-2026-81997558,2026-03-15,Contact 6,contact6@example.com,"6,855.00",settled,4111117735627184,AUTH-V3A0Q3
-TXN-2026-26379743,2026-03-16,Contact 7,contact7@example.com,"18,201.00",refunded,4242424938218478,AUTH-QX6XOG

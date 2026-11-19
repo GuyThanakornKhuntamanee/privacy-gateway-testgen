@@ -18,8 +18,8 @@ from ..textsim import duplicate_report
 from .validation import prompt_span_accuracy, validate_dataset_v2
 
 KNOWN_LIMITATIONS = [
-    "The PDF renderer uses built-in WinAnsi fonts; PDF attachment content is Latin/English. Thai PDF content is routed to DOCX/XLSX/TXT instead.",
-    "Image text uses a bitmap font and Latin script only. Thai OCR images are out of scope for v2.0.",
+    "PDF content is English/Latin only because the standard-library PDF writer uses built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT and the routing is recorded on the attachment.",
+    "Image text uses a bitmap Latin font. Thai image OCR is not supported; Thai image scenarios are routed to English with an explicit language_routing field.",
     "Image and scanned-PDF annotations are verified at render-layout level. No third-party OCR engine is run in the test suite, so OCR accuracy is not claimed.",
     "PPTX speaker notes and native PowerPoint tables are not emitted; slide body text and later-slide placement are supported.",
     "YAML/TOML/INI/ENV verification uses the generator's strict subset parser, not PyYAML or tomllib.",
@@ -27,6 +27,7 @@ KNOWN_LIMITATIONS = [
     "Template-family isolation is enforced for file bundles; a very small dataset consequently has fewer families in validation/test.",
     "The default policy file is an illustrative test configuration, not legal advice or a compliance certification.",
     "All entities are synthetic. Coincidental similarity to a real person, host or company is possible but not intended.",
+    "Cross-file consistency is validated on the generated scenario plan and annotations, not by executing a downstream gateway.",
 ]
 
 RECOMMENDED = [
@@ -151,6 +152,21 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
     negatives = 0
     ambiguous = 0
     ocr_cases = 0
+    attachment_languages = Counter()
+    language_matrix = Counter()
+    bundle_kinds = Counter()
+    mixed_attachments = 0
+    mixed_attachments_verified = 0
+    routed_attachments = 0
+    structure_reference_cases = 0
+    structure_references_total = 0
+    structure_references_resolved = 0
+    cross_file_cases = 0
+    cross_file_links = 0
+    multi_file_cases = 0
+    same_archetype_cases = 0
+    consistency_total = 0
+    consistency_passed = 0
     prompt_lengths: List[int] = []
     for case in cases:
         domains.update(case["domains"])
@@ -167,6 +183,34 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         negatives += 1 if case["polarity"] == "negative" else 0
         ambiguous += 1 if case["test_category"] == "ambiguous" else 0
         ocr_cases += 1 if "ocr" in case["tags"] else 0
+        attachment_languages.update(item.get("language", "unknown") for item in case["attachments"])
+        for matrix in case.get("language_coverage", {}).get("matrices", []):
+            language_matrix[matrix] += 1
+        bundle_kinds[case.get("bundle", {}).get("kind", "unknown")] += 1
+        for item in case["attachments"]:
+            if item.get("language") == "mixed":
+                mixed_attachments += 1
+                if item.get("language_check", {}).get("contains_both"):
+                    mixed_attachments_verified += 1
+            if item.get("language_routing"):
+                routed_attachments += 1
+        if case["attachment_count"] > 1:
+            multi_file_cases += 1
+        ids = [item["archetype"] for item in case["attachments"]]
+        if len(ids) > 1 and len(set(ids)) < len(ids):
+            same_archetype_cases += 1
+        refs = case.get("structure_references", [])
+        if refs:
+            structure_reference_cases += 1
+        structure_references_total += len(refs)
+        structure_references_resolved += sum(1 for ref in refs if ref.get("resolved"))
+        links = case.get("cross_file_links", [])
+        if links:
+            cross_file_cases += 1
+        cross_file_links += len(links)
+        checks = case.get("consistency_checks", [])
+        consistency_total += len(checks)
+        consistency_passed += sum(1 for check in checks if check.get("passed"))
         prompt_lengths.append(case["prompt_length"])
         count = len(case["entities"])
         entity_density["0" if count == 0 else ("1-3" if count <= 3 else ("4-6" if count <= 6 else "7+"))] += 1
@@ -183,6 +227,14 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
     negative_ratio = _share(negatives, total)
     multi_share = _share(multi_domain, total)
     attachment_share = _share(sum(1 for case in cases if case["attachments"]), total)
+    multi_file_share = _share(multi_file_cases, total)
+    structure_reference_share = _share(structure_reference_cases, total)
+    structure_resolution_rate = (
+        _share(structure_references_resolved, structure_references_total)
+        if structure_references_total else 1.0
+    )
+    consistency_rate = _share(consistency_passed, consistency_total) if consistency_total else 1.0
+    mixed_script_rate = _share(mixed_attachments_verified, mixed_attachments) if mixed_attachments else 1.0
     opening = _openings(cases)
     phrases = _repeated_phrases(cases)
     safety = _safety(cases)
@@ -219,6 +271,35 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
          len(intents), f">= {gates_config['min_intent_count']}")
     gate("language_coverage", len(languages) >= gates_config["min_language_count"],
          sorted(languages), f">= {gates_config['min_language_count']}")
+    is_21 = all(case.get("schema_version") == "2.1" for case in cases)
+    if is_21:
+        gate("attachment_language_coverage",
+             len(attachment_languages) >= gates_config.get("min_attachment_language_count", 2),
+             dict(sorted(attachment_languages.items())),
+             f">= {gates_config.get('min_attachment_language_count', 2)} languages")
+        gate("language_matrix_coverage",
+             len(language_matrix) >= gates_config.get("min_language_matrix_combinations", 4),
+             dict(sorted(language_matrix.items())),
+             f">= {gates_config.get('min_language_matrix_combinations', 4)} prompt/attachment pairs")
+        gate("mixed_language_script", mixed_script_rate >= 1.0, mixed_script_rate,
+             "all mixed attachments contain Thai and English script")
+        gate("structure_reference_resolution", structure_resolution_rate >= 1.0,
+             structure_resolution_rate, "all structure references resolve")
+        gate("structure_reference_share",
+             structure_reference_share >= gates_config.get("min_structure_reference_share", 0.0),
+             structure_reference_share,
+             f">= {gates_config.get('min_structure_reference_share', 0.0)}")
+        gate("multi_file_share", multi_file_share >= gates_config.get("min_multi_file_share", 0.0),
+             multi_file_share, f">= {gates_config.get('min_multi_file_share', 0.0)}")
+        gate("cross_file_link_coverage",
+             cross_file_cases >= gates_config.get("min_cross_file_link_cases", 0),
+             cross_file_cases, f">= {gates_config.get('min_cross_file_link_cases', 0)} cases")
+        gate("same_archetype_bundle_coverage",
+             same_archetype_cases >= gates_config.get("min_same_archetype_bundle_cases", 0),
+             same_archetype_cases, f">= {gates_config.get('min_same_archetype_bundle_cases', 0)} cases")
+        gate("cross_file_consistency",
+             consistency_rate >= gates_config.get("min_consistency_rate", 1.0),
+             consistency_rate, f">= {gates_config.get('min_consistency_rate', 1.0)}")
     gate("domain_coverage", len(domains) >= gates_config["min_domain_count"],
          sorted(domains), f">= {gates_config['min_domain_count']}")
     gate("negative_share", negative_ratio >= gates_config["min_negative_ratio"],
@@ -246,7 +327,7 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         gate("reproducibility", reproducible, reproducible, "same seed + config reproduce bytes")
     passed = all(item["passed"] for item in gates)
     return {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "dataset_version": config["dataset_version"],
         "profile": config["profile"],
         "seed": config["seed"],
@@ -262,6 +343,29 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
             "entity_location_accuracy": entity_location_accuracy,
             "extraction_accuracy": extraction_accuracy,
             "extraction_failures": extraction_failures,
+            "attachment_language_shares": {
+                key: _share(value, len(attachments)) for key, value in sorted(attachment_languages.items())
+            },
+            "language_matrix": dict(sorted(language_matrix.items())),
+            "language_matrix_combinations": len(language_matrix),
+            "mixed_attachments": mixed_attachments,
+            "mixed_attachments_verified": mixed_attachments_verified,
+            "mixed_script_rate": mixed_script_rate,
+            "routed_attachments": routed_attachments,
+            "bundle_kinds": dict(sorted(bundle_kinds.items())),
+            "multi_file_cases": multi_file_cases,
+            "multi_file_share": multi_file_share,
+            "same_archetype_bundle_cases": same_archetype_cases,
+            "structure_reference_cases": structure_reference_cases,
+            "structure_reference_share": structure_reference_share,
+            "structure_references_total": structure_references_total,
+            "structure_references_resolved": structure_references_resolved,
+            "structure_resolution_rate": structure_resolution_rate,
+            "cross_file_link_cases": cross_file_cases,
+            "cross_file_links": cross_file_links,
+            "consistency_checks": consistency_total,
+            "consistency_passed": consistency_passed,
+            "consistency_rate": consistency_rate,
             "detection_evaluated": False,
             "detection_note": "No detector or gateway was run; these metrics cover file ingestion and annotation provenance only.",
             "validation_issues": validation_issues[:50],
@@ -334,7 +438,11 @@ def markdown_report_v2(report: dict) -> str:
         f"- File counts: `{metrics['file_type_counts']}`",
         f"- Archetypes: `{metrics['archetype_shares']}`",
         f"- Domains: `{metrics['domain_shares']}`",
-        f"- Languages: `{metrics['language_shares']}`",
+        f"- Languages (prompt): `{metrics['language_shares']}`",
+        f"- Languages (attachment): `{metrics['attachment_language_shares']}`",
+        f"- Prompt/attachment language matrix: `{metrics['language_matrix']}`",
+        f"- Mixed attachments verified: `{metrics['mixed_attachments_verified']}/{metrics['mixed_attachments']}`",
+        f"- Routed (Latin-only renderer): `{metrics['routed_attachments']}`",
         f"- Personas: `{metrics['persona_shares']}`",
         f"- Intents: `{metrics['intent_shares']}`",
         f"- Difficulties: `{metrics['difficulty_shares']}`",
@@ -344,6 +452,11 @@ def markdown_report_v2(report: dict) -> str:
         f"- Negative ratio: `{metrics['negative_ratio']}`",
         f"- Ambiguous ratio: `{metrics['ambiguous_ratio']}`",
         f"- Multi-domain share: `{metrics['multi_domain_share']}`",
+        f"- Multi-file share: `{metrics['multi_file_share']}`",
+        f"- Same-archetype bundle cases: `{metrics['same_archetype_bundle_cases']}`",
+        f"- Structure-reference cases: `{metrics['structure_reference_cases']}` (`{metrics['structure_references_resolved']}/{metrics['structure_references_total']}` resolved)",
+        f"- Cross-file link cases: `{metrics['cross_file_link_cases']}` (`{metrics['cross_file_links']}` links)",
+        f"- Consistency checks: `{metrics['consistency_passed']}/{metrics['consistency_checks']}` passed",
         f"- OCR cases: `{metrics['ocr_cases']}`",
         "",
         "## Verification",

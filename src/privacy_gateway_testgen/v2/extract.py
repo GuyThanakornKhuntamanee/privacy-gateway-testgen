@@ -452,7 +452,9 @@ def _pdf_verify(data: bytes, rendered_locations: List[dict]) -> Tuple[List[str],
             continue
         if kind == "pdf_text":
             text = pages[page - 1]
-            if item["entity"].value not in text:
+            compact_text = re.sub(r"\s+", "", text)
+            compact_value = re.sub(r"\s+", "", item["entity"].value)
+            if compact_value not in compact_text:
                 issues.append(_issue("pdf_text_mismatch", f"page {page} does not contain {item['entity'].value!r}", item))
             texts.append(text)
         elif kind == "pdf_image":

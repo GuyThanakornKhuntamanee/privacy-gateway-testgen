@@ -55,7 +55,7 @@ publish; it does not make it safe to treat as a compliance certification.
 
 ## v2: real files and realistic requests
 
-When the task needs attachments, use the schema `2.0` commands. v1 remains the
+When the task needs attachments, use the schema `2.1` commands. v1 remains the
 default for prompt-only datasets; do not mix v1 and v2 rows in one file.
 
 ```bash
@@ -86,6 +86,31 @@ Ground truth is file-aware. Prompt entities keep `character_start` /
 `docx_header`, `docx_footer`, `pptx_shape`, `pdf_text`, `pdf_image`,
 `image_ocr` or `text_span`. Never invent a location kind or convert an OCR
 result into ground truth.
+
+Schema `2.1` also records, per case:
+
+- `scenario_id`, `cross_file_links`, `bundle` (single, multi-file,
+  same-archetype, old/new) and `consistency_checks`;
+- `prompt_language`, `content_languages`, `language_mode`, `language_coverage`
+  and per-attachment `language` / `language_mix` / `language_check`;
+- `structure_references` that resolve to a real sheet, page, section, row,
+  slide, line or key;
+- `document_profile` with per-file sections, tables, rows, sheets, slides and
+  pages.
+
+Language rules:
+
+- `mixed` must contain real Thai and English script in the same file, not just a
+  Thai name in an English template. `attachment.language_check.contains_both`
+  must be true.
+- PDF and image renderers are Latin-only. A Thai request is routed to English
+  and records `language_routing`; the renderer raises instead of writing `?`.
+  Do not claim Thai PDF or Thai OCR-image support.
+- A multi-file case may mix attachment languages, for example Thai DOCX plus
+  English XLSX plus English log. The prompt language is independent.
+
+Never claim cross-file consistency without checking `cross_file_links` and
+`consistency_checks`; `validate-v2` re-checks both.
 
 Before calling a v2 dataset ready, run `validate-v2`, `verify-v2` and
 `report-v2`. `verified_partial` means an image or scanned PDF was verified at

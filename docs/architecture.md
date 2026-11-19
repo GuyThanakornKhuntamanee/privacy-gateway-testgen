@@ -133,19 +133,21 @@ generated labels as authoritative ground truth.
 
 ## v2 file-aware architecture
 
-Schema `2.0` is additive. v1 prompts, exports and gates remain unchanged; v2
+Schema `2.1` is additive. v1 prompts, exports and gates remain unchanged; v2
 adds a new package at `src/privacy_gateway_testgen/v2/`.
 
 ```
 profile + seed
-  -> target sampling (persona, intent, language, domains, attachments)
-  -> synthetic organisation (shared people, hosts, vendors, systems)
+  -> target sampling (persona, intent, prompt language, domains, attachments)
+  -> ScenarioPlan (shared people, hosts, database endpoints, IDs, transactions)
+  -> per-attachment language (th/en/mixed, with explicit PDF/image routing)
   -> document archetype (business meaning)
   -> renderer (txt/csv/json/yaml/xml/log/md/env/ini/conf/toml/sql/tf/code
                docx/xlsx/pptx/pdf/png/jpg)
-  -> span-first document composition
+  -> span-first document composition + localization
   -> real file bytes
   -> reopen, parse, locate and verify
+  -> cross-file links + consistency checks
   -> case + attachment metadata + file-aware ground truth
 ```
 
@@ -157,7 +159,9 @@ file-specific provenance rather than searching the finished file.
 |---|---|
 | `v2/docmodel.py` | blocks, cells, placements, document/slide model |
 | `v2/org.py` | one coherent fictional organisation per case |
-| `v2/realism.py` | personas, intents, natural prompt forms, imperfections |
+| `v2/scenario.py` | one scenario plan: shared identities, IDs, hosts, timestamps |
+| `v2/localization.py` | Thai/English/mixed labels, Thai formatting, script checks |
+| `v2/realism.py` | personas, intents, natural prompt forms, structure references |
 | `v2/archetypes.py` | 69 business archetypes across HR, finance, sales, healthcare, IT, management and operations |
 | `v2/renderers/textfmt.py` | text, CSV, JSON, YAML, XML, logs, configs, SQL, Terraform, code |
 | `v2/renderers/ooxml.py` | macro-free DOCX/XLSX/PPTX via `zipfile` + OOXML XML |
@@ -165,8 +169,25 @@ file-specific provenance rather than searching the finished file.
 | `v2/renderers/images.py` | PNG and baseline JPEG with a bitmap font and OCR difficulty |
 | `v2/extract.py` | reopen/parse/locate verification |
 | `v2/generate.py` | target sampling, bundles, dedupe, splits and export |
-| `v2/evaluate.py` | measured coverage, verification and realism diagnostics |
+| `v2/evaluate.py` | measured coverage, language/consistency checks and realism diagnostics |
 | `v2/verify.py` | re-verify an exported dataset from disk |
+
+### Language boundary
+
+Localization rewrites only static text between placements; entity values and
+their offsets are untouched. `mixed` is verified by counting Thai and Latin
+script in the generated document. PDF and image renderers declare English-only
+capability and raise on non-Latin characters, so a Thai request is routed to
+DOCX/XLSX/TXT or rendered as English with `language_routing` — never silently as
+`?`.
+
+### Scenario and consistency boundary
+
+`ScenarioPlan.shared()` caches a value per role, so the database endpoint in
+`prod.env`, the incident report and the deployment log are the same `Entity`.
+After rendering, `generate.py` derives `cross_file_links` from annotations and
+records arithmetic/timeline checks in `consistency_checks`. `validate-v2`
+re-checks both, plus structure-reference resolution, on the exported dataset.
 
 ### v2 trust boundary
 

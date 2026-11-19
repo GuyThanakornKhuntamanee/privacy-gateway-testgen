@@ -4,6 +4,52 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [0.3.0] - 2026-11-20
+
+### Added
+
+- Additive schema `2.1` with `prompt_language`, `content_languages`,
+  `language_mode`, `language_coverage`, `scenario_id`, `cross_file_links`,
+  `structure_references`, `document_profile`, `consistency_checks` and
+  `bundle`.
+- Central localization layer for Thai/English/mixed titles, headings, table
+  headers, sheet names, status values, notes and Thai date/currency formatting.
+- Per-attachment language metadata and generation; the prompt/attachment
+  language matrix is measured in reports.
+- Case-level `ScenarioPlan` for shared people, hosts, database endpoints, IDs,
+  timestamps, payment terms and transaction references.
+- Cross-file link derivation and validation, plus arithmetic checks for
+  invoices, payroll and bank statements.
+- Structure-aware prompts that cite real sheets, pages, sections, rows, slides,
+  lines or keys; every reference is resolved by validation.
+- Multi-file, same-archetype and old/new bundles with traceable revision
+  changes.
+- CSV delimiter variation, log format variation, optional report sections and
+  localized spreadsheet sheet names.
+- New tests: localization, mixed script, per-attachment language, routing,
+  cross-file consistency, arithmetic, structure references and old/new bundles.
+- `docs/capability-matrix.md`.
+
+### Changed
+
+- Schema version is `2.1`; `dataset_version` is `2.1.0`; package version `0.3.0`.
+- PDF and image renderers now raise on non-Latin text instead of writing `?`;
+  Thai requests are routed and recorded.
+- Thai documents are localized at document level while entity placements stay
+  exact.
+- 2.0 datasets remain valid for `validate-v2`; 2.1-only report gates are skipped
+  for 2.0.
+
+### Known limitations
+
+- PDF content is English/Latin only; Thai PDF routes to DOCX/XLSX/TXT.
+- OCR images are Latin-script bitmap text; image/scanned-PDF annotations remain
+  layout-verified, not OCR-verified.
+- PPTX speaker notes and native tables are not emitted.
+- YAML/TOML/INI/ENV parsing uses the generator's strict subset.
+- Archives, password-protected files, audio, video and executables are out of
+  scope.
+
 ## [0.2.0] - 2026-11-20
 
 ### Added

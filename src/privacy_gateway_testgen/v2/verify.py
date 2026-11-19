@@ -75,7 +75,7 @@ def verify_dataset_directory(dataset_dir: str) -> dict:
                     "role": annotation.get("role", "body"),
                 })
             result = verify_attachment(data, attachment["extension"], attachment["mime_type"],
-                                       locations, {"delimiter": ",", "headers": []})
+                                       locations, attachment.get("structure") or {"delimiter": ",", "headers": []})
             statuses[result["status"]] += 1
             file_results.append({
                 "test_id": case["test_id"], "attachment_id": attachment["attachment_id"],

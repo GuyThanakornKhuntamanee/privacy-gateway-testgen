@@ -313,6 +313,26 @@ DESTINATION_CLAUSES = {
     ),
 }
 
+PERSONA_OPENERS = {
+    "developer": {"th": ("พี่ครับ", "ช่วยดู", "อันนี้"), "en": ("quick one:", "hey,", "pls")},
+    "sysadmin": {"th": ("พี่ครับ", "รบกวนดู", "เครื่องนี้"), "en": ("quick one:", "hey,", "ops question:")},
+    "devops": {"th": ("พี่ครับ", "อันนี้", "ช่วยเช็ก"), "en": ("quick one:", "hey,", "deploy question:")},
+    "hr": {"th": ("รบกวนช่วย", "พี่คะ", "ขอให้ช่วย"), "en": ("hello,", "could you", "please")},
+    "finance": {"th": ("รบกวนช่วย", "พี่คะ", "ขอให้ช่วย"), "en": ("hello,", "please", "could you")},
+    "accountant": {"th": ("รบกวนช่วย", "พี่คะ", "ขอให้ช่วย"), "en": ("hello,", "please", "could you")},
+    "support": {"th": ("รบกวนช่วย", "พี่คะ", "ลูกค้าแจ้งว่า"), "en": ("hi,", "customer says", "could you")},
+    "sales": {"th": ("พี่ครับ", "ช่วยดู", "อันนี้"), "en": ("hey,", "quick one:", "can you")},
+    "manager": {"th": ("รบกวนช่วย", "ขอให้ช่วย", "ฝากดู"), "en": ("could you", "please", "would you")},
+    "executive_assistant": {"th": ("รบกวนช่วย", "ขอให้ช่วย", "ฝากดู"), "en": ("could you", "please", "would you")},
+    "healthcare_admin": {"th": ("รบกวนช่วย", "พี่คะ", "ขอให้ช่วย"), "en": ("hello,", "could you", "please")},
+    "analyst": {"th": ("พี่ครับ", "ช่วยดู", "อันนี้"), "en": ("quick one:", "can you", "hey,")},
+    "intern": {"th": ("พี่ครับ", "ช่วยดู", "อันนี้"), "en": ("hi,", "can you", "sorry,")},
+    "compliance": {"th": ("รบกวนช่วย", "ขอให้ช่วย", "ฝากตรวจ"), "en": ("could you", "please", "would you")},
+    "security_engineer": {"th": ("พี่ครับ", "ช่วยดู", "อันนี้"), "en": ("quick one:", "hey,", "sec question:")},
+    "operations": {"th": ("พี่ครับ", "ช่วยดู", "อันนี้"), "en": ("hey,", "quick one:", "can you")},
+}
+
+
 
 def _pick(rng: random.Random, values: Sequence[str]) -> str:
     return values[rng.randrange(len(values))]
@@ -393,6 +413,34 @@ def _file_phrase(rng: random.Random, files: Sequence[dict], language: str) -> st
     return name if rng.random() < 0.55 else _pick(rng, ("this file", "the attached file", "this one"))
 
 
+def _structure_phrase(rng: random.Random, ref: dict, language: str) -> str:
+    kind = ref["kind"]
+    value = ref["value"]
+    if kind == "sheet":
+        thai, english = f"tab {value}", f'tab "{value}"'
+    elif kind == "row":
+        thai, english = f"row {value}", f"row {value}"
+    elif kind == "column":
+        thai, english = f"คอลัมน์ {value}", f'column "{value}"'
+    elif kind == "page":
+        thai, english = f"หน้า {value}", f"page {value}"
+    elif kind == "slide":
+        thai, english = f"slide {value}", f"slide {value}"
+    elif kind == "section":
+        thai, english = f"ส่วน {value}", f'section "{value}"'
+    elif kind == "line":
+        thai, english = f"บรรทัดที่ {value}", f"line {value}"
+    elif kind == "key":
+        thai, english = f"key {value}", f'key "{value}"'
+    else:
+        thai = english = str(value)
+    if language == "th":
+        return _pick(rng, (f"ลองดู {thai} ด้วย", f"ช่วยเช็ก {thai} ให้ที", f"ดู {thai} หน่อย"))
+    if language == "mixed":
+        return _pick(rng, (f"check {thai} ให้ที", f"ดู {thai} ด้วย", f"ช่วยเช็ก {thai} หน่อย"))
+    return _pick(rng, (f"also check {english}", f"look at {english} too", f"{english} looks off"))
+
+
 def build_prompt(
     rng: random.Random,
     *,
@@ -405,6 +453,7 @@ def build_prompt(
     typo_rate: float = 0.15,
     destination: bool = False,
     prompt_entity: Optional[Entity] = None,
+    structure_refs: Sequence[dict] = (),
 ) -> dict:
     templates = _template_set(language)
     key = "multi" if len(files) >= 2 else ("file" if files else "ref")
@@ -427,6 +476,12 @@ def build_prompt(
     elif formality == "casual" and language != "en" and rng.random() < 0.25:
         static = static.replace("ช่วย", "ช่วย", 1)
 
+    persona_openers = PERSONA_OPENERS.get(persona, {}).get(
+        language if language != "mixed" else "th"
+    )
+    if persona_openers and rng.random() < 0.35:
+        static = _pick(rng, persona_openers) + " " + static
+
     contexts = list(_contexts(language))
     rng.shuffle(contexts)
     text = static.replace("\x00", file_phrase).replace("\x01", files_phrase)
@@ -441,6 +496,12 @@ def build_prompt(
     if destination:
         text += ". " + imperfect(rng, _pick(rng, DESTINATION_CLAUSES[language]), typo_rate, language)
         context_complexity = "high" if context_complexity == "low" else context_complexity
+    if structure_refs:
+        text += ". " + _structure_phrase(rng, structure_refs[0], language)
+        if len(structure_refs) > 1 and rng.random() < 0.4:
+            text += " และ" if language != "en" else " and "
+            text += _structure_phrase(rng, structure_refs[1], language)
+        context_complexity = "high"
 
     builder = PromptBuilder()
     if prompt_entity is not None:
@@ -475,6 +536,7 @@ def build_prompt(
         "formality": formality,
         "context_complexity": context_complexity,
         "prompt_style": length,
+        "structure_references": list(structure_refs),
     }
 
 

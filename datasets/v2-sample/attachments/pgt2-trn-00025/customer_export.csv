@@ -1,4 +1,0 @@
-customer_id,customer_name,email,phone,card_on_file,card_expiry
-CUS-1000,Contact 1,contact1@example.com,+1-555-0100,4111 1111 1111 1112,10/2031
-CUS-1001,Contact 2,contact2@example.com,+1-555-0101,5555550750072565,03/2030
-CUS-1002,Contact 3,contact3@example.com,+1-555-0102,4111111505366230,12/2029

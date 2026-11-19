@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "privacy-gateway-testgen"
-version = "0.2.0"
+version = "0.3.0"
 description = "Deterministic synthetic prompts, real attachment files and file-aware ground truth for privacy-aware data gateways"
 readme = "README.md"
 requires-python = ">=3.9"

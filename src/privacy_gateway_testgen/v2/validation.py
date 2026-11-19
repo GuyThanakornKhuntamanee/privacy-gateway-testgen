@@ -12,6 +12,7 @@ from ..models import Entity
 
 VERIFICATION_STATUSES = ("verified", "verified_partial", "unverified")
 ATTACHMENT_VERIFICATION_STATUSES = ("verified", "verified_layout", "unverified")
+SCHEMA_VERSIONS = ("2.0", "2.1")
 CATEGORIES = ("single_domain", "multi_domain", "negative", "ambiguous", "adversarial")
 OBJECTIVES = (
     "detection_and_policy", "contextual_detection", "cross_domain_policy",
@@ -48,6 +49,16 @@ REQUIRED_ATTACHMENT_FIELDS = (
     "sha256", "archetype", "renderer", "synthetic", "generated_seed", "expected_extraction_method",
     "verification", "path",
 )
+REQUIRED_CASE_FIELDS_21 = (
+    "prompt_language", "content_languages", "language_mode", "language_coverage",
+    "scenario_id", "cross_file_links", "structure_references", "document_profile",
+    "consistency_checks", "bundle",
+)
+REQUIRED_ATTACHMENT_FIELDS_21 = (
+    "language", "language_mode", "language_mix", "language_capability",
+    "language_check", "structure", "renderer_version", "dependency_renderer",
+)
+LATIN_ONLY_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
 
 
 def _check(condition: bool, message: str, issues: List[str]) -> None:
@@ -61,7 +72,13 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
         _check(field in case, f"missing field: {field}", issues)
     if issues:
         return issues
-    _check(case["schema_version"] == "2.0", "schema_version must be '2.0'", issues)
+    version = case["schema_version"]
+    _check(version in SCHEMA_VERSIONS, "schema_version must be '2.0' or '2.1'", issues)
+    if version == "2.1":
+        for field in REQUIRED_CASE_FIELDS_21:
+            _check(field in case, f"missing field: {field}", issues)
+        if issues:
+            return issues
     prompt = case["prompt"]
     _check(isinstance(prompt, str) and bool(prompt), "prompt must be a non-empty string", issues)
     _check(case["language"] in LANGUAGES, "invalid language", issues)
@@ -101,6 +118,36 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
         _check(attachment["synthetic"] is True, f"{prefix}: synthetic must be true", issues)
         _check(attachment["verification"].get("status") in ATTACHMENT_VERIFICATION_STATUSES,
                f"{prefix}: invalid verification status", issues)
+        if version == "2.1":
+            missing = [field for field in REQUIRED_ATTACHMENT_FIELDS_21 if field not in attachment]
+            if missing:
+                issues.append(f"{prefix}: missing {', '.join(missing)}")
+                continue
+            language = attachment["language"]
+            _check(language in ("th", "en", "mixed"), f"{prefix}: invalid attachment language", issues)
+            _check(attachment["language_mode"] in ("th", "en", "mixed"),
+                   f"{prefix}: invalid language_mode", issues)
+            _check(isinstance(attachment["language_mix"], str) and bool(attachment["language_mix"]),
+                   f"{prefix}: language_mix must be a non-empty string", issues)
+            _check(isinstance(attachment["language_capability"], list) and bool(attachment["language_capability"]),
+                   f"{prefix}: language_capability must be a non-empty array", issues)
+            if attachment["extension"] in LATIN_ONLY_EXTENSIONS:
+                _check(language == "en", f"{prefix}: Latin-only renderer must carry English", issues)
+                _check("en" in attachment["language_capability"],
+                       f"{prefix}: capability must declare English", issues)
+            elif language in ("th", "mixed"):
+                _check(language in attachment["language_capability"],
+                       f"{prefix}: capability does not declare {language}", issues)
+            check = attachment.get("language_check", {})
+            _check(isinstance(check, dict), f"{prefix}: language_check must be an object", issues)
+            if isinstance(check, dict):
+                if language == "th":
+                    _check(bool(check.get("contains_thai")), f"{prefix}: Thai document has no Thai script", issues)
+                elif language == "mixed":
+                    _check(bool(check.get("contains_both")), f"{prefix}: mixed document lacks Thai or English", issues)
+                elif language == "en":
+                    _check(bool(check.get("contains_latin")), f"{prefix}: English document has no Latin script", issues)
+            _check(isinstance(attachment.get("structure"), dict), f"{prefix}: structure must be an object", issues)
     _check(sorted(case["file_types"]) == sorted({item["extension"] for item in case["attachments"]}),
            "file_types do not match attachments", issues)
     _check(sorted(case["archetypes"]) == sorted({item["archetype"] for item in case["attachments"]}),
@@ -158,6 +205,9 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
     if case["polarity"] == "negative":
         _check(case["test_category"] in ("negative", "ambiguous"), "negative case has wrong category", issues)
 
+    if version == "2.1":
+        _check_21(case, issues, attachment_ids)
+
     if policy is not None:
         entities = [
             Entity(item["domain"], item["entity_type"], item["exact_entity_value"], valid=item["valid"])
@@ -172,6 +222,93 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
                         "transformation_expected", "policy_rule_ids"):
                 _check(case[key] == resolved[key], f"{key} does not match policy resolution", issues)
     return issues
+
+
+def _structure_ref_resolves(ref: dict, attachments: List[dict]) -> bool:
+    attachment = next((item for item in attachments
+                       if item["attachment_id"] == ref.get("attachment_id")), None)
+    if attachment is None:
+        return False
+    structure = attachment.get("structure") or {}
+    kind, value = ref.get("kind"), ref.get("value")
+    if kind == "sheet":
+        return any(sheet.get("name") == value for sheet in structure.get("sheets", []))
+    if kind == "row":
+        sheet = ref.get("sheet")
+        if sheet:
+            match = next((item for item in structure.get("sheets", []) if item.get("name") == sheet), None)
+            return bool(match) and 1 <= int(value) <= int(match.get("rows", 0))
+        return 1 <= int(value) <= int(structure.get("rows", 0))
+    if kind == "column":
+        return value in structure.get("headers", [])
+    if kind == "page":
+        return 1 <= int(value) <= int(structure.get("pages", 0))
+    if kind == "slide":
+        return 1 <= int(value) <= int(structure.get("slides", 0))
+    if kind == "section":
+        return value in structure.get("headings", [])
+    if kind == "line":
+        return 1 <= int(value) <= int(structure.get("lines", 0))
+    if kind == "key":
+        return value in structure.get("keys", [])
+    return False
+
+
+def _check_21(case: dict, issues: List[str], attachment_ids: set) -> None:
+    prompt_language = case.get("prompt_language")
+    _check(prompt_language == case.get("language"), "prompt_language does not match language", issues)
+    _check(case.get("language_mode") in ("th", "en", "mixed"), "invalid language_mode", issues)
+    content_languages = case.get("content_languages")
+    _check(isinstance(content_languages, list) and bool(content_languages),
+           "content_languages must be a non-empty array", issues)
+    _check(isinstance(case.get("scenario_id"), str) and bool(case.get("scenario_id")),
+           "scenario_id must be a non-empty string", issues)
+    coverage = case.get("language_coverage")
+    _check(isinstance(coverage, dict), "language_coverage must be an object", issues)
+    if isinstance(coverage, dict):
+        actual = [item["language"] for item in case["attachments"]]
+        _check(coverage.get("attachment_languages") == actual,
+               "language_coverage.attachment_languages does not match attachments", issues)
+        _check(coverage.get("prompt_language") == prompt_language,
+               "language_coverage.prompt_language does not match", issues)
+        if any(item == "mixed" for item in actual):
+            _check(coverage.get("mixed_script_verified") is True,
+                   "mixed attachments are not script-verified", issues)
+    _check(len(case.get("document_profile", [])) == len(case["attachments"]),
+           "document_profile does not match attachments", issues)
+    checks = case.get("consistency_checks")
+    _check(isinstance(checks, list) and bool(checks), "consistency_checks must be a non-empty array", issues)
+    if isinstance(checks, list):
+        for check in checks:
+            _check(isinstance(check, dict) and bool(check.get("check")),
+                   "consistency check is malformed", issues)
+            _check(check.get("passed") is True, f"consistency check failed: {check.get('check')}", issues)
+    refs = case.get("structure_references")
+    _check(isinstance(refs, list), "structure_references must be an array", issues)
+    if isinstance(refs, list):
+        for ref in refs:
+            _check(ref.get("attachment_id") in attachment_ids,
+                   "structure reference attachment does not exist", issues)
+            _check(ref.get("resolved") is True and _structure_ref_resolves(ref, case["attachments"]),
+                   f"structure reference does not resolve: {ref.get('kind')}", issues)
+    links = case.get("cross_file_links")
+    _check(isinstance(links, list), "cross_file_links must be an array", issues)
+    if isinstance(links, list):
+        annotated = {
+            (item["source_attachment"], item["canonical_entity_id"]): item
+            for item in case["entities"] if item["source"] == "attachment"
+        }
+        for link in links:
+            _check(link.get("consistent") is True, "cross-file link is inconsistent", issues)
+            _check(len(link.get("attachments", [])) >= 2, "cross-file link needs two attachments", issues)
+            for attachment_id in link.get("attachments", []):
+                _check(attachment_id in attachment_ids, "cross-file link attachment missing", issues)
+                annotation = annotated.get((attachment_id, link.get("canonical_entity_id")))
+                _check(annotation is not None and annotation["exact_entity_value"] == link.get("exact_entity_value"),
+                       "cross-file link value does not match annotation", issues)
+    verification = case.get("verification", {})
+    if isinstance(verification, dict):
+        _check(verification.get("language_passed") is True, "attachment language verification failed", issues)
 
 
 def validate_dataset_v2(cases: Iterable[dict], policy: Optional[dict] = None) -> List[dict]:

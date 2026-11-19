@@ -12,13 +12,24 @@ from .renderers import SUPPORTED_FORMATS
 
 REQUIRED_DISTRIBUTIONS = (
     "attachment_probability", "attachment_count", "file_type", "language",
-    "persona", "intent", "formality", "length", "difficulty", "domain",
-    "entity_density", "ocr_difficulty", "negative_ratio", "ambiguous_ratio",
+    "attachment_language", "persona", "intent", "formality", "length", "difficulty",
+    "domain", "entity_density", "ocr_difficulty", "negative_ratio", "ambiguous_ratio",
     "multi_domain_ratio", "typo_rate",
 )
 FORMALITIES = ("formal", "neutral", "casual")
 LENGTHS = ("short", "medium", "long")
 OCR_LEVELS = ("1", "2", "3", "4")
+DEFAULT_ATTACHMENT_LANGUAGE = {"th": 0.34, "en": 0.33, "mixed": 0.33}
+DEFAULT_REALISM = {
+    "structure_reference_probability": 0.45,
+    "same_archetype_bundle_probability": 0.25,
+    "old_new_bundle_probability": 0.6,
+}
+DEFAULT_LOCALIZATION = {
+    "thai_date_mode": "be",
+    "currency_mode": "thb",
+    "mixed_language_intensity": 0.5,
+}
 
 
 def _read_json(path: str) -> dict:
@@ -59,6 +70,11 @@ def load_v2_config(path: str, profile: Optional[str] = None) -> dict:
     config.setdefault("near_duplicate_threshold", 0.96)
     config.setdefault("splits", {"train": 0.8, "validation": 0.1, "test": 0.1})
     config.setdefault("dataset_epoch", "2026-01-01T00:00:00Z")
+    config.setdefault("schema_version", "2.1")
+    config.setdefault("realism", dict(DEFAULT_REALISM))
+    config.setdefault("localization", dict(DEFAULT_LOCALIZATION))
+    distributions = config.setdefault("distributions", {})
+    distributions.setdefault("attachment_language", dict(DEFAULT_ATTACHMENT_LANGUAGE))
     validate_v2_config(config)
     policy_file = config.get("policy_file", "../policy.default.json")
     base = os.path.dirname(os.path.abspath(path))
@@ -70,8 +86,8 @@ def validate_v2_config(config: dict) -> None:
     for key in ("schema_version", "dataset_version", "seed", "total_samples", "splits", "distributions"):
         if key not in config:
             raise ValueError(f"config missing required key: {key}")
-    if config["schema_version"] != "2.0":
-        raise ValueError("v2 config schema_version must be '2.0'")
+    if config["schema_version"] not in ("2.0", "2.1"):
+        raise ValueError("v2 config schema_version must be '2.0' or '2.1'")
     total = config["total_samples"]
     if not isinstance(total, int) or total < 1:
         raise ValueError("total_samples must be an integer >= 1")
@@ -87,6 +103,7 @@ def validate_v2_config(config: dict) -> None:
     for name, allowed in (
         ("file_type", set(SUPPORTED_FORMATS)),
         ("language", set(LANGUAGES)),
+        ("attachment_language", set(LANGUAGES)),
         ("persona", set(PERSONAS)),
         ("intent", set(INTENT_PHRASES)),
         ("formality", set(FORMALITIES)),
@@ -113,3 +130,14 @@ def validate_v2_config(config: dict) -> None:
             raise ValueError(f"distribution {name} must be between 0 and 1")
     if dist["negative_ratio"] + dist["ambiguous_ratio"] > 1:
         raise ValueError("negative_ratio + ambiguous_ratio must be <= 1")
+    realism = config.get("realism", {})
+    for name in ("structure_reference_probability", "same_archetype_bundle_probability",
+                 "old_new_bundle_probability"):
+        value = realism.get(name, DEFAULT_REALISM[name])
+        if not isinstance(value, (int, float)) or not 0 <= value <= 1:
+            raise ValueError(f"realism.{name} must be between 0 and 1")
+    localization = config.get("localization", {})
+    if localization.get("thai_date_mode", "be") not in ("be", "ce", "mixed"):
+        raise ValueError("localization.thai_date_mode must be be, ce or mixed")
+    if localization.get("currency_mode", "thb") not in ("thb", "plain"):
+        raise ValueError("localization.currency_mode must be thb or plain")

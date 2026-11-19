@@ -46,9 +46,11 @@ class V2CliTests(unittest.TestCase):
                 self.assertTrue(os.path.exists(os.path.join(reports, name)), name)
             with open(os.path.join(reports, "evaluation.json"), encoding="utf-8") as handle:
                 report = json.load(handle)
-            self.assertEqual(report["schema_version"], "2.0")
+            self.assertEqual(report["schema_version"], "2.1")
             self.assertIn("gates", report)
             self.assertIn("file_open_rate", report["metrics"])
+            self.assertIn("language_matrix", report["metrics"])
+            self.assertIn("consistency_rate", report["metrics"])
             self.assertIn("openings", report["metrics"])
             self.assertEqual(report["total_cases"], 12)
 

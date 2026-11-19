@@ -85,7 +85,7 @@ class V2GenerationTests(unittest.TestCase):
             for name in ("cases.jsonl", "all.json", "stats.json", "manifest.json",
                          "ground_truth/entities.jsonl", "train.jsonl", "validation.jsonl", "test.jsonl"):
                 self.assertTrue(os.path.exists(os.path.join(directory, name)), name)
-            self.assertEqual(manifest["schema_version"], "2.0")
+            self.assertEqual(manifest["schema_version"], "2.1")
             self.assertEqual(manifest["total_cases"], 12)
             for attachment in (item for case in self.dataset["cases"] for item in case["attachments"]):
                 self.assertTrue(os.path.exists(os.path.join(directory, "attachments", *attachment["path"].split("/"))))

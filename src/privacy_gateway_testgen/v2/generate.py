@@ -9,6 +9,8 @@ import random
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
+import copy
+import datetime as _dt
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from .. import __version__
@@ -18,19 +20,26 @@ from ..generator import split_counts
 from ..models import CHAR_OFFSET_CONVENTION, Entity
 from ..policies import resolve_policy
 from ..textsim import jaccard, normalize, shingles
-from .archetypes import ARCHETYPES, Archetype, BuildContext, _safe_negative
-from .docmodel import Doc
+from .archetypes import ARCHETYPES, Archetype, BuildContext
+from .docmodel import Block, Doc
 from .extract import verify_attachment
+from .localization import (
+    document_text, language_capability, language_mix_description, localize_doc,
+    script_counts,
+)
 from .org import make_org
 from .realism import PERSONAS, build_prompt
 from .renderers import render
+from .scenario import ScenarioPlan, make_scenario, safe_negative
 
-GENERATION_METHOD = "archetype+span_first+real_file_renderer"
+GENERATION_METHOD = "archetype+span_first+scenario_plan+real_file_renderer"
 INLINE_ARCHETYPES = {
     "incident_report", "support_ticket", "meeting_minutes", "customer_export",
     "transaction_export", "app_log", "troubleshooting_notes", "architecture_notes",
     "employee_list", "order_export", "customer_complaint", "api_payload",
 }
+LATIN_ONLY_RENDERERS = {"pdf", "png", "jpg", "jpeg"}
+MACHINE_KEY_RENDERERS = {"json", "xml", "yaml", "yml", "env", "ini", "conf", "toml", "sql"}
 BUNDLE_PAIRS = {
     "transaction_export": ("invoice", "bank_statement"),
     "invoice": ("transaction_export", "purchase_order"),
@@ -74,6 +83,10 @@ class Target:
     typo_rate: float
     destination: bool
     prompt_entity: bool
+    attachment_languages: List[str]
+    structure_reference: bool
+    same_archetype_bundle: bool
+    old_new_bundle: bool
 
 
 def _sha256(data: bytes) -> str:
@@ -125,6 +138,220 @@ def _length_class(prompt: str) -> str:
     if len(prompt) < 600:
         return "medium"
     return "long"
+
+
+def _doc_structure(doc: Doc, rendered) -> dict:
+    tables = [block for block in doc.blocks if block.kind == "table"]
+    headings = [block.text for block in doc.blocks if block.kind == "heading" and block.text]
+    sheets = []
+    meta_sheets = rendered.meta.get("sheets") or []
+    for index, sheet in enumerate(meta_sheets):
+        block = tables[index] if index < len(tables) else None
+        sheets.append({
+            "name": sheet["name"] if isinstance(sheet, dict) else str(sheet),
+            "hidden": bool(sheet.get("hidden")) if isinstance(sheet, dict) else False,
+            "rows": (len(block.rows) + 1) if block is not None else 0,
+            "columns": len(block.headers) if block is not None else 0,
+        })
+    headers = rendered.meta.get("headers") or (tables[0].headers if tables else [])
+    rows = sum(len(block.rows) for block in tables)
+    if rendered.extraction_method == "structured_parser" and rendered.renderer == "csv" and tables:
+        rows = len(tables[0].rows) + 1
+    keys = []
+    if isinstance(doc.record, dict):
+        keys = [str(key) for key in doc.record.keys()]
+    return {
+        "renderer": rendered.renderer,
+        "headings": headings,
+        "tables": [
+            {"title": block.title, "rows": len(block.rows), "columns": len(block.headers)}
+            for block in tables
+        ],
+        "rows": rows,
+        "columns": len(headers),
+        "headers": [str(value) for value in headers],
+        "sheets": sheets,
+        "slides": int(rendered.meta.get("slides") or len(doc.slides) or 0),
+        "slide_titles": [slide.title for slide in doc.slides],
+        "pages": int(rendered.meta.get("pages") or 0),
+        "lines": int(rendered.meta.get("line_count") or rendered.data.count(b"\n")),
+        "delimiter": rendered.meta.get("delimiter"),
+        "keys": keys,
+    }
+
+
+def _choose_structure_refs(rng: random.Random, attachments: Sequence[dict]) -> List[dict]:
+    candidates: List[dict] = []
+    for attachment in attachments:
+        structure = attachment["structure"]
+        extension = attachment["extension"]
+        for sheet in structure.get("sheets", []):
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "sheet", "value": sheet["name"]})
+            if sheet.get("rows", 0) > 1:
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "row", "value": rng.randint(2, sheet["rows"]),
+                                   "sheet": sheet["name"]})
+        for index in range(1, structure.get("slides", 0) + 1):
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "slide", "value": index})
+        for index in range(1, structure.get("pages", 0) + 1):
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "page", "value": index})
+        for heading in structure.get("headings", [])[1:]:
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "section", "value": heading})
+        if structure.get("rows", 0) > 1:
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "row", "value": rng.randint(2, structure["rows"])})
+        for header in structure.get("headers", []):
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "column", "value": header})
+        if structure.get("lines", 0) > 3 and extension in ("txt", "md", "log"):
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "line", "value": rng.randint(1, structure["lines"])})
+        for key in structure.get("keys", [])[:5]:
+            candidates.append({"attachment_id": attachment["attachment_id"],
+                               "filename": attachment["filename"],
+                               "kind": "key", "value": key})
+    if not candidates:
+        return []
+    first = rng.choice(candidates)
+    refs = [first]
+    if len(attachments) > 1 and rng.random() < 0.35:
+        others = [item for item in candidates if item["attachment_id"] != first["attachment_id"]]
+        if others:
+            refs.append(rng.choice(others))
+    for ref in refs:
+        ref["valid"] = True
+        ref["resolved"] = True
+    return refs
+
+
+def _cross_file_links(annotations: Sequence[dict]) -> List[dict]:
+    groups: Dict[str, List[dict]] = defaultdict(list)
+    for annotation in annotations:
+        if annotation["source"] != "attachment":
+            continue
+        groups[annotation["canonical_entity_id"]].append(annotation)
+    links = []
+    for canonical, items in sorted(groups.items(), key=lambda pair: pair[0]):
+        attachment_ids = sorted({item["source_attachment"] for item in items})
+        if len(attachment_ids) < 2:
+            continue
+        values = {item["exact_entity_value"] for item in items}
+        filenames = sorted({item["filename"] for item in items})
+        links.append({
+            "link_id": f"XFL-{len(links) + 1:03d}",
+            "canonical_entity_id": canonical,
+            "entity_type": items[0]["entity_type"],
+            "exact_entity_value": items[0]["exact_entity_value"],
+            "attachments": attachment_ids,
+            "filenames": filenames,
+            "occurrences": len(items),
+            "consistent": len(values) == 1,
+        })
+    return links
+
+
+def _aggregate_language(languages: Sequence[str]) -> str:
+    unique = sorted(set(languages))
+    if not unique:
+        return "mixed"
+    if len(unique) == 1:
+        return unique[0]
+    return "mixed"
+
+
+def _reference_exists(ref: dict, attachments: Sequence[dict]) -> bool:
+    attachment = next((item for item in attachments
+                       if item["attachment_id"] == ref.get("attachment_id")), None)
+    if attachment is None:
+        return False
+    structure = attachment.get("structure", {})
+    kind, value = ref.get("kind"), ref.get("value")
+    if kind == "sheet":
+        return any(sheet.get("name") == value for sheet in structure.get("sheets", []))
+    if kind == "row":
+        sheet = ref.get("sheet")
+        if sheet:
+            match = next((item for item in structure.get("sheets", []) if item.get("name") == sheet), None)
+            return bool(match) and 1 <= int(value) <= int(match.get("rows", 0))
+        return 1 <= int(value) <= int(structure.get("rows", 0))
+    if kind == "column":
+        return value in structure.get("headers", [])
+    if kind == "page":
+        return 1 <= int(value) <= int(structure.get("pages", 0))
+    if kind == "slide":
+        return 1 <= int(value) <= int(structure.get("slides", 0))
+    if kind == "section":
+        return value in structure.get("headings", [])
+    if kind == "line":
+        return 1 <= int(value) <= int(structure.get("lines", 0))
+    if kind == "key":
+        return value in structure.get("keys", [])
+    return False
+
+
+def _revise_doc(doc: Doc, rng: random.Random) -> List[dict]:
+    """Make a traceable old/new pair without breaking arithmetic checks."""
+    changes: List[dict] = []
+    status_map = {
+        "pending": "settled", "settled": "refunded", "shipped": "delivered",
+        "packed": "shipped", "proposal": "negotiation", "negotiation": "won",
+        "production": "staging", "staging": "production",
+    }
+    date_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    for block in doc.blocks:
+        if block.kind != "table":
+            continue
+        for row_index, row in enumerate(block.rows, start=1):
+            for column_index, value in enumerate(row, start=1):
+                if value.placements or changes:
+                    continue
+                text = value.text
+                if text.lower() in status_map:
+                    replacement = status_map[text.lower()]
+                    value.text = replacement
+                    changes.append({"kind": "status", "table": block.title, "row": row_index,
+                                    "column": column_index, "from": text, "to": replacement})
+                elif date_pattern.match(text):
+                    day = _dt.date.fromisoformat(text)
+                    replacement = (day + _dt.timedelta(days=1)).isoformat()
+                    value.text = replacement
+                    changes.append({"kind": "date", "table": block.title, "row": row_index,
+                                    "column": column_index, "from": text, "to": replacement})
+    if not changes:
+        for block in doc.blocks:
+            if block.kind != "table":
+                continue
+            for row_index, row in enumerate(block.rows, start=1):
+                for column_index, value in enumerate(row, start=1):
+                    if value.placements:
+                        continue
+                    text = value.text.strip()
+                    if len(text) < 3 or not any(ch.isalpha() for ch in text):
+                        continue
+                    if re.match(r"^[\d,.\-]+$", text):
+                        continue
+                    replacement = text + " (revised)"
+                    value.text = replacement
+                    changes.append({"kind": "field", "table": block.title, "row": row_index,
+                                    "column": column_index, "from": text, "to": replacement})
+                    return changes
+    if not changes:
+        note = "Revised version: one field was corrected for this synthetic scenario."
+        doc.blocks.append(Block("note", text=note))
+        changes.append({"kind": "note", "field": "revision", "from": "original", "to": note})
+    return changes
 
 
 def _allowed(archetype: Archetype, spec: dict) -> bool:
@@ -258,6 +485,15 @@ class V2Generator:
             file_types.append(weighted_pick(self.rng, type_weights))
         if attachment_count > 2:
             file_types.append(weighted_pick(self.rng, type_weights))
+        attachment_languages = [
+            weighted_pick(self.rng, dist["attachment_language"])
+            for _ in range(attachment_count)
+        ]
+        realism = self.config.get("realism", {})
+        same_archetype = (attachment_count >= 2
+                          and self.rng.random() < float(realism.get("same_archetype_bundle_probability", 0.25)))
+        old_new = same_archetype and self.rng.random() < float(realism.get("old_new_bundle_probability", 0.6))
+        structure_reference = self.rng.random() < float(realism.get("structure_reference_probability", 0.45))
         return Target(
             language=language, persona=persona, intent=intent, formality=formality,
             length=length, difficulty=difficulty, domains=domains, negative=negative,
@@ -265,6 +501,10 @@ class V2Generator:
             ocr_difficulty=int(weighted_pick(self.rng, dist["ocr_difficulty"])),
             typo_rate=float(dist["typo_rate"]), destination=self.rng.random() < 0.14,
             prompt_entity=self.rng.random() < 0.12,
+            attachment_languages=attachment_languages,
+            structure_reference=structure_reference,
+            same_archetype_bundle=same_archetype,
+            old_new_bundle=old_new,
         )
 
     def _candidate_families(self, split: str, target: Target) -> List[Tuple[Archetype, str]]:
@@ -374,40 +614,91 @@ class V2Generator:
         if target.attachment_count == 0:
             return self._build_prompt_only(split, sequence, target)
         bundle = self._pick_bundle(split, target)
-        content_language = "en" if any(renderer in ("pdf", "png", "jpg", "jpeg") for _, renderer in bundle) else target.language
-        if content_language == "mixed":
-            content_language = "th" if self.rng.random() < 0.5 else "en"
-        org = make_org(self.rng, content_language, "small" if target.difficulty <= 2 else "normal")
-        pool = EntityPool(self.rng, content_language, org.as_pool_org())
+        if target.same_archetype_bundle and len(bundle) >= 2:
+            primary, primary_renderer = bundle[0]
+            if target.old_new_bundle:
+                plan = [(primary, primary_renderer, "original"), (primary, primary_renderer, "revised")]
+            else:
+                alternatives = [item for item in primary.renderers if item != primary_renderer]
+                if alternatives:
+                    plan = [(primary, primary_renderer, "original"),
+                            (primary, self.rng.choice(alternatives), "related")]
+                else:
+                    plan = [(primary, primary_renderer, "original"), (primary, primary_renderer, "revised")]
+            plan.extend([(archetype, renderer, "related") for archetype, renderer in bundle[2:]])
+        else:
+            plan = [(archetype, renderer, "related") for archetype, renderer in bundle]
+
+        latin_only = any(renderer in LATIN_ONLY_RENDERERS for _, renderer, _ in plan)
+        requested_languages = list(target.attachment_languages) or [target.language]
+        if latin_only:
+            org_language = "en"
+        elif target.language in ("th", "mixed") or any(
+                item in ("th", "mixed") for item in requested_languages):
+            org_language = "th"
+        else:
+            org_language = "en"
+        org = make_org(self.rng, org_language, "small" if target.difficulty <= 2 else "normal")
+        pool = EntityPool(self.rng, org_language, org.as_pool_org())
         test_id = f"pgt2-{SPLIT_CODES[split]}-{sequence:05d}"
+        localization = self.config.get("localization", {})
+        scenario = make_scenario(
+            test_id, self.rng, org, pool, org_language, target.negative, target.ambiguous,
+            latin_only=latin_only,
+            thai_date_mode=localization.get("thai_date_mode", "be"),
+            currency_mode=localization.get("currency_mode", "thb"),
+        )
         attachments: List[dict] = []
         annotations: List[dict] = []
         files: Dict[str, bytes] = {}
         used_names = set()
-        all_locations: List[dict] = []
         fingerprints: List[str] = []
-        for index, (archetype, renderer) in enumerate(bundle, start=1):
+        previous_doc: Optional[Doc] = None
+        for index, (archetype, renderer, role) in enumerate(plan, start=1):
+            desired = requested_languages[(index - 1) % len(requested_languages)]
+            if renderer in LATIN_ONLY_RENDERERS:
+                attachment_language = "en"
+                routing = f"{renderer}_latin_only"
+            else:
+                attachment_language = desired
+                routing = None
+            attachment_id = f"ATT-{index:03d}"
             ctx = BuildContext(
-                rng=self.rng, language=content_language, org=org, pool=pool,
+                rng=self.rng, language=org_language, org=org, pool=pool,
                 domains=target.domains, negative=target.negative, ambiguous=target.ambiguous,
-                density=2, doc_language=content_language,
+                density=2, doc_language=attachment_language,
                 image_style="scan", ocr_difficulty=target.ocr_difficulty,
+                scenario=scenario, variant=index, attachment_id=attachment_id,
             )
-            doc = archetype.builder(ctx)
+            revision_changes: List[dict] = []
+            if role == "revised" and previous_doc is not None:
+                doc = copy.deepcopy(previous_doc)
+                revision_changes = _revise_doc(doc, self.rng)
+            else:
+                doc = archetype.builder(ctx)
+                previous_doc = doc
+            doc.language = attachment_language
+            doc.filename = f"{archetype.id}.{renderer}"
+            doc.metadata.setdefault("ocr_difficulty", target.ocr_difficulty)
+            localize_doc(doc, attachment_language,
+                         localize_headers=renderer not in MACHINE_KEY_RENDERERS)
             stem = re.sub(r"[^A-Za-z0-9._-]", "_", os.path.splitext(os.path.basename(doc.filename))[0]) or archetype.id
+            if role in ("original", "revised"):
+                stem = f"{stem}_{'v1' if role == 'original' else 'v2'}"
             filename = f"{stem}.{renderer}"
             if filename in used_names:
                 filename = f"{stem}_{index}.{renderer}"
             used_names.add(filename)
             doc.filename = filename
-            doc.metadata.setdefault("ocr_difficulty", target.ocr_difficulty)
             fingerprints.append(_doc_fingerprint(doc))
-            rendered = render(doc, renderer, filename)
+            try:
+                rendered = render(doc, renderer, filename)
+            except ValueError as exc:
+                raise GenerationError(f"{archetype.id} renderer refused content: {exc}") from exc
             verification = verify_attachment(rendered.data, renderer, rendered.mime_type,
                                               rendered.entity_locations, rendered.meta)
             if verification["issues"]:
                 raise GenerationError(f"{archetype.id} verification failed: {verification['issues'][:2]}")
-            attachment_id = f"ATT-{index:03d}"
             path = f"{test_id}/{filename}"
             files[path] = rendered.data
             for item in rendered.entity_locations:
@@ -417,6 +708,8 @@ class V2Generator:
                     item["entity"], "attachment", attachment_id, filename, loc, item["role"],
                     "verified_layout" if renderer in ("png", "jpg", "jpeg") else "verified",
                 ))
+            language_check = script_counts(document_text(doc))
+            structure = _doc_structure(doc, rendered)
             attachments.append({
                 "attachment_id": attachment_id,
                 "filename": filename,
@@ -429,28 +722,41 @@ class V2Generator:
                 "archetype_label": archetype.label,
                 "archetype_category": archetype.category,
                 "renderer": rendered.renderer,
+                "renderer_version": "2.1",
+                "dependency_renderer": "stdlib",
                 "synthetic": True,
                 "generated_seed": self.seed,
-                "language": content_language,
+                "language": attachment_language,
+                "language_mode": attachment_language,
+                "language_requested": desired,
+                "language_mix": language_mix_description(attachment_language),
+                "language_capability": list(language_capability(renderer)),
+                "language_routing": routing,
+                "language_check": language_check,
+                "structure": structure,
+                "revision_changes": revision_changes,
                 "expected_extraction_method": rendered.extraction_method,
                 "verification": verification,
                 "path": path,
                 "_data": rendered,
             })
-            all_locations.extend(rendered.entity_locations)
 
-        files_meta = [{"filename": item["filename"], "archetype": item["archetype"]} for item in attachments]
+        files_meta = [{"filename": item["filename"], "archetype": item["archetype"]}
+                      for item in attachments]
         prompt_entity = None
         if target.prompt_entity:
             primary_domain = target.domains[0]
             prompt_entity = (
-                _safe_negative(self.rng, "email_address") if target.negative
+                safe_negative(self.rng, "email_address") if target.negative
                 else pool.draw(primary_domain)
             )
+        structure_refs = (_choose_structure_refs(self.rng, attachments)
+                          if target.structure_reference else [])
         prompt_info = build_prompt(
             self.rng, persona=target.persona, intent=target.intent, language=target.language,
             formality=target.formality, files=files_meta, length=target.length,
             typo_rate=target.typo_rate, destination=target.destination, prompt_entity=prompt_entity,
+            structure_refs=structure_refs,
         )
         for span in prompt_info["spans"]:
             annotations.append(self._annotation(
@@ -462,13 +768,39 @@ class V2Generator:
         expected = [item for item in annotations if item["detection_expected"]]
         if not expected and not target.negative:
             raise GenerationError("positive case produced no detection-expected entity")
+        bundle_meta = self._bundle_meta(sequence, target, attachments)
         case = self._assemble_case(
             split, sequence, target, prompt_info, attachments, annotations,
-            content_language, org.name, test_id,
+            _aggregate_language([item["language"] for item in attachments]),
+            org.name, test_id, scenario=scenario,
+            content_languages=sorted({item["language"] for item in attachments}),
+            bundle=bundle_meta,
         )
         case["document_fingerprint"] = hashlib.sha1("|".join(fingerprints).encode("utf-8")).hexdigest()[:16]
         case.pop("_files", None)
         return case, files
+
+    def _bundle_meta(self, sequence: int, target: Target, attachments: Sequence[dict]) -> dict:
+        if target.old_new_bundle:
+            kind = "old_new"
+        elif target.same_archetype_bundle and len(attachments) > 1:
+            kind = "same_archetype"
+        elif len(attachments) > 1:
+            kind = "multi_file"
+        else:
+            kind = "single_file"
+        changes = [change for item in attachments for change in item.get("revision_changes", [])]
+        return {
+            "bundle_id": f"BND-{sequence:05d}",
+            "kind": kind,
+            "members": [
+                {"attachment_id": item["attachment_id"], "filename": item["filename"],
+                 "archetype": item["archetype"], "role": ("revised" if item.get("revision_changes")
+                                                          else ("original" if kind == "old_new" else "related"))}
+                for item in attachments
+            ],
+            "revision_changes": changes,
+        }
 
     def _build_prompt_only(self, split: str, sequence: int, target: Target) -> Tuple[dict, Dict[str, bytes]]:
         candidates = self._candidate_families(split, target)
@@ -478,12 +810,22 @@ class V2Generator:
         content_language = "th" if target.language == "mixed" and self.rng.random() < 0.5 else target.language
         if content_language not in ("th", "en"):
             content_language = "th"
-        org = make_org(self.rng, content_language, "small")
-        pool = EntityPool(self.rng, content_language, org.as_pool_org())
-        ctx = BuildContext(rng=self.rng, language=content_language, org=org, pool=pool,
+        org_language = "th" if content_language == "th" or target.language == "mixed" else "en"
+        org = make_org(self.rng, org_language, "small")
+        pool = EntityPool(self.rng, org_language, org.as_pool_org())
+        test_id = f"pgt2-{SPLIT_CODES[split]}-{sequence:05d}"
+        localization = self.config.get("localization", {})
+        scenario = make_scenario(
+            test_id, self.rng, org, pool, org_language, target.negative, target.ambiguous,
+            thai_date_mode=localization.get("thai_date_mode", "be"),
+            currency_mode=localization.get("currency_mode", "thb"),
+        )
+        ctx = BuildContext(rng=self.rng, language=org_language, org=org, pool=pool,
                            domains=target.domains, negative=target.negative, ambiguous=target.ambiguous,
-                           doc_language=content_language)
+                           doc_language=content_language, scenario=scenario, attachment_id="ATT-001")
         doc = archetype.builder(ctx)
+        doc.language = content_language
+        localize_doc(doc, content_language)
         rendered = render(doc, "txt", "inline_snippet.txt")
         snippet = rendered.data.decode("utf-8")
         if not rendered.entity_locations or not snippet.strip():
@@ -519,9 +861,11 @@ class V2Generator:
         prompt_info = dict(prompt_info)
         prompt_info["prompt"] = builder_text
         attachments: List[dict] = []
-        test_id = f"pgt2-{SPLIT_CODES[split]}-{sequence:05d}"
         case = self._assemble_case(split, sequence, target, prompt_info, attachments, annotations,
-                                   content_language, org.name, test_id)
+                                   content_language, org.name, test_id, scenario=scenario,
+                                   content_languages=[content_language],
+                                   bundle={"bundle_id": f"BND-{sequence:05d}", "kind": "prompt_only",
+                                           "members": [], "revision_changes": []})
         case["document_fingerprint"] = _doc_fingerprint(doc)
         return case, {}
 
@@ -554,7 +898,10 @@ class V2Generator:
 
     def _assemble_case(self, split: str, sequence: int, target: Target, prompt_info: dict,
                        attachments: List[dict], annotations: List[dict], content_language: str,
-                       org_name: str, test_id: str) -> dict:
+                       org_name: str, test_id: str,
+                       scenario: Optional[ScenarioPlan] = None,
+                       content_languages: Optional[Sequence[str]] = None,
+                       bundle: Optional[dict] = None) -> dict:
         for index, annotation in enumerate(annotations, start=1):
             annotation["annotation_id"] = f"ENT-{index:05d}"
         expected = [item for item in annotations if item["detection_expected"]]
@@ -567,12 +914,13 @@ class V2Generator:
             seen.add(key)
             expected_entities.append(Entity(item["domain"], item["entity_type"], item["exact_entity_value"],
                                             valid=item["valid"]))
-        scenario = self._scenario()
-        resolved = resolve_policy(expected_entities, scenario, self.policy)
+        policy_scenario = self._scenario()
+        resolved = resolve_policy(expected_entities, policy_scenario, self.policy)
         domains = sorted({item["domain"] for item in expected if item["domain"] != "lookalike"})
         entity_types = sorted({item["entity_type"] for item in expected})
         file_types = sorted({item["extension"] for item in attachments})
-        archetypes = [item["archetype"] for item in attachments]
+        archetype_ids = [item["archetype"] for item in attachments]
+        archetypes = sorted(set(archetype_ids))
         categories = sorted({item["archetype_category"] for item in attachments})
         sensitive_actions = set(resolved["action_expected"].values()) - {"ALLOW"}
         if target.negative:
@@ -595,10 +943,34 @@ class V2Generator:
             objective = "contextual_detection"
         prompt = prompt_info["prompt"]
         prompt_length_class = _length_class(prompt)
+        attachment_languages = [item["language"] for item in attachments]
+        content_languages = list(content_languages or ([content_language] if content_language else []))
+        structure_references = [dict(item) for item in prompt_info.get("structure_references", [])]
+        for ref in structure_references:
+            ref["resolved"] = _reference_exists(ref, attachments)
+            ref["valid"] = ref["resolved"]
+        cross_file_links = _cross_file_links(annotations)
+        consistency_checks = list(scenario.checks) if scenario is not None else []
+        consistency_checks.append({
+            "check": "structure_reference_resolution",
+            "passed": all(ref["resolved"] for ref in structure_references),
+            "attachment_id": None,
+            "details": {"references": len(structure_references),
+                        "resolved": sum(1 for ref in structure_references if ref["resolved"])},
+        })
+        consistency_checks.append({
+            "check": "cross_file_identifiers",
+            "passed": all(link["consistent"] for link in cross_file_links),
+            "attachment_id": None,
+            "details": {"links": len(cross_file_links),
+                        "linked_attachments": len({item for link in cross_file_links
+                                                   for item in link["attachments"]})},
+        })
         tags = set()
         tags.update(domains)
         tags.update(entity_types)
         tags.add(f"lang:{target.language}")
+        tags.add(f"content_lang:{content_language}")
         tags.add(f"persona:{target.persona}")
         tags.add(f"intent:{target.intent}")
         tags.add(f"difficulty:{target.difficulty}")
@@ -610,6 +982,15 @@ class V2Generator:
             tags.update(f"archetype:{item}" for item in archetypes)
             if len(attachments) > 1:
                 tags.add("multi_attachment")
+            for language in sorted(set(attachment_languages)):
+                tags.add(f"attachment_lang:{language}")
+                tags.add(f"matrix:{target.language}>{language}")
+        if structure_references:
+            tags.add("structure_reference")
+        if cross_file_links:
+            tags.add("cross_file")
+        if bundle:
+            tags.add(f"bundle:{bundle.get('kind', 'none')}")
         if any(item["expected_extraction_method"] == "ocr" for item in attachments):
             tags.add("ocr")
         if target.negative:
@@ -619,17 +1000,59 @@ class V2Generator:
         if target.destination:
             tags.add("destination_context")
         verification_statuses = [item["verification"]["status"] for item in attachments]
-        if any(status == "unverified" for status in verification_statuses):
+        language_ok = all(
+            item["language_check"]["contains_thai"] if item["language"] == "th"
+            else item["language_check"]["contains_both"] if item["language"] == "mixed"
+            else item["language_check"]["contains_latin"]
+            for item in attachments
+        )
+        if any(status == "unverified" for status in verification_statuses) or not language_ok:
             verification_status = "unverified"
         elif any(status == "verified_layout" for status in verification_statuses):
             verification_status = "verified_partial"
         else:
             verification_status = "verified"
+        language_coverage = {
+            "prompt_language": target.language,
+            "attachment_languages": attachment_languages,
+            "content_languages": content_languages,
+            "matrices": [f"{target.language}->{item}" for item in attachment_languages] or [f"{target.language}->prompt_only"],
+            "mixed_attachments": sum(1 for item in attachments if item["language"] == "mixed"),
+            "mixed_script_verified": all(
+                item["language_check"]["contains_both"]
+                for item in attachments if item["language"] == "mixed"
+            ),
+            "routed_attachments": sum(1 for item in attachments if item.get("language_routing")),
+        }
+        document_profile = [
+            {
+                "attachment_id": item["attachment_id"],
+                "filename": item["filename"],
+                "archetype": item["archetype"],
+                "renderer": item["renderer"],
+                "language": item["language"],
+                "language_routing": item.get("language_routing"),
+                "sections": len(item["structure"].get("headings", [])),
+                "tables": len(item["structure"].get("tables", [])),
+                "rows": item["structure"].get("rows", 0),
+                "sheets": len(item["structure"].get("sheets", [])),
+                "slides": item["structure"].get("slides", 0),
+                "pages": item["structure"].get("pages", 0),
+                "delimiter": item["structure"].get("delimiter"),
+            }
+            for item in attachments
+        ]
         case = {
-            "schema_version": "2.0",
+            "schema_version": "2.1",
             "test_id": test_id,
             "prompt": prompt,
             "language": target.language,
+            "prompt_language": target.language,
+            "content_language": content_language,
+            "content_languages": content_languages,
+            "language_mode": content_language,
+            "language_coverage": language_coverage,
+            "scenario_id": scenario.scenario_id if scenario else f"SCN-{test_id.split('-')[-1]}",
             "domains": domains,
             "entity_types": entity_types,
             "classification_expected": entity_types,
@@ -642,6 +1065,12 @@ class V2Generator:
             "file_types": file_types,
             "archetypes": archetypes,
             "archetype_categories": categories,
+            "bundle": bundle or {"bundle_id": f"BND-{sequence:05d}", "kind": "prompt_only",
+                                 "members": [], "revision_changes": []},
+            "cross_file_links": cross_file_links,
+            "structure_references": structure_references,
+            "document_profile": document_profile,
+            "consistency_checks": consistency_checks,
             "persona": target.persona,
             "persona_label": PERSONAS[target.persona]["label"],
             "intent": target.intent,
@@ -655,7 +1084,7 @@ class V2Generator:
                 "rationale": ("Mixed lookalike and contextual values; interpretation depends on context."
                               if target.ambiguous else "Single interpretation."),
             },
-            "policy_scenario": scenario,
+            "policy_scenario": policy_scenario,
             "policy_decision_expected": resolved["policy_decision_expected"],
             "action_expected": resolved["action_expected"],
             "routing_expected": resolved["routing_expected"],
@@ -671,7 +1100,8 @@ class V2Generator:
             },
             "rationale": (
                 f"Archetype {archetypes[0] if archetypes else 'inline_snippet'} from {org_name}. "
-                f"Task: {target.intent}. Sensitive values are incidental to the request."
+                f"Scenario {scenario.scenario_id if scenario else 'inline'}. Task: {target.intent}. "
+                "Sensitive values are incidental to the request."
             ),
             "tags": sorted(tags),
             "generation_method": GENERATION_METHOD,
@@ -681,6 +1111,9 @@ class V2Generator:
                 "attachments_checked": len(attachments),
                 "attachments_verified": sum(1 for item in attachments if item["verification"]["status"] in ("verified", "verified_layout")),
                 "ocr_layout_only": sum(1 for item in attachments if item["verification"]["status"] == "verified_layout"),
+                "language_checked": len(attachments),
+                "language_passed": language_ok,
+                "mixed_language_verified": language_coverage["mixed_script_verified"],
             },
             "prompt_length": len(prompt),
             "prompt_length_class": prompt_length_class,
@@ -700,7 +1133,6 @@ class V2Generator:
             "seed": self.seed,
             "char_offset_convention": CHAR_OFFSET_CONVENTION,
             "extraction_methods": sorted({item["expected_extraction_method"] for item in attachments}),
-            "content_language": content_language,
         }
         if case["verification_status"] == "unverified":
             raise GenerationError("attachment verification failed")
@@ -732,11 +1164,20 @@ def compute_stats(cases: Iterable[dict]) -> dict:
     by_archetype = Counter()
     by_attachment_count = Counter()
     by_extraction = Counter()
+    by_attachment_language = Counter()
+    language_matrix = Counter()
+    by_bundle_kind = Counter()
     domain_combinations = Counter()
     prompt_lengths = []
     entity_counts = []
     file_total = 0
     ocr_cases = 0
+    structure_reference_cases = 0
+    cross_file_link_cases = 0
+    multi_file_cases = 0
+    same_archetype_bundle_cases = 0
+    consistency_total = 0
+    consistency_passed = 0
     for case in cases:
         by_domain.update(case["domains"])
         by_entity_type.update(case["entity_types"])
@@ -749,8 +1190,23 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         prompt_lengths.append(case["prompt_length"])
         entity_counts.append(len(case["entities"]))
         file_total += len(case["attachments"])
+        by_attachment_language.update(item["language"] for item in case["attachments"])
+        language_matrix.update(case.get("language_coverage", {}).get("matrices", []))
+        by_bundle_kind[case.get("bundle", {}).get("kind", "unknown")] += 1
         if "ocr" in case["tags"]:
             ocr_cases += 1
+        if case.get("structure_references"):
+            structure_reference_cases += 1
+        if case.get("cross_file_links"):
+            cross_file_link_cases += 1
+        if case["attachment_count"] > 1:
+            multi_file_cases += 1
+        archetype_ids = [item["archetype"] for item in case["attachments"]]
+        if len(archetype_ids) > 1 and len(set(archetype_ids)) < len(archetype_ids):
+            same_archetype_bundle_cases += 1
+        checks = case.get("consistency_checks", [])
+        consistency_total += len(checks)
+        consistency_passed += sum(1 for item in checks if item.get("passed"))
     return {
         "total_cases": total,
         "total_files": file_total,
@@ -758,11 +1214,21 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         "negative_cases": by_polarity.get("negative", 0),
         "ambiguous_cases": by_category.get("ambiguous", 0),
         "multi_domain_cases": sum(1 for case in cases if case["domain_scope"] == "multi_domain"),
+        "multi_file_cases": multi_file_cases,
+        "same_archetype_bundle_cases": same_archetype_bundle_cases,
+        "structure_reference_cases": structure_reference_cases,
+        "cross_file_link_cases": cross_file_link_cases,
+        "consistency_checks": consistency_total,
+        "consistency_passed": consistency_passed,
+        "consistency_rate": round(consistency_passed / consistency_total, 4) if consistency_total else 1.0,
         "ocr_cases": ocr_cases,
         "mean_entities_per_case": _mean(entity_counts),
         "mean_files_per_case": round(file_total / total, 3) if total else 0.0,
         "by_split": dict(sorted(by_split.items())),
         "by_language": dict(sorted(by_language.items())),
+        "by_attachment_language": dict(sorted(by_attachment_language.items())),
+        "language_matrix": dict(sorted(language_matrix.items())),
+        "by_bundle_kind": dict(sorted(by_bundle_kind.items())),
         "by_persona": dict(sorted(by_persona.items())),
         "by_intent": dict(sorted(by_intent.items())),
         "by_difficulty": dict(sorted(by_difficulty.items())),
@@ -845,7 +1311,7 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
     verification_summary = Counter(case["verification_status"] for case in cases)
     manifest = {
         "dataset_id": f"pgt2-{dataset['seed']}-{dataset['profile']}",
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "dataset_version": dataset["dataset_version"],
         "generator_version": __version__,
         "generated_at": config.get("dataset_epoch", "1970-01-01T00:00:00Z"),
@@ -859,6 +1325,13 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
         "domain_distribution": stats["by_domain"],
         "domain_combinations": stats["domain_combinations"],
         "language_distribution": stats["by_language"],
+        "attachment_language_distribution": stats["by_attachment_language"],
+        "language_matrix": stats["language_matrix"],
+        "bundle_distribution": stats["by_bundle_kind"],
+        "structure_reference_cases": stats["structure_reference_cases"],
+        "cross_file_link_cases": stats["cross_file_link_cases"],
+        "consistency_checks": stats["consistency_checks"],
+        "consistency_rate": stats["consistency_rate"],
         "persona_distribution": stats["by_persona"],
         "intent_distribution": stats["by_intent"],
         "difficulty_distribution": stats["by_difficulty"],

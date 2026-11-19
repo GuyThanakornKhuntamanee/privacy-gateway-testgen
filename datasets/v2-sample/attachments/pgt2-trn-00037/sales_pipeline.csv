@@ -1,5 +1,0 @@
-opportunity,customer,contact_email,amount,stage,reference
-OPP-2000,Contact 1,contact1@example.com,"687,394",negotiation,TXN-2026-81629304
-OPP-2001,Contact 2,contact2@example.com,"605,428",qualified,TXN-2026-96497585
-OPP-2002,Contact 3,contact3@example.com,"55,209",negotiation,TXN-2026-16038402
-OPP-2003,Contact 4,contact4@example.com,"603,939",proposal,TXN-2026-16749286

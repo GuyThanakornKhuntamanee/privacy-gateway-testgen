@@ -33,7 +33,7 @@ DSS, HIPAA, GDPR, PDPA, or any other compliance certification.
 
 ## v2 file generation
 
-The schema 2.0 generator writes real files. It enforces additional controls:
+The schema 2.1 generator writes real files. It enforces additional controls:
 
 - OOXML packages are created directly with `zipfile` and XML; they contain no
   macros (`vbaProject.bin`), executables, DLLs or remote templates.
@@ -55,6 +55,14 @@ The schema 2.0 generator writes real files. It enforces additional controls:
 Image OCR annotations are **pre-render ground truth**. The test suite does not
 run an OCR engine; image and scanned-PDF cases are marked `verified_layout` and
 must not be presented as OCR accuracy evidence.
+
+PDF and image renderers are Latin-only. A Thai request for those renderers is
+routed to English and recorded as `language_routing`; the renderers raise on
+non-Latin text instead of writing `?`. Thai content belongs in DOCX, XLSX, PPTX
+or text formats. No Thai PDF or Thai OCR-image capability is claimed.
+
+Cross-file links and arithmetic checks describe the generated scenario only.
+They do not certify that a downstream gateway performs the same correlation.
 
 
 

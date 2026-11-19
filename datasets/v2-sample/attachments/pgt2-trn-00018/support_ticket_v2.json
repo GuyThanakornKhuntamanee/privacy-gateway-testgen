@@ -1,0 +1,34 @@
+{
+  "title": "ตั๋วสนับสนุน",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "Support ticket #95245"
+    },
+    {
+      "kind": "paragraph",
+      "text": "ผู้แจ้ง: Contact 2 <contact2@example.com>"
+    },
+    {
+      "kind": "paragraph",
+      "text": "ปัญหา: after the latest release the checkout page shows an error. The customer tried twice and is waiting for an update."
+    },
+    {
+      "kind": "paragraph",
+      "text": "รหัสคำขอ: req-20517"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Request from 10.30.7.221 to https://warehouse.orchid-vector.internal/internal/report returned 502."
+    },
+    {
+      "kind": "paragraph",
+      "text": "ขั้นตอนถัดไปที่แนะนำ: confirm the service health dashboard and review the gateway log."
+    },
+    {
+      "kind": "note",
+      "text": "Revised version: one field was corrected for this synthetic scenario."
+    }
+  ],
+  "_language_note": "เอกสารตัวอย่างสังเคราะห์สำหรับทดสอบ privacy gateway เท่านั้น"
+}

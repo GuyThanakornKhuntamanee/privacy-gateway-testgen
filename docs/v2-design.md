@@ -1,6 +1,7 @@
 # v2 design: realistic request + attachment + ground truth
 
-Status: implementation design for schema `2.0`. The v1 prompt-only generator and
+Status: implementation design for schema `2.1`. Schema `2.0` datasets remain
+readable; new datasets use additive 2.1 fields. The v1 prompt-only generator and
 its `1.0` schema are unchanged and remain the default.
 
 ## Problem
@@ -14,13 +15,16 @@ ingestion, OCR, spreadsheet/table extraction, or cross-file policy decisions.
 
 ```
 profile + seed
-    -> scenario targets (persona, intent, language, domains, attachments)
-    -> synthetic organisation (shared identities, hosts, systems)
+    -> scenario targets (persona, intent, prompt language, domains, attachments)
+    -> case ScenarioPlan (shared people, hosts, IDs, timestamps, transactions)
+    -> synthetic organisation (shared identities, systems)
     -> document archetype (meaning) + renderer (file format)
-    -> human-like prompt (incidental task, not "detect the PII")
+    -> per-attachment language + localization
+    -> human-like prompt (incidental task, optional structure reference)
     -> span-first document composition
     -> real file bytes
     -> reopen + extract + verify
+    -> cross-file links + consistency checks
     -> case, attachment metadata, file-aware ground truth
 ```
 
@@ -36,13 +40,15 @@ searching a finished file. Unlike v1, the location is file-specific:
 |---|---|---|
 | Content model | `v2/docmodel.py` | Blocks, cells, placements, document model |
 | Organisation | `v2/org.py` | Coherent synthetic people, hosts, vendors, systems |
-| Realism | `v2/realism.py` | Personas, intents, prompt forms, imperfections |
+| Scenario | `v2/scenario.py` | Shared identities, IDs, timestamps and transactions |
+| Localization | `v2/localization.py` | Thai/English/mixed labels, formatting and script checks |
+| Realism | `v2/realism.py` | Personas, intents, prompt forms, imperfections, structure refs |
 | Archetypes | `v2/archetypes.py` | Business meaning independent of file format |
 | Renderers | `v2/renderers/` | Real TXT/CSV/JSON/YAML/XML/log/Office/PDF/image bytes |
 | Verification | `v2/extract.py` | Reopen, parse, locate and re-check every annotation |
-| Generation | `v2/generate.py` | Targets, multi-file bundles, dedupe, splits, export |
-| Evaluation | `v2/evaluate.py` | Measured gates, coverage, realism diagnostics |
-| Interface | `v2/cli.py` | `generate-v2`, `validate-v2`, `report-v2` |
+| Generation | `v2/generate.py` | Targets, bundles, dedupe, splits, export |
+| Evaluation | `v2/evaluate.py` | Measured gates, language/consistency coverage |
+| Interface | `v2/cli.py` | `generate-v2`, `validate-v2`, `report-v2`, `verify-v2` |
 
 An archetype declares the business document (`payroll`, `incident_report`,
 `kubernetes_manifest`) and which renderers can carry it. The same archetype can
@@ -85,6 +91,49 @@ convention (`unicode_codepoints_0_based_end_exclusive`). File entities carry a
 `pdf_text` and `image_ocr` are not the same kind of evidence. A scanned PDF
 records `source_type: embedded_image`; OCR output is an evaluation-stage
 artifact and is never promoted to ground truth.
+
+### Language model (2.1)
+
+Each attachment selects its own language independently of the prompt. The
+localization layer rewrites static text between placements, so entity values and
+their offsets never change. Machine formats (`json`, `xml`, `yaml`, `env`,
+`ini`, `conf`, `toml`, `sql`) keep English keys; titles, prose and comments can
+be Thai, and JSON/XML/config documents receive a `_language_note`.
+
+`mixed` is verified as **intra-document code-switching**: `attachment.language_check`
+counts Thai and Latin characters and the evaluator requires both. A Thai name in
+an English template is not enough.
+
+PDF and image renderers are Latin-only. A Thai request is routed to English with
+`language_routing` recorded; the renderer raises on non-Latin characters instead
+of writing `?`. This is Option B in the brief: explicit unsupported, not
+silently degraded.
+
+### Scenario plan and cross-file links (2.1)
+
+One `ScenarioPlan` per case owns shared people, organisation, hosts, database
+endpoint, internal URL, private network, incident/ticket/invoice/request IDs,
+timestamps, payment terms and transaction references. Builders request shared
+values by key; the plan caches and returns the same `Entity`.
+
+After rendering, every canonical entity that occurs in at least two attachments
+becomes a `cross_file_link`; `bundle` records whether the case is a single file,
+a related multi-file bundle, a same-archetype bundle or an old/new revision.
+Old/new pairs use a deep copy of the first document plus one traceable change
+(status, date or text field), never a full re-generation under the same name.
+
+### Consistency and structure (2.1)
+
+`consistency_checks` records invoice line arithmetic, VAT total, due date vs
+payment terms, payroll gross/tax/net, statement running balance, ordered log
+timestamps, cross-file identifier consistency and structure-reference
+resolution. A failed check fails generation; `validate-v2` re-checks the
+exported case.
+
+`structure_references` are chosen only from structures the renderer reports
+(sheets, rows, columns, pages, slides, headings, lines, keys). The prompt
+contains a natural clause such as `ดู tab employee` or `หน้า 3`, and the
+reference resolves against `attachment.structure`.
 
 ## Dataset layout
 
@@ -134,7 +183,7 @@ the same case JSON and attachment bytes.
 
 ## Migration from 1.0
 
-- `schema_version` is `2.0`; v1 files are untouched and still validate with
+- `schema_version` is `2.1`; v1 files are untouched and still validate with
   `validate`.
 - v2 cases add `attachments`, file-aware `entities`, `persona`, `intent`,
   `profile`, `ambiguity`, `file_types` and verification evidence.
@@ -143,34 +192,53 @@ the same case JSON and attachment bytes.
 - v2 is exposed through separate commands (`generate-v2`, `validate-v2`,
   `report-v2`); no existing CLI behaviour or v1 sample dataset changes.
 
+## Migration from 2.0
+
+- `schema_version` is `2.1`; 2.0 files still load and validate with
+  `validate-v2`, and `report-v2` skips 2.1-only gates for them.
+- Additive 2.1 fields: `prompt_language`, `content_languages`, `language_mode`,
+  `language_coverage`, `scenario_id`, `cross_file_links`, `structure_references`,
+  `document_profile`, `consistency_checks`, `bundle`; per attachment
+  `language`, `language_mode`, `language_mix`, `language_capability`,
+  `language_routing`, `language_check`, `structure`, `renderer_version`,
+  `dependency_renderer` and `revision_changes`.
+- Existing 2.0 fields keep their meaning. No field was renamed or removed.
+
 ## Acceptance criteria
 
 1. v1 tests and the v1 evaluation gate still pass unchanged.
-2. Every P0/P1/P2 file family renders real bytes that reopen and parse.
-3. Every annotation either resolves at its recorded location or the case is
-   marked `unverified`; no silent assumption that rendering succeeded.
+2. Every supported file family renders real bytes that reopen and parse.
+3. Every annotation resolves at its recorded location or the case is marked
+   `unverified`; rendering success alone is never accepted.
 4. Same seed + config reproduces case JSON and attachment bytes.
-5. Single/multi-domain, negative, ambiguous, prompt-only, single-file,
-   multi-file and OCR-oriented cases are present.
-6. Prompt openings and sentence skeletons meet configured repetition limits.
-7. No real personal data, working credential, live card number, private
-   company host or macro exists in generated output.
-8. The evaluation report contains only measured values and names limitations.
+5. Thai documents contain Thai labels; English documents stay English; mixed
+   documents contain both scripts and are measured.
+6. Prompt and attachment languages are independent and the matrix is reported.
+7. Shared IDs, people, hosts, timestamps and transactions agree across files.
+8. Invoice, payroll and statement arithmetic checks pass.
+9. Structure references resolve to real sheets/pages/sections/rows/slides.
+10. Same-archetype and old/new bundles record their relationship and changes.
+11. No real personal data, working credential, live card number, private
+    company host or macro exists in generated output.
+12. The evaluation report contains only measured values and names limitations.
 
-## Known limitations (v2.0)
+## Known limitations (2.1)
 
 - The PDF renderer uses built-in WinAnsi fonts, so PDF attachment content is
-  English/Latin; Thai PDF content is routed to DOCX/XLSX/TXT instead. Thai text
-  is fully supported in the XML-based Office formats and text formats.
-- Images use a bundled bitmap font, so OCR images are Latin-script only.
-  Thai OCR images are out of scope for this version.
-- Image OCR is not performed with a third-party OCR engine in the test suite;
-  image annotations are verified at render-layout level and marked accordingly.
-  At OCR difficulty 3–4 a rotation is applied after layout, so image bounding
-  boxes are recorded in pre-render coordinates (`bbox_space: pre_render`).
+  English/Latin; Thai PDF content is routed to DOCX/XLSX/TXT and marked with
+  `language_routing`. The renderer raises on non-Latin text rather than
+  substituting `?`.
+- Images use a bundled bitmap font and are Latin-script only; Thai image
+  scenarios are routed to English with explicit metadata.
+- Image/scanned-PDF OCR is not performed with a third-party OCR engine in the
+  test suite; image annotations are layout-verified and marked accordingly. At
+  OCR difficulty 3–4 a rotation is applied after layout, so bounding boxes are
+  in pre-render coordinates (`bbox_space: pre_render`).
 - PPTX speaker notes and real PowerPoint tables are not emitted yet; slide body
   text and later-slide placement are supported.
 - YAML/TOML/INI/ENV round-trip uses the generator's strict subset parser, not
   PyYAML/tomllib.
 - Archives, audio, video, executables and password-protected containers are
   intentionally out of scope.
+- Cross-file consistency is validated against generated annotations and the
+  scenario plan, not by executing a downstream gateway.

@@ -1,7 +1,0 @@
-Customer export
-
-$.customer.name: Lalita Rungruang
-$.customer.email: naree.somchai@example.org
-$.customer.phone: 085-513-1373
-$.payment.card: 4111111419314177
-$.payment.reference: ORD-2026-679929

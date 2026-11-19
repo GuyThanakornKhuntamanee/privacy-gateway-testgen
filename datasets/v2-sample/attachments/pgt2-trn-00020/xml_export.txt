@@ -1,0 +1,3 @@
+Customer export
+
+$.token: ${DB_PASSWORD}

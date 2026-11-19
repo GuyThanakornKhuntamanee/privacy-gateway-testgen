@@ -12,7 +12,9 @@ Run every item before publishing a tag. Do not publish if any gate fails.
       changes; v2 sample version in `configs/v2/default.json` bumped if v2 data
       changes.
 - [ ] `schemas/testcase.v2.schema.json` and `docs/v2-design.md` are current if
-      schema 2.0 changed.
+      schema 2.1 changed.
+- [ ] `docs/capability-matrix.md` matches the renderers and the checked language
+      capabilities.
 
 ## 2. Verify the code
 
@@ -37,6 +39,12 @@ Run every item before publishing a tag. Do not publish if any gate fails.
       writes `evaluation.json`, `evaluation.md`, `verification.json`.
 - [ ] Split integrity is clean (no template family or near-duplicate across
       splits).
+- [ ] Language gate passes: Thai documents contain Thai, mixed documents contain
+      both scripts, and PDF/image attachments are English with a routing reason.
+- [ ] Prompt/attachment language matrix is reported and non-trivial.
+- [ ] `cross_file_links` are consistent and `consistency_checks` all pass.
+- [ ] Every `structure_reference` resolves to a real sheet/page/section/row.
+- [ ] Old/new and same-archetype bundles show a traceable change.
 - [ ] All six actions appear in the sample.
 - [ ] Security scan tests pass; inspect any new entity shape manually.
 - [ ] Manifest hashes match the committed files, including v2 attachment hashes.

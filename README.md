@@ -61,8 +61,10 @@ privacy-gateway-testgen generate --config configs/default.json --out datasets/sa
 
 ## v2: requests with real attachments
 
-Schema `2.0` adds real files, file-aware ground truth and a realism engine. The
-v1 command surface and sample dataset are unchanged. v2 has its own commands:
+Schema `2.1` adds real files, per-attachment language, a case-level scenario
+plan, cross-file consistency checks, structure-aware prompts and a realism
+engine. The v1 command surface and sample dataset are unchanged. v2 has its own
+commands:
 
 ```bash
 PYTHONPATH=src python -m privacy_gateway_testgen generate-v2 \
@@ -85,15 +87,18 @@ path can also be passed to `--profile` for a custom profile.
 ### What a v2 case contains
 
 A realistic prompt, zero to three attachments, per-entity provenance, policy
-expectations and verification evidence:
+expectations, a shared scenario plan, consistency checks and verification
+evidence:
 
 ```json
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "test_id": "pgt2-trn-00002",
   "persona": "developer",
   "intent": "troubleshoot",
   "prompt": "นี้ config ล่าสุด ช่วยดูให้ทีว่าทำไม prod ต่อ db ไม่ได้",
+  "prompt_language": "th",
+  "scenario_id": "SCN-00002",
   "attachments": [{
     "attachment_id": "ATT-001",
     "filename": "prod.env",
@@ -101,6 +106,9 @@ expectations and verification evidence:
     "mime_type": "text/plain",
     "archetype": "application_environment_config",
     "expected_extraction_method": "direct_text",
+    "language": "th",
+    "language_mix": "Thai business prose with English technical terms",
+    "language_capability": ["th", "en", "mixed"],
     "synthetic": true,
     "verification": {"status": "verified"}
   }],
@@ -113,7 +121,10 @@ expectations and verification evidence:
     "exact_entity_value": "Example-Fake-Passw0rd-4821!",
     "detection_expected": true,
     "location": {"kind": "key_path", "key": "DB_PASSWORD", "line": 5}
-  }]
+  }],
+  "cross_file_links": [],
+  "structure_references": [],
+  "consistency_checks": [{"check": "cross_file_identifiers", "passed": true}]
 }
 ```
 
@@ -139,7 +150,52 @@ Real, parseable files are emitted for: `txt`, `csv`, `json`, `yaml`, `yml`,
 The document archetype library has 69 entries across HR, finance, sales/CRM,
 healthcare, IT/engineering, management and operations. One archetype can render
 as several formats; an invoice can be PDF, DOCX or XLSX without changing the
-business content.
+business content. The tested format/language matrix is in
+[`docs/capability-matrix.md`](docs/capability-matrix.md).
+
+### Language system (schema 2.1)
+
+- **Central localization layer** (`v2/localization.py`) for titles, headings,
+  table headers, sheet names, status values, notes, footers and formatting.
+- **Per-attachment language**: a Thai DOCX can sit next to an English XLSX in
+  one case. `prompt_language`, `content_languages`, `language_mode`,
+  `language_coverage` and per-attachment `language` / `language_mix` record it.
+- **True mixed documents**: bilingual headers such as `ชื่อ / name`, Thai prose
+  with English technical terms, and English machine keys with Thai comments.
+  `attachment.language_check` counts Thai and Latin script and the evaluator
+  gates on it.
+- **Thai formatting**: Buddhist-era or Gregorian dates (`thai_date_mode`),
+  THB currency (`currency_mode`) and Thai labels. English documents stay
+  English.
+- **PDF and images are Latin-only** (built-in WinAnsi / bitmap fonts). Thai
+  requests for those renderers are routed to English and record
+  `language_routing: pdf_latin_only` or `<ext>_latin_only`. The renderers raise
+  on non-Latin text instead of writing `?`.
+
+Prompt/attachment language combinations are measured in
+`reports/v2/evaluation.json` under `language_matrix` (for example
+`th->mixed`), not assumed.
+
+### Scenario plan and cross-file consistency
+
+Every case builds one `ScenarioPlan` before its attachments: organisation,
+people, customers, hosts, database endpoint, internal URL, incident/request/
+ticket/invoice IDs, transaction references, dates and amounts. Builders draw
+shared values from it, so `app.log`, `prod.env` and `incident_report.docx` tell
+the same story.
+
+The case records:
+
+- `cross_file_links`: shared entities that occur in two or more attachments;
+- `bundle`: `single_file`, `multi_file`, `same_archetype`, `old_new` or
+  `prompt_only`, with members and revision changes;
+- `consistency_checks`: invoice arithmetic, invoice due date, payroll
+  gross - tax = net, statement running balance, ordered log timestamps,
+  structure reference resolution and cross-file identifiers;
+- `structure_references`: prompts such as "ดู tab employee" or "หน้า 3" point at
+  a sheet/page/section/row/slide that actually exists (or are marked invalid);
+- `document_profile`: per-file structure (sections, tables, rows, sheets,
+  slides, pages).
 
 ### v2 dataset layout
 
@@ -162,24 +218,34 @@ reproduces the case JSON and attachment bytes.
 
 ### v2 measured sample
 
-The committed `datasets/v2-sample` has 72 cases, 70 attachment files, 16
-personas, 20 intents and 10 file types. `reports/v2/evaluation.json` records
-measured values: schema validity 1.0, prompt span accuracy 1.0, file open rate
-1.0, extraction accuracy 1.0, entity location accuracy 1.0, exact/near/document
-duplicate rates 0.0, negative share 0.25, multi-domain share 0.1806, attachment
-share 0.7222 and 5 OCR-oriented cases. Of 72 cases, 67 are fully verified and 5 are
-`verified_partial` because image/scanned annotations are render-layout verified,
-not OCR-verified.
+The committed `datasets/v2-sample` has 72 cases, 62 attachment files, 32
+archetypes, 16 personas, 19 intents and 9 file types. `reports/v2/evaluation.json`
+records measured values: schema validity 1.0, prompt span accuracy 1.0, file
+open rate 1.0, extraction accuracy 1.0, entity location accuracy 1.0,
+exact/near/document duplicate rates 0.0, negative share 0.1528, multi-domain
+share 0.1389, attachment share 0.6389 and 8 OCR-oriented cases. Of 72 cases, 64
+are fully verified and 8 are `verified_partial` because image/scanned annotations
+are render-layout verified, not OCR-verified.
+
+Language is measured, not assumed: prompt languages are Thai 39, English 19,
+mixed 14; attachment languages are Thai 12, English 29, mixed 21; 12 distinct
+prompt→attachment language pairs appear. 16 cases carry a structure reference
+(every one resolves), 6 cases have cross-file links (20 links), and all
+consistency checks pass. 12 cases are multi-file, 3 are same-archetype or
+old/new bundles, and 26 are prompt-only.
 
 ### v2 limitations
 
 These are deliberate and documented rather than hidden:
 
-- PDF content is Latin/English because the standard-library PDF writer uses
-  built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT.
-- OCR images use a bitmap Latin font; Thai OCR images are out of scope.
-- Image/scanned-PDF OCR is verified at layout level, not with a third-party OCR
-  engine. Rotated OCR images keep pre-render bounding boxes (`bbox_space:
+- PDF content is English/Latin because the standard-library PDF writer uses
+  built-in WinAnsi fonts. Thai PDF requests are routed to English DOCX/XLSX/TXT
+  and record `language_routing`; the PDF renderer raises rather than replacing
+  Thai glyphs with `?`.
+- Images use a bitmap Latin font. Thai image scenarios are routed to English
+  and record `language_routing`; image/scanned-PDF OCR is verified at layout
+  level, not with a third-party OCR engine.
+- Rotated OCR images keep pre-render bounding boxes (`bbox_space:
   pre_render`).
 - PPTX speaker notes and native PowerPoint tables are not emitted yet.
 - YAML/TOML/INI/ENV verification uses the generator's strict subset parser.
@@ -187,6 +253,8 @@ These are deliberate and documented rather than hidden:
   scope.
 - `report-v2` reports what it measured; a `verified_partial` case must not be
   treated as OCR accuracy evidence.
+- Cross-file consistency is checked against generated annotations and the
+  scenario plan; no downstream gateway is executed.
 
 ## What it produces
 
@@ -335,12 +403,14 @@ Latest run on the committed sample (`seed 7`, 140 cases):
 See [`docs/evaluation-report.md`](docs/evaluation-report.md) and
 [`reports/evaluation.md`](reports/evaluation.md) for the generated report.
 
-Automated suite: **112 tests pass** (`python -m unittest discover -s tests -t .`).
+Automated suite: **130 tests pass** (`python -m unittest discover -s tests -t .`).
 The suite covers entity validity and safety, exact spans, every template in all
 three languages, policy precedence, validation failures, annotation repair,
 generator reproducibility/dedup/splits, security scans, schema agreement, the
-CLI, every v2 file renderer's round trip, v2 distribution/persona/OCR cases, v2
-schema agreement and v2 security scans.
+CLI, every v2 file renderer's round trip, v2 distribution/persona/OCR cases,
+localization, per-attachment language, mixed-script checks, cross-file
+consistency, arithmetic, old/new bundles, structure references, v2 schema
+agreement and v2 security scans.
 
 ## Safety
 
@@ -374,6 +444,14 @@ src/privacy_gateway_testgen/ package
   annotations.py             imported-annotation verification
   textsim.py                 duplicate/leakage similarity
   cli.py                     command line interface
+  v2/                        file-aware schema 2.1 generator
+    localization.py          Thai/English/mixed labels and formatting
+    scenario.py              shared people, hosts, IDs, transactions
+    archetypes.py            business documents independent of format
+    renderers/               real TXT/CSV/JSON/Office/PDF/image bytes
+    extract.py               reopen/parse/locate verification
+    generate.py              targets, bundles, splits, export
+    evaluate.py              measured gates and language/consistency metrics
 tests/                       unittest suite
 datasets/sample/             generated sample dataset
 reports/                     latest evaluation

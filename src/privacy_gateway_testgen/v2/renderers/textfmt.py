@@ -16,6 +16,7 @@ from xml.sax.saxutils import escape as xml_escape
 
 from ...models import Entity
 from ..docmodel import Block, Cell, Doc, entity_cell, record_placements, table_records
+from ..localization import THAI_NOTE
 from .base import EXTRACTION_METHODS, MIME_TYPES, RenderedFile, location
 
 CELL_TEXT = "text_span"
@@ -38,6 +39,13 @@ def _wrap_entities(value: Any) -> Any:
 
 
 def _derive_record(doc: Doc) -> Any:
+    record = _derive_record_raw(doc)
+    if doc.language in ("th", "mixed") and isinstance(record, dict):
+        record.setdefault("_language_note", THAI_NOTE)
+    return record
+
+
+def _derive_record_raw(doc: Doc) -> Any:
     if doc.record is not None:
         return _wrap_entities(doc.record)
     table = doc.table()

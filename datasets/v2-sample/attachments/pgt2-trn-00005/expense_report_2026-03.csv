@@ -1,7 +1,0 @@
-date,employee,email,category,amount
-2026-03-10,Contact 1,contact1@example.com,office,"14,523.00"
-2026-03-11,Contact 2,contact2@example.com,office,"13,376.00"
-2026-03-12,Contact 3,contact3@example.com,travel,"10,895.00"
-2026-03-13,Contact 4,contact4@example.com,software,"11,830.00"
-2026-03-14,Contact 5,contact5@example.com,software,"14,082.00"
-2026-03-15,Contact 6,contact6@example.com,travel,"12,191.00"
