@@ -19,7 +19,7 @@ generated sample in `datasets/sample/`.
 
 ## Automated tests
 
-**Result: PASS — 73 tests, 0 failures, 0 errors** (about 3.6 seconds).
+**v1 result: PASS - 73 tests, 0 failures, 0 errors** (about 3.6 seconds).
 
 | Module | Tests | What it covers |
 |---|---:|---|
@@ -139,10 +139,68 @@ to its inputs.
   machine.
 - Consider a signed dataset manifest if datasets will be distributed publicly.
 
+## v2 file-aware evaluation (2026-11-20)
+
+- Dataset: `datasets/v2-sample` (72 cases, 70 attachment files, seed 7,
+  profile `real-world-enterprise`, schema `2.0`).
+- Commands:
+  ```bash
+  PYTHONPATH=src python -m privacy_gateway_testgen generate-v2 \
+    --config configs/v2/default.json --profile real-world-enterprise \
+    --out datasets/v2-sample
+  PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 \
+    --dataset datasets/v2-sample --json
+  PYTHONPATH=src python -m privacy_gateway_testgen verify-v2 \
+    --dataset datasets/v2-sample
+  PYTHONPATH=src python -m privacy_gateway_testgen report-v2 \
+    --dataset datasets/v2-sample --out reports/v2 --check-reproducible
+  ```
+- Raw results: `reports/v2/evaluation.json`, `reports/v2/evaluation.md`,
+  `reports/v2/verification.json`.
+- Automated tests: 112 pass (73 v1 + 39 v2), standard library only.
+
+Measured v2 gates:
+
+| Gate | Result | Value | Requirement |
+|---|---|---|---|
+| schema_validity | PASS | 1.0 | >= 1.0 |
+| prompt_span_accuracy | PASS | 1.0 | >= 1.0 |
+| file_open_rate | PASS | 1.0 | >= 1.0 |
+| extraction_accuracy | PASS | 1.0 | >= 1.0 |
+| entity_location_accuracy | PASS | 1.0 | >= 1.0 |
+| exact_duplicate_rate | PASS | 0.0 | <= 0.0 |
+| near_duplicate_rate | PASS | 0.0 | <= 0.05 |
+| document_duplicate_rate | PASS | 0.0 | <= 0.05 |
+| file_type_coverage | PASS | csv, docx, jpeg, jpg, json, md, pdf, pptx, txt, xlsx (10) | >= 8 |
+| archetype_coverage | PASS | 29 | >= 8 |
+| persona_coverage | PASS | 16 | >= 6 |
+| intent_coverage | PASS | 20 | >= 8 |
+| language_coverage | PASS | th, en, mixed | >= 2 |
+| domain_coverage | PASS | pii, payment, secrets, infrastructure | >= 3 |
+| negative_share | PASS | 0.25 | >= 0.08 |
+| multi_domain_share | PASS | 0.1806 | >= 0.08 |
+| attachment_share | PASS | 0.7222 | >= 0.35 |
+| ocr_case_coverage | PASS | 5 | >= 1 |
+| opening_repetition | PASS | 0.0278 | <= 0.35 |
+| repeated_phrase_rate | PASS | 0.0972 | <= 0.20 |
+| archetype_concentration | PASS | 0.1111 | <= 0.30 |
+| synthetic_safety | PASS | 0 issues | 0 |
+| attachment_verification | PASS | 1.0 | == 1.0 |
+
+Counts: 54 positive / 18 negative, 10 ambiguous, 10 multi-domain, 67 fully
+verified and 5 `verified_partial` (image/scanned-PDF layout verification).
+File counts in the sample: docx 18, xlsx 10, txt 10, pdf 10, csv 7, json 5,
+pptx 4, jpg 3, md 2, jpeg 1. Entity density averages 5.375 entities per case.
+
+These numbers are measured from the committed sample. They do not claim OCR
+accuracy, a downstream detector's accuracy, or production readiness. The
+limitations in `docs/v2-design.md` still apply.
+
 ## Conclusion
 
-For **v0.1.0**, the repository's automated tests and all configured quality
-gates pass, and the security scans are clean. The tool is ready for public
+For **v0.2.0**, the repository's automated tests and all configured quality
+gates pass, the v2 file round-trip and security scans are clean, and the v2
+sample report contains only measured values. The tool is ready for public
 testing as a synthetic dataset generator. It does not certify a gateway, a
 legal policy, or PCI DSS compliance, and it should not be presented as having
-done so.
+done so. Image/scanned-PDF OCR accuracy is explicitly not claimed.

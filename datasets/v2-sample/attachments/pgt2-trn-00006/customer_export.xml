@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customerExport>
+  <exported_at>2026-03-18T09:12:44Z</exported_at>
+  <payment>
+    <card>4242426827308427</card>
+    <amount>12,400.00</amount>
+    <reference>TXN-2026-38430255</reference>
+  </payment>
+</customerExport>

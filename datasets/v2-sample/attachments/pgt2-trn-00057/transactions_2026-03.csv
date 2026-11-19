@@ -1,0 +1,8 @@
+transaction_ref,date,customer,email,amount,status,card,auth_code
+TXN-2026-87408824,2026-03-10,ลลิตา ใจดี,lalita.somchai44@example.net,"23,895.00",settled,378282913794259,AUTH-IWEVGW
+TXN-2026-58335918,2026-03-11,ธีรภัทร สายทอง,maneerat.thiraphat@example.net,"18,601.00",pending,4242428397409742,AUTH-H850KS
+TXN-2026-77935979,2026-03-12,ธนกร แสงทอง,anan.siriporn@example.com,"10,067.00",settled,4242423862993478,AUTH-U6O2JU
+TXN-2026-02425915,2026-03-13,สมหญิง อินทรีย์,kittipong.lalita87@example.com,"11,963.00",pending,378282665761555,AUTH-ZLR0OK
+TXN-2026-94146271,2026-03-14,ลลิตา ใจดี,lalita.somchai44@example.net,"17,248.00",pending,5555550101689927,AUTH-GOIBOR
+TXN-2026-99375875,2026-03-15,ธีรภัทร สายทอง,maneerat.thiraphat@example.net,724.00,refunded,4242428058865851,AUTH-ZEIYSO
+TXN-2026-24767527,2026-03-16,ธนกร แสงทอง,anan.siriporn@example.com,"13,678.00",settled,5555557305454495,AUTH-GOFLO7

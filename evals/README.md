@@ -14,6 +14,11 @@ run. The repository's quantitative evidence is the automated test suite plus
 the quality gates in `reports/evaluation.json` /
 `docs/evaluation-report.md`.
 
+A v2 file-aware run is not yet in the behavior eval set. When adding one, ask
+the agent for a small `generate-v2` dataset, then check whether it ran
+`validate-v2`, `verify-v2` and `report-v2`, and whether it labelled
+image/scanned-PDF cases `verified_partial` instead of claiming OCR accuracy.
+
 ## Running an evaluation later
 
 For each eval, start a fresh agent session with access to this skill directory

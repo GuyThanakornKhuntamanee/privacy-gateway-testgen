@@ -1,0 +1,19 @@
+Platform weekly - meeting minutes
+
+Date: 2026-03-18  |  Location: internal video call
+
+Attendees
+
+- Contact 1 - contact1@example.com
+- Contact 2 - contact2@example.com
+- Contact 3 - contact3@example.com
+Notes
+
+The team reviewed the deployment checklist and the customer migration plan. One action remains open for the database owner.
+
+Migration target: db-replica.nimbus-lotus.internal:5432 via https://warehouse.nimbus-lotus.internal/internal/report
+
+Action items
+
+- Owner: Contact 1 - confirm the migration window.
+- Owner: Contact 1 - remove the old deployment credential.

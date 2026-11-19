@@ -1,0 +1,823 @@
+{
+  "cases": 72,
+  "dataset_dir": "D:\\Chula\\CEDT\\Capstone_Project_I\\privacy-gateway-testgen\\datasets\\v2-sample",
+  "file_open_rate": 1.0,
+  "file_results": [
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00001/customer_export.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00001"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00001/support_ticket.jpg",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00001"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00003/strategy_report.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00003"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00004/support_ticket.md",
+      "status": "verified",
+      "test_id": "pgt2-trn-00004"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00004/customer_export.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00004"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00004/management_deck.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00004"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00005/support_ticket.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00005"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00006/support_ticket.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00008/customer_export.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00008"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00009/risk_report.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00009"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00012/employee_list.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00012"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00012/meeting_minutes.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00012"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00013/meeting_minutes.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00013"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00013/employee_list.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00013"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00013/payroll_2026-03.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00013"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00014/customer_export.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00014"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00015/management_deck.pptx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00015"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00016/management_deck.pptx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00016"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00018/customer_export.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00018"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00019/support_ticket.jpg",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00019"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00019/bank_statement_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00019"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00021/management_deck.pptx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00021"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00022/employee_list.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00022"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00025/customer_export.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00025"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00026/risk_report.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00026"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00028/employee_list.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00028"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00029/expense_report_2026-03.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00029"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00030/customer_complaint.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00030"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00032/employment_contract.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00032"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00033/invoice_2026-03.jpg",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00033"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00034/payroll_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00034"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00035/meeting_minutes.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00035"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00037/employee_list.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00037"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00038/support_ticket.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00038"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00039/meeting_minutes.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00039"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00040/transactions_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00040"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00041/meeting_minutes.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00041"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00041/employee_list.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00041"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00041/candidate_cv.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00041"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00043/invoice_2026-03.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00043"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00044/quotation_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00044"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00044/patient_list.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00044"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00045/leave_request.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00045"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00046/support_ticket.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00046"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00046/customer_export.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00046"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00048/support_ticket.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00048"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00050/quotation_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00050"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00050/supplier_agreement.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00050"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00051/order_export.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00051"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00053/supplier_agreement.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00053"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00055/transactions_2026-03.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00055"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00058/leave_request.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00058"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00002/invoice_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-val-00002"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00002/purchase_order_2026-03.docx",
+      "status": "verified",
+      "test_id": "pgt2-val-00002"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00003/purchase_order_2026-03.pdf",
+      "status": "verified",
+      "test_id": "pgt2-val-00003"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00004/prescription.docx",
+      "status": "verified",
+      "test_id": "pgt2-val-00004"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00005/strategy_report.pptx",
+      "status": "verified",
+      "test_id": "pgt2-val-00005"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00006/meeting_minutes.md",
+      "status": "verified",
+      "test_id": "pgt2-val-00006"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00006/leave_request.jpeg",
+      "status": "verified_layout",
+      "test_id": "pgt2-val-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00007/invoice_2026-03.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-val-00007"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00007/purchase_order_2026-03.pdf",
+      "status": "verified",
+      "test_id": "pgt2-val-00007"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00001/purchase_order_2026-03.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00001"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00001/meeting_minutes.pdf",
+      "status": "verified",
+      "test_id": "pgt2-tst-00001"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00001/medical_report_scan.pdf",
+      "status": "verified_layout",
+      "test_id": "pgt2-tst-00001"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00002/purchase_order_2026-03.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00002"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00003/bank_statement_2026-03.csv",
+      "status": "verified",
+      "test_id": "pgt2-tst-00003"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00005/lab_result.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00005"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00005/meeting_minutes.pdf",
+      "status": "verified",
+      "test_id": "pgt2-tst-00005"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00006/internal_memo.txt",
+      "status": "verified",
+      "test_id": "pgt2-tst-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00007/lab_result.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00007"
+    }
+  ],
+  "files": 70,
+  "issues": [],
+  "manifest_checks": 77,
+  "passed": true,
+  "statuses": {
+    "verified": 65,
+    "verified_layout": 5
+  },
+  "verified_files": 70
+}

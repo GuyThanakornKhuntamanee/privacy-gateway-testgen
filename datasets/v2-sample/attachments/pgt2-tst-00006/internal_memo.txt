@@ -1,0 +1,10 @@
+Internal memo - access review
+
+To: ชัยวัฒน์ อินทรีย์  |  From: ชัยวัฒน์ วงศ์ไทย
+
+The quarterly access review found two accounts with elevated permissions. Please confirm the owners before Friday.
+
+Account owner contact: prasert.somchai5@example.com
+
+Synthetic memo for policy testing.
+

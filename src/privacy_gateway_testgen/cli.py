@@ -16,6 +16,7 @@ from .generator import DatasetGenerator, compute_stats, export_dataset
 from .policies import load_policy
 from .templates import TEMPLATES
 from .validation import validate_dataset
+from .v2 import cli as v2_cli
 
 
 def _load_cases(path: str):
@@ -216,6 +217,49 @@ def build_parser() -> argparse.ArgumentParser:
 
     list_domains = sub.add_parser("list-domains", help="print domains, entity types and templates")
     list_domains.set_defaults(func=cmd_list_domains)
+
+    generate_v2 = sub.add_parser("generate-v2", help="generate a file-aware schema 2.0 dataset")
+    generate_v2.add_argument("--config", default="configs/v2/default.json")
+    generate_v2.add_argument("--profile")
+    generate_v2.add_argument("--out", default="datasets/v2-sample")
+    generate_v2.add_argument("--seed", type=int)
+    generate_v2.add_argument("--count", type=int)
+    generate_v2.add_argument("--file-types", help="comma-separated override, e.g. pdf,xlsx,docx")
+    generate_v2.add_argument("--domains", help="comma-separated override, e.g. pii,secrets")
+    generate_v2.add_argument("--files-only", action="store_true", help="force every case to have an attachment")
+    generate_v2.add_argument("--policy")
+    generate_v2.set_defaults(func=v2_cli.cmd_generate_v2)
+
+    validate_v2 = sub.add_parser("validate-v2", help="validate schema 2.0 cases and optionally an exported dataset")
+    validate_v2.add_argument("--input", nargs="+")
+    validate_v2.add_argument("--dataset")
+    validate_v2.add_argument("--config", default="configs/v2/default.json")
+    validate_v2.add_argument("--profile")
+    validate_v2.add_argument("--policy")
+    validate_v2.add_argument("--json", action="store_true")
+    validate_v2.set_defaults(func=v2_cli.cmd_validate_v2)
+
+    report_v2 = sub.add_parser("report-v2", help="reopen a v2 dataset, verify files and write measured reports")
+    report_v2.add_argument("--dataset", required=True)
+    report_v2.add_argument("--config", default="configs/v2/default.json")
+    report_v2.add_argument("--profile")
+    report_v2.add_argument("--out", default="reports/v2")
+    report_v2.add_argument("--policy")
+    report_v2.add_argument("--check-reproducible", action="store_true")
+    report_v2.add_argument("--json", action="store_true")
+    report_v2.set_defaults(func=v2_cli.cmd_report_v2)
+
+    verify_v2 = sub.add_parser("verify-v2", help="reopen every attachment in an exported v2 dataset and verify annotations")
+    verify_v2.add_argument("--dataset", required=True)
+    verify_v2.set_defaults(func=v2_cli.cmd_verify_v2)
+
+    profiles_v2 = sub.add_parser("list-profiles-v2", help="print v2 generation profiles")
+    profiles_v2.add_argument("--config", default="configs/v2/default.json")
+    profiles_v2.add_argument("--profile")
+    profiles_v2.set_defaults(func=v2_cli.cmd_list_profiles_v2)
+
+    archetypes_v2 = sub.add_parser("list-archetypes-v2", help="print v2 document archetypes")
+    archetypes_v2.set_defaults(func=v2_cli.cmd_list_archetypes_v2)
     return parser
 
 

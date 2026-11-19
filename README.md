@@ -59,6 +59,135 @@ python -m pip install -e .
 privacy-gateway-testgen generate --config configs/default.json --out datasets/sample
 ```
 
+## v2: requests with real attachments
+
+Schema `2.0` adds real files, file-aware ground truth and a realism engine. The
+v1 command surface and sample dataset are unchanged. v2 has its own commands:
+
+```bash
+PYTHONPATH=src python -m privacy_gateway_testgen generate-v2 \
+  --config configs/v2/default.json --profile real-world-enterprise \
+  --out datasets/v2-sample
+
+PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 \
+  --dataset datasets/v2-sample --json
+
+PYTHONPATH=src python -m privacy_gateway_testgen report-v2 \
+  --dataset datasets/v2-sample --out reports/v2 --check-reproducible
+```
+
+`generate-v2` supports `--count`, `--seed`, `--profile`, `--file-types`,
+`--domains`, `--files-only` and `--policy`. Profiles are
+`benchmark-balanced`, `real-world-enterprise`, `thai-enterprise`,
+`developer-security`, `office-documents`, `ocr` and `negative-hard`. A JSON file
+path can also be passed to `--profile` for a custom profile.
+
+### What a v2 case contains
+
+A realistic prompt, zero to three attachments, per-entity provenance, policy
+expectations and verification evidence:
+
+```json
+{
+  "schema_version": "2.0",
+  "test_id": "pgt2-trn-00002",
+  "persona": "developer",
+  "intent": "troubleshoot",
+  "prompt": "นี้ config ล่าสุด ช่วยดูให้ทีว่าทำไม prod ต่อ db ไม่ได้",
+  "attachments": [{
+    "attachment_id": "ATT-001",
+    "filename": "prod.env",
+    "extension": "env",
+    "mime_type": "text/plain",
+    "archetype": "application_environment_config",
+    "expected_extraction_method": "direct_text",
+    "synthetic": true,
+    "verification": {"status": "verified"}
+  }],
+  "domains": ["secrets", "infrastructure"],
+  "entities": [{
+    "annotation_id": "ENT-00001",
+    "source": "attachment",
+    "source_attachment": "ATT-001",
+    "entity_type": "password",
+    "exact_entity_value": "Example-Fake-Passw0rd-4821!",
+    "detection_expected": true,
+    "location": {"kind": "key_path", "key": "DB_PASSWORD", "line": 5}
+  }]
+}
+```
+
+The actual v2 schema uses lower-case domain names (`secrets`,
+`infrastructure`) and the exact field set in
+[`schemas/testcase.v2.schema.json`](schemas/testcase.v2.schema.json).
+
+### Supported files
+
+Real, parseable files are emitted for: `txt`, `csv`, `json`, `yaml`, `yml`,
+`xml`, `log`, `md`, `env`, `ini`, `conf`, `toml`, `sql`, `tf`, `py`, `js`, `ts`,
+`java`, `go`, `docx`, `xlsx`, `pptx`, `pdf`, `png`, `jpg` and `jpeg`.
+
+- DOCX/XLSX/PPTX are macro-free OOXML ZIP packages.
+- PDF supports native text, multi-page tables and scanned image-only pages.
+- Images are synthetic screenshots/scans with configurable OCR difficulty.
+- Spreadsheets support multiple sheets, hidden sheets, Thai/English headers and
+  empty/mixed-type cells.
+- Ground truth uses `xlsx_cell`, `docx_paragraph`, `docx_table_cell`,
+  `pptx_shape`, `pdf_text`, `pdf_image`, `image_ocr`, `json_path`, `yaml_path`,
+  `xml_path`, `key_path`, `csv_cell` and `text_span`.
+
+The document archetype library has 69 entries across HR, finance, sales/CRM,
+healthcare, IT/engineering, management and operations. One archetype can render
+as several formats; an invoice can be PDF, DOCX or XLSX without changing the
+business content.
+
+### v2 dataset layout
+
+```
+datasets/v2-sample/
+├── manifest.json
+├── cases.jsonl
+├── all.json
+├── stats.json
+├── train.jsonl validation.jsonl test.jsonl
+├── ground_truth/entities.jsonl
+└── attachments/TC-.../file.ext
+```
+
+`manifest.json` records schema/generator versions, fixed dataset epoch, seed,
+profile, file/domain/language/persona/difficulty distributions, verification
+status, config/policy hashes and SHA-256 for every generated artifact and
+attachment. There is no wall-clock timestamp, so the same config + seed
+reproduces the case JSON and attachment bytes.
+
+### v2 measured sample
+
+The committed `datasets/v2-sample` has 72 cases, 70 attachment files, 16
+personas, 20 intents and 10 file types. `reports/v2/evaluation.json` records
+measured values: schema validity 1.0, prompt span accuracy 1.0, file open rate
+1.0, extraction accuracy 1.0, entity location accuracy 1.0, exact/near/document
+duplicate rates 0.0, negative share 0.25, multi-domain share 0.1806, attachment
+share 0.7222 and 5 OCR-oriented cases. Of 72 cases, 67 are fully verified and 5 are
+`verified_partial` because image/scanned annotations are render-layout verified,
+not OCR-verified.
+
+### v2 limitations
+
+These are deliberate and documented rather than hidden:
+
+- PDF content is Latin/English because the standard-library PDF writer uses
+  built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT.
+- OCR images use a bitmap Latin font; Thai OCR images are out of scope.
+- Image/scanned-PDF OCR is verified at layout level, not with a third-party OCR
+  engine. Rotated OCR images keep pre-render bounding boxes (`bbox_space:
+  pre_render`).
+- PPTX speaker notes and native PowerPoint tables are not emitted yet.
+- YAML/TOML/INI/ENV verification uses the generator's strict subset parser.
+- Archives, password-protected files, audio, video and executables are out of
+  scope.
+- `report-v2` reports what it measured; a `verified_partial` case must not be
+  treated as OCR accuracy evidence.
+
 ## What it produces
 
 | Domain | Example entity types |
@@ -206,11 +335,12 @@ Latest run on the committed sample (`seed 7`, 140 cases):
 See [`docs/evaluation-report.md`](docs/evaluation-report.md) and
 [`reports/evaluation.md`](reports/evaluation.md) for the generated report.
 
-Automated suite: **73 tests pass** (`python -m unittest discover -s tests -t .`).
+Automated suite: **112 tests pass** (`python -m unittest discover -s tests -t .`).
 The suite covers entity validity and safety, exact spans, every template in all
 three languages, policy precedence, validation failures, annotation repair,
-generator reproducibility/dedup/splits, security scans, schema agreement, and
-the CLI.
+generator reproducibility/dedup/splits, security scans, schema agreement, the
+CLI, every v2 file renderer's round trip, v2 distribution/persona/OCR cases, v2
+schema agreement and v2 security scans.
 
 ## Safety
 

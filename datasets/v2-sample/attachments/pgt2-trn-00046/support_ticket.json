@@ -1,0 +1,29 @@
+{
+  "title": "Support ticket",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "Support ticket #48219"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Requester: ธนกร พูลสวัสดิ์ <piyada.anan81@example.org>"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Phone: 082-164-7741  Account: CUS-841"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Issue: after the latest release the checkout page shows an error. The customer tried twice and is waiting for an update."
+    },
+    {
+      "kind": "paragraph",
+      "text": "Browser console showed request header: at_example_fake_954298bd55f893df683e"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Suggested next step: confirm the service health dashboard and review the gateway log."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+date,employee,email,category,card,amount
+2026-03-10,Contact 1,contact1@example.com,travel,4111114785544427,"17,741.00"
+2026-03-11,Contact 2,contact2@example.com,training,5555550165567894,"2,038.00"
+2026-03-12,Contact 3,contact3@example.com,travel,6011112818789668,"1,622.00"
+2026-03-13,Contact 4,contact4@example.com,software,5555559816334802,"8,061.00"
+2026-03-14,Contact 5,contact5@example.com,software,4242421487030536,"11,736.00"
+2026-03-15,Contact 6,contact6@example.com,training,4111114732067712,"1,980.00"

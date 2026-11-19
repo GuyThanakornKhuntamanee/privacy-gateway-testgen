@@ -131,6 +131,81 @@ repair a unique occurrence, refuses to guess when a value is ambiguous, and
 reports semantic verification separately. This avoids silently treating
 generated labels as authoritative ground truth.
 
+## v2 file-aware architecture
+
+Schema `2.0` is additive. v1 prompts, exports and gates remain unchanged; v2
+adds a new package at `src/privacy_gateway_testgen/v2/`.
+
+```
+profile + seed
+  -> target sampling (persona, intent, language, domains, attachments)
+  -> synthetic organisation (shared people, hosts, vendors, systems)
+  -> document archetype (business meaning)
+  -> renderer (txt/csv/json/yaml/xml/log/md/env/ini/conf/toml/sql/tf/code
+               docx/xlsx/pptx/pdf/png/jpg)
+  -> span-first document composition
+  -> real file bytes
+  -> reopen, parse, locate and verify
+  -> case + attachment metadata + file-aware ground truth
+```
+
+The same rule as v1 applies: entities are created first and inserted through a
+builder that records their position. A renderer maps that logical position to
+file-specific provenance rather than searching the finished file.
+
+| Module | Responsibility |
+|---|---|
+| `v2/docmodel.py` | blocks, cells, placements, document/slide model |
+| `v2/org.py` | one coherent fictional organisation per case |
+| `v2/realism.py` | personas, intents, natural prompt forms, imperfections |
+| `v2/archetypes.py` | 69 business archetypes across HR, finance, sales, healthcare, IT, management and operations |
+| `v2/renderers/textfmt.py` | text, CSV, JSON, YAML, XML, logs, configs, SQL, Terraform, code |
+| `v2/renderers/ooxml.py` | macro-free DOCX/XLSX/PPTX via `zipfile` + OOXML XML |
+| `v2/renderers/pdf.py` | native PDF pages plus image-only scanned pages |
+| `v2/renderers/images.py` | PNG and baseline JPEG with a bitmap font and OCR difficulty |
+| `v2/extract.py` | reopen/parse/locate verification |
+| `v2/generate.py` | target sampling, bundles, dedupe, splits and export |
+| `v2/evaluate.py` | measured coverage, verification and realism diagnostics |
+| `v2/verify.py` | re-verify an exported dataset from disk |
+
+### v2 trust boundary
+
+A renderer returning bytes is not proof that a case is correct. Every attachment
+is reopened with the same class of parser an evaluation harness would use:
+
+- text formats are decoded and the recorded character span is re-sliced;
+- CSV is parsed with `csv`;
+- JSON is parsed with `json` and the JSON path is resolved;
+- XML is parsed with ElementTree and the element path is resolved;
+- DOCX/XLSX/PPTX are opened as ZIP packages and the paragraph/cell/shape/slide
+  locations are resolved;
+- PDF content streams are parsed and the page/text location is checked;
+- PNG/JPEG headers and dimensions are checked and image bounding boxes are
+  bounds-checked.
+
+Image OCR is **not** performed by the test suite. Image and scanned-PDF cases
+are marked `verified_layout` / `verified_partial`; the expected OCR line is
+pre-render ground truth, not an OCR result. This distinction is intentional.
+
+### Determinism and safety in v2
+
+- ZIP members use a fixed 1980-01-01 timestamp; Office/PDF metadata uses
+  `2026-01-01T00:00:00Z`; no wall-clock time enters the manifest.
+- Office packages are macro-free and contain no executables or external
+  relationships except safe `example` hyperlinks.
+- PDFs contain no JavaScript, launch actions, embedded files or remote content.
+- Spreadsheet formulas are limited to generated arithmetic; no external links.
+- Images are synthetic screenshots and clearly marked; no real identity
+  documents or biometric data are generated.
+- `v2/evaluate.py` reports measured gates, not aspirational claims.
+
+## What v2 does not do
+
+Archives (including recursive extraction), password-protected archives, audio,
+video, speech recognition, executables and multimedia classification remain out
+of scope. The renderer registry and `Doc` model are the extension points for a
+future version.
+
 ## Extension points
 
 - New entity value: add a factory and register it in `entities/*.py`.

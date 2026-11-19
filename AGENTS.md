@@ -1,32 +1,40 @@
 # AGENTS.md
 
-Deterministic synthetic test prompts with exact ground-truth spans for
-privacy-aware gateways. The skill (`SKILL.md`) and the Python package
-(`src/privacy_gateway_testgen/`) ship together and must stay in agreement.
+Deterministic synthetic test prompts, real attachment files and exact
+ground-truth locations for privacy-aware gateways. The skill (`SKILL.md`) and the
+Python package (`src/privacy_gateway_testgen/`) ship together and must stay in
+agreement.
 
 ## Gate
 
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -t . -v
 PYTHONPATH=src python -m privacy_gateway_testgen evaluate --config configs/default.json --out reports --dataset-out datasets/sample
+PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 --dataset datasets/v2-sample
+PYTHONPATH=src python -m privacy_gateway_testgen verify-v2 --dataset datasets/v2-sample
+PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2
 ```
 
-73 tests, ~4 s, standard library only. A change is done when both pass and the
-`datasets/sample` + `reports/` diff is intended.
+112 tests, ~20 s, standard library only. A change is done when all pass and the
+`datasets/sample`, `datasets/v2-sample` and `reports/` diffs are intended.
 
 ## Invariants
 
-- **Span-first.** Prompts record spans while being built through `PromptBuilder`.
-  Annotating a finished prompt with regex loses them.
+- **Span-first.** Prompts and attachments record entity positions while being
+  built. Annotating a finished file with regex loses them.
+- **Verified files.** A renderer returning bytes is not success. Every v2
+  attachment is reopened with a parser and every location is resolved.
 - **Synthetic only.** Reserved example domains, `example`/`fake` markers, and
   nothing that could behave as a live credential.
-- **Declared metadata is truth.** A template's domains, length class,
-  difficulty and flags must match what its builder emits.
+- **Declared metadata is truth.** A template/archetype's domains, length class,
+  difficulty, renderers and flags must match what its builder emits.
 - **Config over code.** Weights, distributions, policy actions and thresholds
   live in `configs/*.json`.
 - **Standard library only.** No new dependencies.
 - **Byte-identical output.** The same config and seed reproduce `datasets/` and
   `reports/` exactly; regenerate them when a change alters output.
+- **OCR is not assumed.** Image/scanned-PDF cases are layout-verified and
+  marked `verified_partial` unless an OCR engine actually ran.
 
 ## Where to look
 

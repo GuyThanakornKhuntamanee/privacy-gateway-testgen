@@ -30,6 +30,42 @@ python -m pip install -e .
 4. **Configurable over hardcoded.** Entity weights, prompt distributions,
    policy actions, and gate thresholds belong in JSON configuration. Avoid
    company-specific or jurisdiction-specific defaults.
+5. **A file is not verified when it renders.** For v2, reopen it with a parser,
+   resolve every recorded location, and mark image/scanned-PDF cases
+   `verified_partial` unless an OCR engine actually ran.
+
+## Adding a v2 document archetype
+
+1. Add a builder in `src/privacy_gateway_testgen/v2/archetypes.py` using
+   `DocBuilder`. Insert entities through `.para`, `.table` and `.record`; never
+   append `entity.value` directly.
+2. Declare the real category, domains, supported renderers, difficulty and
+   rationale in the `ARCHETYPES` registry. Keep the builder's output consistent
+   with that declaration.
+3. If the document needs a header/footer, hidden sheet, XML root or OCR style,
+   set it through `builder.build(...)` or `doc.metadata`, not through a
+   post-render search.
+4. Run `tests/test_v2_renderers.py` and `tests/test_v2_generation.py`; all
+   supported formats must reopen and verify.
+
+## Adding a v2 renderer
+
+1. Implement `render_*` in `v2/renderers/` and return a `RenderedFile` with the
+   MIME type, extraction method, and every entity location.
+2. Register the extension in `v2/renderers/__init__.py` and add it to
+   `SUPPORTED_FORMATS` through its family set.
+3. Add the corresponding extraction and verification path to `v2/extract.py`.
+   A renderer is not production-ready until the round-trip test passes.
+4. Do not add a dependency. OOXML uses `zipfile` + XML, PNG uses `zlib`, JPEG is
+   encoded locally, and PDF is written directly.
+
+## v2 prompt realism
+
+Prompt builders live in `v2/realism.py`. Keep the sensitive data incidental:
+the prompt should read like a workplace request, not like an instruction to
+detect a category. When adding a phrase, keep the Thai/English/mixed variants
+and the imperfection path. Do not make every example ungrammatical; typo rate is
+configuration.
 
 ## Adding an entity factory
 
@@ -70,6 +106,8 @@ The default policy is illustrative. Do not present it as a legal requirement.
 
 - [ ] `PYTHONPATH=src python -m unittest discover -s tests -t . -v` passes.
 - [ ] `python -m privacy_gateway_testgen evaluate --config configs/default.json --out reports --dataset-out datasets/sample` passes.
+- [ ] `python -m privacy_gateway_testgen validate-v2 --dataset datasets/v2-sample` and `verify-v2 --dataset datasets/v2-sample` pass.
+- [ ] `python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2` passes.
 - [ ] New entity values are synthetic and non-functional.
 - [ ] New templates declare accurate metadata and use the builder.
 - [ ] Documentation/config examples are updated.

@@ -10,7 +10,7 @@
     "train.jsonl": "f5af9713be21f3b0d87846bf2b09903274fa7fd17eeef1c6f11600ab19505d65",
     "validation.jsonl": "9af8f84c0381bf19988e8ac8fb31f24e90ba8e4604fe71135a5c60a6fca7d022"
   },
-  "generator_version": "0.1.0",
+  "generator_version": "0.2.0",
   "near_duplicate_threshold": 0.98,
   "policy_sha256": "542691e4c21940c5dc274c220595ee39b3365439f2f345af42a37f97c57ee1f7",
   "schema_version": "1.0",

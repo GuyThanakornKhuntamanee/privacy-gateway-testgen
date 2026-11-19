@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/privacy-gateway-testgen/testcase.v2.schema.json",
+  "title": "Privacy Gateway File-Aware Test Case (schema 2.0)",
+  "type": "object",
+  "required": [
+    "schema_version", "test_id", "prompt", "language", "persona", "intent",
+    "formality", "profile", "domains", "entities", "attachments",
+    "attachment_count", "file_types", "archetypes", "difficulty",
+    "test_category", "test_objective", "ambiguity", "policy_scenario",
+    "policy_decision_expected", "action_expected", "routing_expected",
+    "transformation_expected", "policy_rule_ids", "output_leakage_check_expected",
+    "token_restoration_expected", "audit_log_expected", "rationale", "tags",
+    "generation_method", "verification_status", "verification", "prompt_length",
+    "prompt_length_class", "prompt_style", "context_complexity", "structure",
+    "polarity", "domain_scope", "detection_mode", "split", "template_id",
+    "template_family", "dataset_version", "seed", "char_offset_convention",
+    "extraction_methods", "content_language", "document_fingerprint"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "test_id": {"type": "string", "minLength": 1},
+    "prompt": {"type": "string", "minLength": 1},
+    "language": {"enum": ["th", "en", "mixed"]},
+    "persona": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "formality": {"enum": ["formal", "neutral", "casual"]},
+    "profile": {"type": "string", "minLength": 1},
+    "domains": {
+      "type": "array",
+      "items": {"enum": ["pii", "payment", "secrets", "infrastructure"]},
+      "uniqueItems": true
+    },
+    "entity_types": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "detection_expected": {"type": "boolean"},
+    "classification_expected": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "polarity": {"enum": ["positive", "negative"]},
+    "domain_scope": {"enum": ["none", "single_domain", "multi_domain"]},
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "attachment_id", "filename", "extension", "file_type", "mime_type",
+          "size_bytes", "sha256", "archetype", "renderer", "synthetic",
+          "generated_seed", "expected_extraction_method", "verification", "path"
+        ],
+        "properties": {
+          "attachment_id": {"type": "string", "pattern": "^ATT-[0-9]{3}$"},
+          "filename": {"type": "string", "minLength": 1},
+          "extension": {"type": "string", "minLength": 1},
+          "file_type": {"type": "string", "minLength": 1},
+          "mime_type": {"type": "string", "minLength": 1},
+          "size_bytes": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "archetype": {"type": "string", "minLength": 1},
+          "renderer": {"type": "string", "minLength": 1},
+          "synthetic": {"const": true},
+          "generated_seed": {"type": "integer"},
+          "expected_extraction_method": {
+            "enum": ["direct_text", "structured_parser", "office_parser", "pdf_text", "ocr", "mixed"]
+          },
+          "verification": {
+            "type": "object",
+            "required": ["status", "checks", "issues"],
+            "properties": {
+              "status": {"enum": ["verified", "verified_layout", "unverified"]},
+              "checks": {"type": "array", "items": {"type": "string"}},
+              "issues": {"type": "array", "items": {"type": "object"}}
+            }
+          },
+          "path": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "attachment_count": {"type": "integer", "minimum": 0, "maximum": 3},
+    "file_types": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "archetypes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "annotation_id", "canonical_entity_id", "domain", "entity_type",
+          "exact_entity_value", "detection_expected", "classification_expected",
+          "valid", "note", "source", "source_attachment", "filename", "role",
+          "location", "verification"
+        ],
+        "properties": {
+          "annotation_id": {"type": "string", "pattern": "^ENT-[0-9]{5}$"},
+          "canonical_entity_id": {"type": "string", "minLength": 1},
+          "domain": {"enum": ["pii", "payment", "secrets", "infrastructure", "lookalike"]},
+          "entity_type": {"type": "string", "minLength": 1},
+          "exact_entity_value": {"type": "string", "minLength": 1},
+          "detection_expected": {"type": "boolean"},
+          "classification_expected": {"type": ["string", "null"]},
+          "valid": {"type": "boolean"},
+          "note": {"type": "string"},
+          "source": {"enum": ["prompt", "attachment"]},
+          "source_attachment": {"type": ["string", "null"]},
+          "filename": {"type": ["string", "null"]},
+          "role": {"type": "string"},
+          "character_start": {"type": "integer", "minimum": 0},
+          "character_end": {"type": "integer", "minimum": 0},
+          "location": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "prompt_span", "text_span", "csv_cell", "json_path", "yaml_path",
+                  "xml_path", "key_path", "xlsx_cell", "docx_paragraph",
+                  "docx_table_cell", "docx_header", "docx_footer", "pptx_shape",
+                  "pdf_text", "pdf_image", "image_ocr"
+                ]
+              },
+              "line": {"type": "integer", "minimum": 1},
+              "character_start": {"type": "integer", "minimum": 0},
+              "character_end": {"type": "integer", "minimum": 0},
+              "path": {"type": "string"},
+              "row": {"type": "integer", "minimum": 1},
+              "column": {"type": "integer", "minimum": 1},
+              "header": {"type": "string"},
+              "sheet": {"type": "string"},
+              "cell": {"type": "string"},
+              "table": {"type": "integer", "minimum": 1},
+              "paragraph": {"type": "integer", "minimum": 0},
+              "slide": {"type": "integer", "minimum": 1},
+              "shape": {"type": "integer", "minimum": 1},
+              "page": {"type": "integer", "minimum": 1},
+              "x": {"type": "number"},
+              "y": {"type": "number"},
+              "width": {"type": "number"},
+              "height": {"type": "number"},
+              "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+              "source_type": {"enum": ["native", "embedded_image", "ocr", "table"]},
+              "expected_ocr_text": {"type": "string"},
+              "ocr_normalized": {"type": "boolean"},
+              "case_sensitive": {"type": "boolean"},
+              "bbox_space": {"enum": ["pre_render", "post_render"]},
+              "rotation_applied": {"type": "boolean"}
+            }
+          },
+          "verification": {"enum": ["verified", "verified_layout", "unverified"]}
+        }
+      }
+    },
+    "difficulty": {"type": "integer", "minimum": 1, "maximum": 5},
+    "test_category": {"enum": ["single_domain", "multi_domain", "negative", "ambiguous", "adversarial"]},
+    "test_objective": {
+      "enum": [
+        "detection_and_policy", "contextual_detection", "cross_domain_policy",
+        "false_positive", "adversarial_robustness", "file_ingestion_and_policy",
+        "ambiguous_context"
+      ]
+    },
+    "ambiguity": {
+      "type": "object",
+      "required": ["is_ambiguous", "rationale"],
+      "properties": {
+        "is_ambiguous": {"type": "boolean"},
+        "rationale": {"type": "string"}
+      }
+    },
+    "policy_scenario": {"type": "string", "minLength": 1},
+    "policy_decision_expected": {"enum": ["ALLOW", "MASK", "TOKENIZE", "REDACT", "LOCAL_ONLY", "BLOCK"]},
+    "action_expected": {
+      "type": "object",
+      "additionalProperties": {"enum": ["ALLOW", "MASK", "TOKENIZE", "REDACT", "LOCAL_ONLY", "BLOCK"]}
+    },
+    "routing_expected": {"enum": ["external", "local", "blocked"]},
+    "transformation_expected": {"type": "array"},
+    "policy_rule_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "output_leakage_check_expected": {"type": "boolean"},
+    "token_restoration_expected": {"enum": ["authorized_context_only", "not_applicable"]},
+    "audit_log_expected": {
+      "type": "object",
+      "required": ["record_fields", "forbidden_fields"],
+      "properties": {
+        "record_fields": {"type": "array", "items": {"type": "string"}},
+        "forbidden_fields": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "rationale": {"type": "string", "minLength": 1},
+    "tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "generation_method": {"type": "string", "minLength": 1},
+    "verification_status": {"enum": ["verified", "verified_partial", "unverified"]},
+    "verification": {
+      "type": "object",
+      "properties": {
+        "status": {"enum": ["verified", "verified_partial", "unverified"]},
+        "attachments_checked": {"type": "integer", "minimum": 0},
+        "attachments_verified": {"type": "integer", "minimum": 0},
+        "ocr_layout_only": {"type": "integer", "minimum": 0}
+      }
+    },
+    "prompt_length": {"type": "integer", "minimum": 1},
+    "prompt_length_class": {"enum": ["short", "medium", "long"]},
+    "prompt_style": {"enum": ["short", "medium", "long"]},
+    "prompt_styles": {"type": "array", "items": {"type": "string"}},
+    "context_complexity": {"enum": ["low", "medium", "high"]},
+    "structure": {"enum": ["file_attachment", "pasted_text", "unstructured", "report", "markdown", "json", "yaml", "xml", "log", "table", "code"]},
+    "detection_mode": {"enum": ["deterministic", "contextual"]},
+    "edge_case": {"type": "boolean"},
+    "adversarial": {"type": "boolean"},
+    "split": {"enum": ["train", "validation", "test"]},
+    "template_id": {"type": "string"},
+    "template_family": {"type": "string"},
+    "dataset_version": {"type": "string"},
+    "seed": {"type": "integer"},
+    "char_offset_convention": {"const": "unicode_codepoints_0_based_end_exclusive"},
+    "content_language": {"enum": ["th", "en", "mixed"]},
+    "document_fingerprint": {"type": "string", "minLength": 8},
+    "extraction_methods": {"type": "array", "items": {"type": "string"}}
+  }
+}

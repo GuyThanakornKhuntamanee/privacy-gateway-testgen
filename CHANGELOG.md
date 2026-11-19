@@ -4,6 +4,51 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [0.2.0] - 2026-11-20
+
+### Added
+
+- Additive schema `2.0` file-aware generator (`generate-v2`, `validate-v2`,
+  `report-v2`, `verify-v2`, `list-profiles-v2`, `list-archetypes-v2`).
+- Real attachment generation: TXT, CSV, JSON, YAML/YML, XML, LOG, MD, ENV, INI,
+  CONF, TOML, SQL, Terraform, Python/JS/TS/Java/Go, DOCX, XLSX, PPTX, PDF, PNG,
+  JPG/JPEG. OOXML files are macro-free; images use a pure-Python rasterizer.
+- File-aware ground truth locations: `csv_cell`, `json_path`, `yaml_path`,
+  `xml_path`, `key_path`, `xlsx_cell`, `docx_paragraph`, `docx_table_cell`,
+  `docx_header`/`docx_footer`, `pptx_shape`, `pdf_text`, `pdf_image`,
+  `image_ocr` and `text_span`.
+- 69 document archetypes across HR, finance, sales/CRM, healthcare, IT, management
+  and operations; one archetype can render as multiple formats.
+- Synthetic organisation profiles with coherent people, customers, vendors,
+  hosts, endpoints and projects shared across a case.
+- Human-like prompt engine with 16 personas, 22 intents, Thai/English/mixed
+  templates, configurable formality, typos, fragments, code switching and
+  destination context.
+- Negative, ambiguous, multi-domain and multi-attachment cases with per-file
+  provenance.
+- Seven generation profiles: `benchmark-balanced`, `real-world-enterprise`,
+  `thai-enterprise`, `developer-security`, `office-documents`, `ocr` and
+  `negative-hard`, plus custom profile files.
+- File round-trip verification, dataset re-verification from disk, duplicate and
+  document-fingerprint checks, measured coverage/realism reports.
+- `datasets/v2-sample` (72 cases, 70 files) and `reports/v2/`.
+- 39 additional unittest cases (112 total) covering every file family.
+
+### Changed
+
+- Package version `0.2.0`; v1 schema `1.0`, commands and sample dataset are
+  unchanged.
+
+### Known limitations
+
+- PDF content is Latin/English only because built-in PDF fonts are WinAnsi.
+- OCR images are Latin-script bitmap text; image/scanned-PDF annotations are
+  layout-verified, not OCR-verified.
+- PPTX speaker notes and native tables are not emitted.
+- YAML/TOML/INI/ENV parsing uses the generator's strict subset.
+- Archives, password-protected files, audio, video and executables are out of
+  scope.
+
 ## [0.1.0] - 2026-11-09
 
 ### Added

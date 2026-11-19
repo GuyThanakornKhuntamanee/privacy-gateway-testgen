@@ -9,7 +9,10 @@ Run every item before publishing a tag. Do not publish if any gate fails.
 - [ ] `CHANGELOG.md` updated (or release notes drafted) with user-visible
       changes, schema changes, and policy-default changes.
 - [ ] `dataset_version` in `configs/default.json` bumped if the generated data
+      changes; v2 sample version in `configs/v2/default.json` bumped if v2 data
       changes.
+- [ ] `schemas/testcase.v2.schema.json` and `docs/v2-design.md` are current if
+      schema 2.0 changed.
 
 ## 2. Verify the code
 
@@ -17,19 +20,30 @@ Run every item before publishing a tag. Do not publish if any gate fails.
 - [ ] No skipped tests for functionality that is claimed to work.
 - [ ] No third-party runtime imports.
 - [ ] `python -m compileall src` succeeds.
+- [ ] Each v2 renderer family reopens and verifies (`tests/test_v2_renderers.py`).
 
 ## 3. Verify the data
 
 - [ ] Regenerate the sample: `generate --config configs/default.json --out datasets/sample`.
+- [ ] Regenerate the v2 sample:
+      `generate-v2 --config configs/v2/default.json --profile real-world-enterprise --out datasets/v2-sample`.
 - [ ] `validate` passes on `all.jsonl`, `train.jsonl`, `validation.jsonl`,
       `test.jsonl`.
+- [ ] `validate-v2 --dataset datasets/v2-sample` and
+      `verify-v2 --dataset datasets/v2-sample` pass.
 - [ ] `evaluate` passes with the shipped config and writes
       `reports/evaluation.json` / `.md`.
+- [ ] `report-v2 --dataset datasets/v2-sample --out reports/v2` passes and
+      writes `evaluation.json`, `evaluation.md`, `verification.json`.
 - [ ] Split integrity is clean (no template family or near-duplicate across
       splits).
 - [ ] All six actions appear in the sample.
 - [ ] Security scan tests pass; inspect any new entity shape manually.
-- [ ] Manifest hashes match the committed files.
+- [ ] Manifest hashes match the committed files, including v2 attachment hashes.
+- [ ] No Office macro, PDF JavaScript, external relationship or executable is
+      present in generated attachments.
+- [ ] Image/scanned-PDF cases are marked `verified_partial`; no OCR accuracy is
+      claimed without an OCR run.
 
 ## 4. Review the documentation
 

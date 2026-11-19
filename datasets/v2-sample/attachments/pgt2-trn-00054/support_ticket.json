@@ -1,0 +1,25 @@
+{
+  "title": "Support ticket",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "Support ticket #48219"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Requester: Contact 2 <contact2@example.com>"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Issue: after the latest release the checkout page shows an error. The customer tried twice and is waiting for an update."
+    },
+    {
+      "kind": "paragraph",
+      "text": "Failed order reference: TXN-2026-48879002"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Suggested next step: confirm the service health dashboard and review the gateway log."
+    }
+  ]
+}

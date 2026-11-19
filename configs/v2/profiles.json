@@ -1,0 +1,133 @@
+{
+  "benchmark-balanced": {
+    "description": "Balanced domains, languages, personas and file families for model comparison.",
+    "distributions": {
+      "language": {"th": 0.34, "en": 0.33, "mixed": 0.33},
+      "domain": {"pii": 0.25, "payment": 0.25, "secrets": 0.25, "infrastructure": 0.25},
+      "negative_ratio": 0.20,
+      "multi_domain_ratio": 0.30,
+      "ambiguous_ratio": 0.10,
+      "attachment_probability": 0.85,
+      "file_type": {
+        "txt": 0.08, "csv": 0.08, "json": 0.08, "pdf": 0.08, "png": 0.06,
+        "jpg": 0.05, "jpeg": 0.03, "docx": 0.08, "xlsx": 0.08, "pptx": 0.05,
+        "yaml": 0.06, "yml": 0.02, "xml": 0.04, "log": 0.06, "md": 0.05,
+        "env": 0.02, "ini": 0.01, "conf": 0.01, "toml": 0.01, "sql": 0.01,
+        "tf": 0.01, "py": 0.02, "js": 0.01, "ts": 0.005, "java": 0.005, "go": 0.005
+      }
+    }
+  },
+  "real-world-enterprise": {
+    "description": "Workplace skew: text, spreadsheets, Office documents and a smaller share of files.",
+    "distributions": {
+      "attachment_probability": 0.72,
+      "file_type": {
+        "txt": 0.16, "csv": 0.13, "json": 0.06, "pdf": 0.11, "png": 0.05,
+        "jpg": 0.03, "jpeg": 0.01, "docx": 0.14, "xlsx": 0.15, "pptx": 0.04,
+        "yaml": 0.02, "yml": 0.005, "xml": 0.01, "log": 0.03, "md": 0.04,
+        "env": 0.005, "ini": 0.002, "conf": 0.002, "toml": 0.001, "sql": 0.001,
+        "tf": 0.001, "py": 0.003, "js": 0.001, "ts": 0.001, "java": 0.0, "go": 0.0
+      },
+      "language": {"th": 0.50, "en": 0.22, "mixed": 0.28},
+      "negative_ratio": 0.20,
+      "multi_domain_ratio": 0.22,
+      "ambiguous_ratio": 0.12,
+      "typo_rate": 0.20
+    },
+    "archetype_filter": {
+      "categories": ["HR", "Finance", "Sales", "Management", "Operations", "Healthcare", "CRM"]
+    }
+  },
+  "thai-enterprise": {
+    "description": "Thai-first language mix with Thai office and customer documents.",
+    "distributions": {
+      "language": {"th": 0.68, "en": 0.08, "mixed": 0.24},
+      "persona": {
+        "hr": 0.14, "finance": 0.13, "accountant": 0.10, "support": 0.12,
+        "sales": 0.10, "manager": 0.10, "executive_assistant": 0.08,
+        "operations": 0.10, "healthcare_admin": 0.06, "intern": 0.07
+      },
+      "file_type": {
+        "txt": 0.14, "csv": 0.13, "xlsx": 0.19, "docx": 0.17, "pdf": 0.14,
+        "pptx": 0.05, "json": 0.03, "png": 0.05, "jpg": 0.03, "log": 0.02,
+        "md": 0.02, "xml": 0.01, "yaml": 0.005, "yml": 0.002, "env": 0.001,
+        "ini": 0.001, "conf": 0.001, "toml": 0.001, "sql": 0.001, "tf": 0.001,
+        "py": 0.001, "js": 0.001, "ts": 0.0, "java": 0.0, "go": 0.0
+      },
+      "negative_ratio": 0.16,
+      "multi_domain_ratio": 0.20,
+      "typo_rate": 0.22
+    },
+    "archetype_filter": {
+      "categories": ["HR", "Finance", "Sales", "Management", "Operations", "Healthcare", "CRM"]
+    }
+  },
+  "developer-security": {
+    "description": "Secrets, infrastructure, logs, configs and source code.",
+    "distributions": {
+      "domain": {"secrets": 0.42, "infrastructure": 0.36, "pii": 0.12, "payment": 0.10},
+      "persona": {"developer": 0.25, "sysadmin": 0.20, "devops": 0.18, "security_engineer": 0.22, "operations": 0.15},
+      "intent": {
+        "troubleshoot": 0.26, "inspect_config": 0.20, "explain_error": 0.14,
+        "check_code": 0.16, "find_anomalies": 0.12, "summarize": 0.06, "review_document": 0.06
+      },
+      "language": {"th": 0.35, "en": 0.40, "mixed": 0.25},
+      "file_type": {
+        "env": 0.14, "yaml": 0.13, "yml": 0.04, "log": 0.16, "py": 0.09,
+        "js": 0.04, "ts": 0.03, "json": 0.08, "conf": 0.04, "ini": 0.03,
+        "toml": 0.03, "tf": 0.05, "sql": 0.02, "txt": 0.09, "md": 0.03,
+        "xml": 0.02, "java": 0.01, "go": 0.01, "csv": 0.01, "pdf": 0.01,
+        "png": 0.02, "jpg": 0.01, "jpeg": 0.0, "docx": 0.005, "xlsx": 0.005, "pptx": 0.0
+      },
+      "negative_ratio": 0.22,
+      "multi_domain_ratio": 0.35,
+      "typo_rate": 0.24
+    },
+    "archetype_filter": {
+      "categories": ["IT", "Engineering"]
+    }
+  },
+  "office-documents": {
+    "description": "DOCX, XLSX, PDF and PPTX enterprise documents.",
+    "distributions": {
+      "file_type": {"docx": 0.30, "xlsx": 0.30, "pdf": 0.24, "pptx": 0.16},
+      "language": {"th": 0.40, "en": 0.25, "mixed": 0.35},
+      "domain": {"pii": 0.34, "payment": 0.28, "secrets": 0.18, "infrastructure": 0.20},
+      "negative_ratio": 0.16,
+      "multi_domain_ratio": 0.32,
+      "attachment_probability": 1.0
+    },
+    "archetype_filter": {
+      "categories": ["HR", "Finance", "Sales", "Management", "Operations", "Healthcare", "CRM"]
+    }
+  },
+  "ocr": {
+    "description": "PNG/JPEG screenshots and scanned PDFs for extraction/OCR evaluation.",
+    "distributions": {
+      "file_type": {"png": 0.43, "jpg": 0.28, "jpeg": 0.09, "pdf": 0.20},
+      "language": {"th": 0.20, "en": 0.55, "mixed": 0.25},
+      "attachment_probability": 1.0,
+      "attachment_count": {"1": 0.92, "2": 0.08, "3": 0.0},
+      "ocr_difficulty": {"1": 0.20, "2": 0.35, "3": 0.30, "4": 0.15},
+      "negative_ratio": 0.12,
+      "multi_domain_ratio": 0.20,
+      "typo_rate": 0.12
+    },
+    "archetype_filter": {
+      "id_prefix": ["screenshot_", "scanned_"]
+    }
+  },
+  "negative-hard": {
+    "description": "Hard negatives, lookalikes and ambiguous context cases.",
+    "distributions": {
+      "negative_ratio": 0.55,
+      "ambiguous_ratio": 0.25,
+      "multi_domain_ratio": 0.20,
+      "attachment_probability": 0.80,
+      "domain": {"pii": 0.25, "payment": 0.25, "secrets": 0.25, "infrastructure": 0.25}
+    },
+    "archetype_filter": {
+      "categories": ["HR", "Finance", "Sales", "Management", "Operations", "Healthcare", "IT", "CRM"]
+    }
+  }
+}

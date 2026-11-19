@@ -1,0 +1,76 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Length 2681 >>
+stream
+BT /F2 18.00 Tf 0.100 0.120 0.180 rg 1 0 0 1 48.00 48.00 Tm (Purchase Order) Tj ET
+BT /F2 13.00 Tf 0.080 0.100 0.140 rg 1 0 0 1 48.00 74.00 Tm (Purchase Order) Tj ET
+BT /F1 10.00 Tf 0.080 0.100 0.140 rg 1 0 0 1 48.00 94.00 Tm (Reference: PUR-2026-8959  |  Date: 2026-03-18  |  Due: 2026-04-17) Tj ET
+BT /F1 10.00 Tf 0.080 0.100 0.140 rg 1 0 0 1 48.00 112.00 Tm (Bill to: Contact 1 | contact1@example.com) Tj ET
+BT /F2 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 50.00 128.00 Tm (description) Tj ET
+BT /F2 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 174.75 128.00 Tm (quantity) Tj ET
+BT /F2 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 299.50 128.00 Tm (unit_price) Tj ET
+BT /F2 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 424.25 128.00 Tm (line_total) Tj ET
+0.700 0.720 0.750 RG 0.50 w 48.00 114.50 m 547.00 114.50 l S
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 50.00 143.50 Tm (Noise-cancelling Headset) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 174.75 143.50 Tm (7) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 299.50 143.50 Tm (11,946.00) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 424.25 143.50 Tm (83,622.00) Tj ET
+0.700 0.720 0.750 RG 0.50 w 48.00 130.00 m 547.00 130.00 l S
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 50.00 159.00 Tm (27-inch Monitor) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 174.75 159.00 Tm (8) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 299.50 159.00 Tm (9,364.00) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 424.25 159.00 Tm (74,912.00) Tj ET
+0.700 0.720 0.750 RG 0.50 w 48.00 145.50 m 547.00 145.50 l S
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 50.00 174.50 Tm (Ergonomic Chair) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 174.75 174.50 Tm (8) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 299.50 174.50 Tm (11,913.00) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 424.25 174.50 Tm (95,304.00) Tj ET
+0.700 0.720 0.750 RG 0.50 w 48.00 161.00 m 547.00 161.00 l S
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 50.00 190.00 Tm (USB-C Dock) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 174.75 190.00 Tm (3) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 299.50 190.00 Tm (7,853.00) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.140 rg 1 0 0 1 424.25 190.00 Tm (23,559.00) Tj ET
+0.700 0.720 0.750 RG 0.50 w 48.00 176.50 m 547.00 176.50 l S
+BT /F1 10.00 Tf 0.080 0.100 0.140 rg 1 0 0 1 48.00 207.50 Tm (Subtotal: 277,397.00   VAT 7%: 19,417.00   Total: 296,814.00) Tj ET
+BT /F1 10.00 Tf 0.080 0.100 0.140 rg 1 0 0 1 48.00 225.50 Tm (Billing service endpoint: https://www.example.org/help) Tj ET
+BT /F1 10.00 Tf 0.080 0.100 0.140 rg 1 0 0 1 48.00 243.50 Tm (Synthetic example document. Not a real invoice or payment instruction.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
+endobj
+7 0 obj
+<< /Type /Catalog /Pages 6 0 R >>
+endobj
+8 0 obj
+<< /Title (Purchase Order) /Author (Privacy Gateway Testgen) /Producer (privacy-gateway-testgen) /CreationDate (D:20260101000000Z) /ModDate (D:20260101000000Z) >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000015 00000 n 
+0000000112 00000 n 
+0000000214 00000 n 
+0000000309 00000 n 
+0000003042 00000 n 
+0000003188 00000 n 
+0000003245 00000 n 
+0000003294 00000 n 
+trailer
+<< /Size 9 /Root 7 0 R /Info 8 0 R >>
+startxref
+3472
+%%EOF

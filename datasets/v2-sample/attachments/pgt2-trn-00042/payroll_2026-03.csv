@@ -1,0 +1,6 @@
+employee,email,gross,tax,net
+Contact 1,contact1@example.com,"56,211.00","2,810.00","53,401.00"
+Contact 2,contact2@example.com,"81,454.00","4,072.00","77,382.00"
+Contact 3,contact3@example.com,"79,336.00","3,966.00","75,370.00"
+Contact 4,contact4@example.com,"47,107.00","2,355.00","44,752.00"
+Contact 5,contact5@example.com,"105,812.00","5,290.00","100,522.00"

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customerExport>
+  <exported_at>2026-03-18T09:12:44Z</exported_at>
+  <customer>
+    <name>Contact 1</name>
+    <email>contact1@example.com</email>
+    <phone>+1-555-0100</phone>
+  </customer>
+  <token>YOUR_API_KEY_HERE</token>
+</customerExport>
