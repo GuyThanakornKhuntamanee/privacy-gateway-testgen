@@ -10,3 +10,5 @@ dist/
 htmlcov/
 eval-workspace/
 *.log
+.serena/
+graphify-out/
