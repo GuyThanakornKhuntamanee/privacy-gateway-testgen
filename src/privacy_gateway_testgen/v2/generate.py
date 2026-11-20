@@ -809,6 +809,15 @@ class V2Generator:
                 routing = f"relabelled_from_{attachment_language}"
                 attachment_language = measured_language
                 doc.language = attachment_language
+                if attachment_language in ("th", "mixed"):
+                    # The document was authored/localized for another language;
+                    # localize it for the measured one before measuring again.
+                    localize_doc(doc, attachment_language,
+                                 localize_headers=renderer not in MACHINE_KEY_RENDERERS)
+                    text = document_text(doc)
+                    static_stats = script_counts(document_static_text(doc))
+                    language_check = script_counts(text)
+                    language_check["static"] = static_stats
             if attachment_language == "th":
                 language_check["residual_english_labels"] = residual_english_labels(text)
             language_check["matches_declared_language"] = language_matches(

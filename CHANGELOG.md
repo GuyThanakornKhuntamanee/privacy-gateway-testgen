@@ -52,7 +52,7 @@ semantic versioning.
 - Immutable schema 2.0 fixture at `datasets/compat/v2.0-sample/`.
 - CI runs v2 generation, validation, verification, reporting, reproducibility,
   hash-seed report comparison and the 2.0 fixture.
-- 36 correctness regression tests; 166 tests total.
+- 37 correctness regression tests; 167 tests total.
 - Documented synthetic-identifier collision risk in `SECURITY.md`.
 
 ### Changed

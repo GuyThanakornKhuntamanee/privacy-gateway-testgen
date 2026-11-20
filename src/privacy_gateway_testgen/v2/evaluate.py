@@ -393,7 +393,7 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         readiness_reasons.append(
             "known_high_issues:" + ",".join(KNOWN_HIGH_CORRECTNESS_ISSUES))
     if not reproducible:
-        readiness_reasons.append("dataset_reproducibility_not_checked")
+        readiness_reasons.append("dataset_reproducibility_not_verified")
     benchmark_ready = {
         "benchmark_ready": not readiness_reasons,
         "reasons": readiness_reasons,

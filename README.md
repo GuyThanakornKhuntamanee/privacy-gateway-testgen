@@ -477,7 +477,7 @@ Latest run on the committed sample (`seed 7`, 140 cases):
 See [`docs/evaluation-report.md`](docs/evaluation-report.md) and
 [`reports/evaluation.md`](reports/evaluation.md) for the generated report.
 
-Automated suite: **166 tests pass** (`python -m unittest discover -s tests -t .`).
+Automated suite: **167 tests pass** (`python -m unittest discover -s tests -t .`).
 The suite covers entity validity and safety, exact spans, every template in all
 three languages, policy precedence, validation failures, annotation repair,
 generator reproducibility/dedup/splits, security scans, schema agreement, the

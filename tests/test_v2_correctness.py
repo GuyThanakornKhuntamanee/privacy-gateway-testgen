@@ -435,6 +435,13 @@ class LocalizationAndAddressTests(unittest.TestCase):
         self.assertIn("ชื่อ", text)
         self.assertIn(entity.value, text)
 
+    def test_revision_fallback_line_is_localized(self):
+        from privacy_gateway_testgen.v2.docmodel import Block, Doc
+        doc = Doc(archetype="memo", title="Memo", filename="memo.txt")
+        doc.blocks.append(Block("paragraph", text="Status: approved (previously draft)"))
+        localize_doc(doc, "th")
+        self.assertEqual(residual_english_labels(document_text(doc)), [])
+
     def test_thai_address_components_are_consistent(self):
         rng = random.Random(4)
         for _ in range(50):

@@ -291,3 +291,33 @@ Report determinism: รัน `report-v2` ด้วย `PYTHONHASHSEED=5` แล
 - เหตุผล exclusion ทั้งหมด: `verification_status:verified_partial`
 - เกณฑ์เข้า subset: verified, language metadata ผ่าน, consistency ไม่มี
   failed/not_evaluated; partial OCR ถูกกันออกตามข้อกำหนด
+
+## 11. Scale check: 1,000 cases
+
+รันจริงด้วย `--count 1000` (profile `benchmark-balanced`, config เดิม):
+
+- Generation: ~376 s (6.3 นาที), 1,000 cases, 1,194 attachment files,
+  ทั้ง 26 formats, ไม่มี case ไหนถูก reject
+- `validate-v2`: 0 issue cases; `verify-v2`: 1,194/1,194 verified
+- Gates: PASS ทั้งหมด (residual labels 0, language mismatch 0, duplicate 0)
+- Language: prompt th 35.4% / en 32.6% / mixed 32.0%;
+  attachment th 34.5% / en 58.0% / mixed 7.5%
+- Cross-file: 226 cases / 942 links; multi-file 272 cases
+- Consistency: 1,083 passed / 3,916 not_applicable / 0 failed / 0 not_evaluated
+- `report-v2 --check-reproducible`: PASS, `benchmark_ready: true`,
+  safe cases 908, excluded 92 (ทั้งหมดเป็น `verified_partial` OCR layout-only)
+- Report (มี regeneration check) ใช้เวลา ~377 s
+
+ข้อจำกัดที่พบระหว่างทดสอบ 1,000 เคส และแก้แล้ว:
+
+- `report-v2 --check-reproducible` เดิม rebuild ด้วย `seed`/`total_samples`
+  จาก config (72/seed 21) ทำให้ dataset ที่สร้างด้วย `--count`/`--seed` ถูก
+  รายงานว่า reproducibility ไม่ผ่าน; แก้ให้ใช้ค่าจาก `manifest.json`
+- เอกสารที่ถูก relabel เป็น `th` หลังวัด share (เช่น revision fallback
+  `Status: approved`) ยังเหลือ label อังกฤษ; แก้ให้ localize ใหม่ตามภาษาที่วัดได้
+  ก่อนตรวจ residual (residual 0 ที่ 1,000 เคส)
+
+ต้นทุน: 1,000 เคสใช้พื้นที่ประมาณ 60–80 MB (ขึ้นกับภาพ/PDF) และเวลา ~6 นาที
+ต่อการ generate หนึ่งครั้ง; report ที่มี `--check-reproducible` จะ generate ซ้ำ
+อีกครั้งจึงใช้เวลาใกล้เคียงกัน
+

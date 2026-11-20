@@ -34,7 +34,7 @@ Raw results: `reports/evaluation.json`, `reports/evaluation.md`,
 
 ## Automated tests
 
-**Result: PASS - 166 tests, 0 failures, 0 errors** (about 57 seconds).
+**Result: PASS - 167 tests, 0 failures, 0 errors** (about 57 seconds).
 
 | Area | What it covers |
 |---|---|

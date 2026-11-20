@@ -17,7 +17,7 @@ PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2
 PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 --dataset datasets/compat/v2.0-sample
 ```
 
-166 tests, ~60 s, standard library only. A change is done when all pass,
+167 tests, ~60 s, standard library only. A change is done when all pass,
 `benchmark_ready` is `true` (or its reasons are intended), and the
 `datasets/sample`, `datasets/v2-sample` and `reports/` diffs are intended.
 

@@ -131,6 +131,10 @@ def cmd_report_v2(args) -> int:
     }
     reproducible = False
     if args.check_reproducible:
+        # Rebuild with the dataset's own seed and size, not the config defaults:
+        # a dataset generated with --count/--seed must still be re-checkable.
+        config["seed"] = manifest.get("seed", config["seed"])
+        config["total_samples"] = manifest.get("total_cases", config["total_samples"])
         second = V2Generator(config, policy).generate()
         first_json = json.dumps(cases, ensure_ascii=False, sort_keys=True)
         second_json = json.dumps(second["cases"], ensure_ascii=False, sort_keys=True)
