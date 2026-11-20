@@ -1,0 +1,8 @@
+date;customer;email;amount;status;currency
+2026-03-18;ณัฐพล ชัยมงคล;naree.siriporn@example.org;84,514.00;settled;THB
+2026-03-10;ณัฐพล ชัยมงคล;naree.siriporn@example.org;4,889.00;settled;THB
+2026-03-11;จุฑามาศ ใจดี;thiraphat.naree15@example.org;5,984.00;settled;THB
+2026-03-12;มณีรัตน์ สายทอง;chanida.piyada22@example.com;20,118.00;pending;THB
+2026-03-13;ธีรภัทร สายทอง;kittipong.siriporn54@example.net;13,527.00;pending;THB
+2026-03-14;ณัฐพล ชัยมงคล;naree.siriporn@example.org;13,351.00;settled;THB
+2026-03-15;จุฑามาศ ใจดี;thiraphat.naree15@example.org;19,788.00;pending;THB

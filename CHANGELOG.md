@@ -4,6 +4,63 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [0.3.1] - 2026-11-20
+
+### Fixed
+
+- Log timestamps are generated from the scenario timeline and the rendered lines
+  are parsed back; an out-of-order log (including the final ERROR line) now fails
+  validation instead of being reported as ordered. Bracket-format logs keep the
+  full time of day.
+- Invoices/quotations and their transaction export read one total, currency,
+  transaction reference and payment schedule from the `ScenarioPlan`; linked
+  amount/currency/reference checks are real and a mismatch fails.
+- Image ground truth keeps entities atomic on one line and widens the canvas
+  instead of splitting a value; the image verifier rejects a fragment annotation.
+- Language labels are measured from Thai/Latin shares over authored text, not
+  from script presence; documents that miss their requested thresholds are
+  relabelled or rejected, and `language_stats` is reported.
+- `Contact N` and `contactN@example.com` placeholders are gone: documents use a
+  realistic synthetic organisation identity that is not an annotated target.
+- Reports are deterministic across `PYTHONHASHSEED` values (sorted n-grams,
+  deterministic tie-breaking, no timestamps in `evaluation.json`/`evaluation.md`).
+- Static labels inside compound lines (`Subtotal: ... VAT 7%: ... Total: ...`)
+  are localized; residual English labels in Thai documents are reported and
+  gated at zero.
+- Latin-only rendering is per attachment: a Thai DOCX next to an English PDF
+  keeps Thai content, and both representations share one canonical identity.
+- Thai addresses now come from a curated tambon/amphoe/province/postcode table.
+- Thai imperfection no longer mutates Thai graphemes; it uses particles, spacing
+  and punctuation only.
+- Prompt composition uses particle-free intent cores, context/persona
+  compatibility and a duplicate-phrase check instead of blind concatenation.
+- Prompt-only cases use seven content forms (email, chat, ticket, notes, table,
+  log fragment, code/config, short no-paste) instead of one fenced paste.
+- Structure references only cite structures a reader can see; images never get
+  row/column references.
+- Multi-file bundles must carry relationship evidence; unrelated bundles are
+  explicit negative/ambiguous cases.
+- Old/new revisions change a real value (status, date, amount, phone, time or
+  endpoint) with before/after values and locations in both documents.
+- Consistency checks carry `status` (`passed`, `failed`, `not_applicable`,
+  `not_evaluated`) and `evaluated_items`; `not_applicable` is not a pass.
+
+### Added
+
+- `benchmark_ready` in `report-v2` with per-check evidence and listed reasons,
+  plus `benchmark_safe_cases.jsonl` / `benchmark_excluded_cases.jsonl`.
+- Immutable schema 2.0 fixture at `datasets/compat/v2.0-sample/`.
+- CI runs v2 generation, validation, verification, reporting, reproducibility,
+  hash-seed report comparison and the 2.0 fixture.
+- 36 correctness regression tests; 166 tests total.
+- Documented synthetic-identifier collision risk in `SECURITY.md`.
+
+### Changed
+
+- `datasets/v2-sample` is generated with the `benchmark-balanced` profile so it
+  covers text, structured text, Office, spreadsheet, PDF, image, config and log.
+- `dataset_version` is `2.1.1`; package version `0.3.1`.
+
 ## [0.3.0] - 2026-11-20
 
 ### Added

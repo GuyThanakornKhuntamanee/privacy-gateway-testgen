@@ -1,0 +1,19 @@
+ประชุมแพลตฟอร์มรายสัปดาห์
+
+วันที่: 18 มี.ค. 2569  |  Location: internal video call
+
+ผู้เข้าร่วม
+
+- สมชาย แสงทอง - prasert.prasert@example.com
+- อรทัย รุ่งเรือง - kittipong.kittipong81@example.com
+- ธนกร ศรีสุข - lalita.thiraphat36@example.org
+บันทึก
+
+ทีมทบทวน checklist การ deploy และแผนย้ายข้อมูลลูกค้า ยังมีงานค้างหนึ่งรายการสำหรับเจ้าของฐานข้อมูล
+
+Finance noted a pending transaction: ORD-2026-336222
+
+รายการที่ต้องทำ
+
+- ผู้รับผิดชอบ / Owner: อรทัย รุ่งเรือง - confirm the migration window.
+- ผู้รับผิดชอบ / Owner: ธนกร ศรีสุข - remove the old deployment credential.

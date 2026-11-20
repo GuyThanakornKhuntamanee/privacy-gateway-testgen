@@ -11,12 +11,68 @@ from __future__ import annotations
 
 import datetime as _dt
 import random
+import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from ..entities import EntityPool, common, entity_types
 from ..models import Entity
 from .org import OrgProfile
+
+CHECK_STATUSES = ("passed", "failed", "not_applicable", "not_evaluated")
+LOG_BASE = _dt.datetime(2026, 3, 18, 9, 12, tzinfo=_dt.timezone.utc)
+_LOG_PATTERNS = (
+    # ISO-8601, the generator's default: 2026-03-18T09:12:00Z or +07:00
+    re.compile(r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2}))"),
+    # syslog/nginx style: 2026/03/18 09:12:00 +0000
+    re.compile(r"(\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} [+-]\d{4})"),
+    # nginx clf style: 18/Mar/2026:09:12:00 +0000
+    re.compile(r"(\d{2}/[A-Za-z]{3}/\d{4}:\d{2}:\d{2}:\d{2} [+-]\d{4})"),
+)
+
+
+def parse_log_timestamp(text: str) -> Optional[_dt.datetime]:
+    """Parse the first timestamp this generator can emit inside one log line."""
+    for pattern in _LOG_PATTERNS:
+        match = pattern.search(text)
+        if not match:
+            continue
+        value = match.group(1)
+        for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S%z",
+                    "%Y/%m/%d %H:%M:%S %z", "%d/%b/%Y:%H:%M:%S %z"):
+            try:
+                parsed = _dt.datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+            return parsed.replace(tzinfo=parsed.tzinfo or _dt.timezone.utc).astimezone(_dt.timezone.utc)
+    return None
+
+
+def validate_log_order(lines: Sequence[str]) -> dict:
+    """Chronological validation of rendered log lines.  Never assumes success."""
+    stamps = [parse_log_timestamp(line) for line in lines]
+    parsed = [stamp for stamp in stamps if stamp is not None]
+    if len(lines) < 2 or len(parsed) < 2:
+        return {"status": "not_evaluated", "evaluated_items": 0,
+                "reason": "fewer than two parseable timestamps",
+                "lines": len(lines), "parsed": len(parsed)}
+    unparsed = [index for index, stamp in enumerate(stamps) if stamp is None]
+    if unparsed:
+        return {"status": "failed", "evaluated_items": len(parsed),
+                "reason": "log line without a parseable timestamp",
+                "unparsed_lines": unparsed[:5], "lines": len(lines)}
+    out_of_order = [index for index in range(1, len(parsed)) if parsed[index] < parsed[index - 1]]
+    status = "failed" if out_of_order else "passed"
+    return {
+        "status": status,
+        "evaluated_items": len(parsed),
+        "reason": "timestamp goes backwards" if out_of_order else "",
+        "out_of_order_lines": out_of_order[:5],
+        "lines": len(lines),
+        "first": parsed[0].strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "last": parsed[-1].strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+
 
 
 def safe_negative(rng: random.Random, entity_type: str) -> Entity:
@@ -78,6 +134,67 @@ def _english_address(rng: random.Random) -> str:
     )
 
 
+def finance_checks(plan: "ScenarioPlan") -> List[dict]:
+    """Cross-file financial validators over values actually rendered."""
+    def values(key: str) -> List[dict]:
+        return plan.observations.get(key, [])
+
+    checks: List[dict] = []
+    totals = values("finance.total")
+    if len(totals) >= 2:
+        distinct = {item["value"] for item in totals}
+        checks.append({
+            "check": "linked_amount_matches",
+            "status": "passed" if len(distinct) == 1 else "failed",
+            "passed": len(distinct) == 1, "evaluated_items": len(totals),
+            "attachment_id": None,
+            "details": {"values": [item["value"] for item in totals],
+                        "attachments": [item["attachment_id"] for item in totals]},
+        })
+    else:
+        checks.append({
+            "check": "linked_amount_matches", "status": "not_applicable", "passed": False,
+            "evaluated_items": 0, "attachment_id": None,
+            "details": {"reason": "fewer than two rendered amounts in this bundle",
+                        "observed_values": [item["value"] for item in totals]},
+        })
+    currencies = values("finance.currency")
+    if len(currencies) >= 2:
+        distinct = {item["value"] for item in currencies}
+        checks.append({
+            "check": "linked_currency_matches",
+            "status": "passed" if len(distinct) == 1 else "failed",
+            "passed": len(distinct) == 1, "evaluated_items": len(currencies),
+            "attachment_id": None,
+            "details": {"values": [item["value"] for item in currencies]},
+        })
+    else:
+        checks.append({
+            "check": "linked_currency_matches", "status": "not_applicable", "passed": False,
+            "evaluated_items": 0, "attachment_id": None,
+            "details": {"reason": "fewer than two rendered currencies in this bundle",
+                        "observed_values": [item["value"] for item in currencies]},
+        })
+    references = values("finance.transaction_reference")
+    if len(references) >= 2:
+        distinct = {item["value"] for item in references}
+        checks.append({
+            "check": "linked_transaction_reference_matches",
+            "status": "passed" if len(distinct) == 1 else "failed",
+            "passed": len(distinct) == 1, "evaluated_items": len(references),
+            "attachment_id": None,
+            "details": {"values": [item["value"] for item in references]},
+        })
+    else:
+        checks.append({
+            "check": "linked_transaction_reference_matches", "status": "not_applicable",
+            "passed": False, "evaluated_items": 0, "attachment_id": None,
+            "details": {"reason": "fewer than two rendered references in this bundle",
+                        "observed_values": [item["value"] for item in references]},
+        })
+    return checks
+
+
 class ScenarioPlan:
     """Shared identities, systems and identifiers for one test case."""
 
@@ -97,18 +214,21 @@ class ScenarioPlan:
         self.currency_mode = currency_mode
         self._cache: Dict[str, Entity] = {}
         self.checks: List[dict] = []
+        self.observations: Dict[str, List[dict]] = {}
         self.issue_date = "2026-03-18"
         self.payment_terms_days = rng.choice((15, 30, 45))
         self.incident_id = f"INC-2026-{rng.randint(1000, 9999):04d}"
         self.ticket_id = f"#{rng.randint(10000, 99999)}"
         self.project = rng.choice(org.projects)
+        self._finance: Optional[dict] = None
         self._seed_cache()
 
     def _seed_cache(self) -> None:
         def seed(key: str, entity: Entity, domain: str, entity_type: str) -> None:
             if self.negative and not self.ambiguous:
                 entity = safe_negative(self.rng, entity_type)
-            self._cache[f"{domain}:{entity_type}:{key}"] = self.latinize(entity)
+            self._cache[f"{domain}:{entity_type}:{key}"] = (
+                self.latinize(entity) if self.latin_only else entity)
 
         seed("db_endpoint", self.org.database_endpoint, "infrastructure", "database_endpoint")
         seed("url", self.org.internal_url, "infrastructure", "internal_url")
@@ -143,8 +263,52 @@ class ScenarioPlan:
         return current.value
 
     def timestamp(self, index: int = 0) -> str:
-        base = _dt.datetime(2026, 3, 18, 9, 12, tzinfo=_dt.timezone.utc)
-        return (base + _dt.timedelta(minutes=index * 3, seconds=index * 7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        return self.timestamp_value(index).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    def timestamp_value(self, index: int = 0) -> _dt.datetime:
+        """One monotonic timeline shared by every log and report in the case."""
+        return LOG_BASE + _dt.timedelta(minutes=index * 3, seconds=index * 7)
+
+    def format_timestamp(self, index: int, style: str = "iso") -> str:
+        moment = self.timestamp_value(index)
+        if style == "bracket":
+            return moment.strftime("%Y/%m/%d %H:%M:%S +0000")
+        return moment.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    def finance(self, item_count: int = 4) -> dict:
+        """Shared financial facts: an invoice and its transaction export agree."""
+        if self._finance is not None:
+            return self._finance
+        products = list(common.PRODUCTS)
+        chosen = self.rng.sample(products, k=min(item_count, len(products)))
+        items = []
+        for name in chosen:
+            quantity = self.rng.randint(1, 8)
+            unit = self.rng.randrange(1200, 18000)
+            items.append({"description": name, "quantity": quantity,
+                          "unit_price": unit, "line_total": quantity * unit})
+        subtotal = sum(item["line_total"] for item in items)
+        tax = int(round(subtotal * 0.07))
+        total = subtotal + tax
+        self._finance = {
+            "transaction_id": self.shared("payment", "payment_transaction_reference", "txn_0").value,
+            "invoice_number": self.invoice_number("invoice"),
+            "currency": "THB" if self.currency_mode == "thb" else "XXX",
+            "items": items,
+            "subtotal": subtotal, "tax": tax, "total": total,
+            "tax_rate": 0.07,
+            "invoice_date": self.issue_date, "due_date": self.due_date,
+            # payment_date == invoice_date: one settled transaction, not an
+            # installment plan, so invoice total == transaction amount.
+            "payment_date": self.issue_date,
+            "payment_schedule": "single_payment",
+        }
+        return self._finance
+
+    def observe(self, key: str, value, attachment_id: str, role: str) -> None:
+        """Record a rendered value so cross-file agreement is checked, not assumed."""
+        self.observations.setdefault(key, []).append(
+            {"value": value, "attachment_id": attachment_id, "role": role})
 
     def shared(self, domain: str, entity_type: Optional[str] = None,
                key: Optional[str] = None) -> Entity:
@@ -164,11 +328,12 @@ class ScenarioPlan:
         return entity
 
     def latinize(self, entity: Entity) -> Entity:
-        """Keep Latin-only renderers free of silently mangled glyphs."""
-        if not self.latin_only or entity.value.isascii():
+        """Give a Latin-only renderer a linked Latin representation of the identity."""
+        if entity.value.isascii():
             return entity
+        canonical = entity.canonical_value or entity.value
         if entity.entity_type == "thai_name":
-            value = common.english_person(self.rng)
+            value = common.romanize_thai_name(canonical)
         elif entity.entity_type == "thai_address":
             value = _english_address(self.rng)
         elif entity.entity_type == "vehicle_registration":
@@ -182,13 +347,24 @@ class ScenarioPlan:
         else:
             value = "EXAMPLE-" + common.digits(self.rng, 8)
         return Entity(entity.domain, entity.entity_type, value, valid=entity.valid,
-                      detection_expected=entity.detection_expected, note=entity.note)
+                      detection_expected=entity.detection_expected, note=entity.note,
+                      canonical_value=canonical)
 
-    def record_check(self, name: str, passed: bool, details: dict,
-                     attachment_id: Optional[str] = None) -> None:
+    def record_check(self, name: str, status, details: dict,
+                     attachment_id: Optional[str] = None,
+                     evaluated_items: Optional[int] = None) -> None:
+        """Structured check: passed, failed, not_applicable or not_evaluated."""
+        if isinstance(status, bool):
+            status = "passed" if status else "failed"
+        if status not in CHECK_STATUSES:
+            raise ValueError(f"invalid consistency status: {status!r}")
+        if evaluated_items is None:
+            evaluated_items = 1 if status in ("passed", "failed") else 0
         self.checks.append({
             "check": name,
-            "passed": bool(passed),
+            "status": status,
+            "passed": status == "passed",
+            "evaluated_items": int(evaluated_items),
             "attachment_id": attachment_id,
             "details": details,
         })

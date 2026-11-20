@@ -1,0 +1,4 @@
+การตั้งค่าแอปพลิเคชัน
+
+$.api_key: sk_example_fake_103575db4012c0570c90c887
+$.database.password: Example-Fake-Passw0rd-2747!

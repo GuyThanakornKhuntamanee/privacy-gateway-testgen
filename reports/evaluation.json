@@ -30,31 +30,31 @@
       "name": "domain:pii",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.45
+      "value": 0.4571
     },
     {
       "name": "domain:payment",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.2786
+      "value": 0.2571
     },
     {
       "name": "domain:secrets",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.2214
+      "value": 0.2286
     },
     {
       "name": "domain:infrastructure",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.2071
+      "value": 0.2571
     },
     {
       "name": "language:th",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.4786
+      "value": 0.5
     },
     {
       "name": "language:en",
@@ -66,49 +66,49 @@
       "name": "language:mixed",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.2571
+      "value": 0.2357
     },
     {
       "name": "length:short",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.3714
+      "value": 0.3929
     },
     {
       "name": "length:medium",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.3929
+      "value": 0.3857
     },
     {
       "name": "length:long",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.2357
+      "value": 0.2214
     },
     {
       "name": "difficulty:1",
       "passed": true,
       "requirement": ">= 0.04",
-      "value": 0.3714
+      "value": 0.3929
     },
     {
       "name": "difficulty:2",
       "passed": true,
       "requirement": ">= 0.04",
-      "value": 0.1143
+      "value": 0.1214
     },
     {
       "name": "difficulty:3",
       "passed": true,
       "requirement": ">= 0.04",
-      "value": 0.2357
+      "value": 0.2214
     },
     {
       "name": "difficulty:4",
       "passed": true,
       "requirement": ">= 0.04",
-      "value": 0.2214
+      "value": 0.2071
     },
     {
       "name": "difficulty:5",
@@ -120,19 +120,19 @@
       "name": "entity_type_coverage",
       "passed": true,
       "requirement": ">= 25",
-      "value": 31
+      "value": 32
     },
     {
       "name": "negative_ratio",
       "passed": true,
       "requirement": "0.2 +/- 0.12",
-      "value": 0.2143
+      "value": 0.1857
     },
     {
       "name": "multi_domain_share",
       "passed": true,
       "requirement": ">= 0.12",
-      "value": 0.2857
+      "value": 0.2786
     },
     {
       "name": "action_coverage",
@@ -175,34 +175,34 @@
   ],
   "metrics": {
     "action_counts": {
-      "ALLOW": 30,
-      "BLOCK": 31,
-      "LOCAL_ONLY": 29,
-      "MASK": 13,
-      "REDACT": 33,
-      "TOKENIZE": 4
+      "ALLOW": 26,
+      "BLOCK": 32,
+      "LOCAL_ONLY": 34,
+      "MASK": 18,
+      "REDACT": 25,
+      "TOKENIZE": 5
     },
     "difficulty_shares": {
-      "1": 0.3714,
-      "2": 0.1143,
-      "3": 0.2357,
-      "4": 0.2214,
+      "1": 0.3929,
+      "2": 0.1214,
+      "3": 0.2214,
+      "4": 0.2071,
       "5": 0.0571
     },
     "distribution_fidelity": {
       "difficulty": {
         "delta": {
-          "1": 0.2514,
-          "2": -0.0857,
-          "3": -0.0143,
-          "4": -0.0286,
+          "1": 0.2729,
+          "2": -0.0786,
+          "3": -0.0286,
+          "4": -0.0429,
           "5": -0.1229
         },
         "measured": {
-          "1": 0.3714,
-          "2": 0.1143,
-          "3": 0.2357,
-          "4": 0.2214,
+          "1": 0.3929,
+          "2": 0.1214,
+          "3": 0.2214,
+          "4": 0.2071,
           "5": 0.0571
         },
         "target": {
@@ -215,16 +215,16 @@
       },
       "domain": {
         "delta": {
-          "infrastructure": 0.0071,
-          "payment": 0.0286,
-          "pii": 0.15,
-          "secrets": -0.0286
+          "infrastructure": 0.0571,
+          "payment": 0.0071,
+          "pii": 0.1571,
+          "secrets": -0.0214
         },
         "measured": {
-          "infrastructure": 0.2071,
-          "payment": 0.2786,
-          "pii": 0.45,
-          "secrets": 0.2214
+          "infrastructure": 0.2571,
+          "payment": 0.2571,
+          "pii": 0.4571,
+          "secrets": 0.2286
         },
         "target": {
           "infrastructure": 0.2,
@@ -236,13 +236,13 @@
       "language": {
         "delta": {
           "en": 0.0143,
-          "mixed": -0.0429,
-          "th": 0.0286
+          "mixed": -0.0643,
+          "th": 0.05
         },
         "measured": {
           "en": 0.2643,
-          "mixed": 0.2571,
-          "th": 0.4786
+          "mixed": 0.2357,
+          "th": 0.5
         },
         "target": {
           "en": 0.25,
@@ -252,14 +252,14 @@
       },
       "length": {
         "delta": {
-          "long": -0.0643,
-          "medium": -0.0071,
-          "short": 0.0714
+          "long": -0.0786,
+          "medium": -0.0143,
+          "short": 0.0929
         },
         "measured": {
-          "long": 0.2357,
-          "medium": 0.3929,
-          "short": 0.3714
+          "long": 0.2214,
+          "medium": 0.3857,
+          "short": 0.3929
         },
         "target": {
           "long": 0.3,
@@ -267,13 +267,13 @@
           "short": 0.3
         }
       },
-      "max_abs_delta": 0.2514
+      "max_abs_delta": 0.2729
     },
     "domain_shares": {
-      "infrastructure": 0.2071,
-      "payment": 0.2786,
-      "pii": 0.45,
-      "secrets": 0.2214
+      "infrastructure": 0.2571,
+      "payment": 0.2571,
+      "pii": 0.4571,
+      "secrets": 0.2286
     },
     "duplicates": {
       "cross_split_examples": [],
@@ -286,7 +286,7 @@
       "near_duplicate_rate": 0.0,
       "threshold": 0.98
     },
-    "entity_type_count": 31,
+    "entity_type_count": 32,
     "entity_types": [
       "access_token",
       "api_key",
@@ -300,6 +300,7 @@
       "database_endpoint",
       "date_of_birth",
       "email_address",
+      "firewall_rule",
       "gps_coordinates",
       "health_condition",
       "internal_hostname",
@@ -322,16 +323,16 @@
     ],
     "language_shares": {
       "en": 0.2643,
-      "mixed": 0.2571,
-      "th": 0.4786
+      "mixed": 0.2357,
+      "th": 0.5
     },
     "length_shares": {
-      "long": 0.2357,
-      "medium": 0.3929,
-      "short": 0.3714
+      "long": 0.2214,
+      "medium": 0.3857,
+      "short": 0.3929
     },
-    "multi_domain_share": 0.2857,
-    "negative_ratio": 0.2143,
+    "multi_domain_share": 0.2786,
+    "negative_ratio": 0.1857,
     "reproducible": true,
     "schema_validity": 1.0,
     "span_accuracy": 1.0,
@@ -347,17 +348,16 @@
       "prompt_overlap": []
     },
     "structure_counts": {
-      "chat": 3,
-      "code": 16,
-      "email": 6,
-      "json": 15,
-      "log": 4,
-      "markdown": 6,
-      "report": 11,
-      "sql": 7,
-      "table": 1,
-      "unstructured": 69,
-      "yaml": 2
+      "chat": 2,
+      "code": 14,
+      "email": 7,
+      "json": 14,
+      "log": 1,
+      "markdown": 16,
+      "report": 8,
+      "sql": 4,
+      "table": 2,
+      "unstructured": 72
     },
     "target_negative_ratio": 0.2,
     "validation_issue_cases": 0,

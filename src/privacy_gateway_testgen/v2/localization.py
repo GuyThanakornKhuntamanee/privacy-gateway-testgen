@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import re
-from typing import Dict, List, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from .docmodel import Block, Cell, Doc, Placement
 
@@ -54,6 +54,13 @@ LABELS: Dict[str, str] = {
     "status": "สถานะ", "balance": "ยอดคงเหลือ", "debit": "เดบิต",
     "credit": "เครดิต", "type": "ประเภท", "invoice": "ใบแจ้งหนี้",
     "invoice_number": "เลขที่ใบแจ้งหนี้", "customer_export": "ข้อมูลลูกค้า",
+    "bill to": "เรียกเก็บเงินจาก", "due": "ครบกำหนด", "vat 7%": "ภาษีมูลค่าเพิ่ม 7%",
+    "account holder": "เจ้าของบัญชี", "opening balance": "ยอดยกมา",
+    "transaction reference": "อ้างอิงธุรกรรม", "card on file": "บัตรที่บันทึกไว้",
+    "expiry": "วันหมดอายุ", "authorization": "รหัสอนุมัติ",
+    "currency": "สกุลเงิน",
+    "payment gateway key": "คีย์ payment gateway",
+    "billing service endpoint": "ปลายทางบริการเรียกเก็บเงิน",
     "order_id": "เลขที่คำสั่งซื้อ", "opportunity": "โอกาสขาย",
     "stage": "ขั้นตอน", "category": "หมวด", "expense": "ค่าใช้จ่าย",
     # operations / IT
@@ -372,6 +379,68 @@ STATUS_VALUES = {
 THAI_RE = re.compile(r"[\u0E00-\u0E7F]")
 LATIN_RE = re.compile(r"[A-Za-z]")
 
+# English static labels that may appear inside a longer line (``a: 1  b: 2``).
+# Only these are reported as untranslated; technical vocabulary is not.
+INLINE_LABELS: Dict[str, str] = {
+    "bill to": "เรียกเก็บเงินจาก", "date": "วันที่", "due": "ครบกำหนด",
+    "reference": "อ้างอิง", "subtotal": "ยอดรวมก่อนภาษี",
+    "vat 7%": "ภาษีมูลค่าเพิ่ม 7%", "total": "ยอดรวม",
+    "account holder": "เจ้าของบัญชี", "account": "บัญชี",
+    "opening balance": "ยอดยกมา", "transaction reference": "อ้างอิงธุรกรรม",
+    "card on file": "บัตรที่บันทึกไว้", "expiry": "วันหมดอายุ",
+    "authorization": "รหัสอนุมัติ", "payment gateway key": "คีย์ payment gateway",
+    "billing service endpoint": "ปลายทางบริการเรียกเก็บเงิน",
+    "description": "รายการ", "quantity": "จำนวน", "unit price": "ราคาต่อหน่วย",
+    "line total": "ยอดรวมรายการ", "amount": "จำนวนเงิน", "balance": "ยอดคงเหลือ",
+    "type": "ประเภท", "address": "ที่อยู่", "national id": "เลขบัตรประชาชน",
+    "email": "อีเมล", "phone": "เบอร์โทร", "role": "ตำแหน่ง", "plan": "แผน",
+    "owner": "ผู้รับผิดชอบ", "approved by": "อนุมัติโดย", "requester": "ผู้แจ้ง",
+    "from": "จาก", "to": "ถึง", "employee": "พนักงาน", "leave type": "ประเภทการลา",
+    "dates": "วันที่", "days": "จำนวนวัน", "candidate": "ผู้สมัคร",
+    "patient": "ผู้ป่วย", "dob": "วันเกิด", "diagnosis": "การวินิจฉัย",
+    "clinician": "แพทย์ผู้ดูแล", "incident id": "รหัสเหตุการณ์",
+    "reported by": "ผู้รายงาน", "issue": "ปัญหา",
+    "suggested next step": "ขั้นตอนถัดไปที่แนะนำ", "scorecard": "แบบประเมิน",
+    "service url": "URL บริการ", "database endpoint": "ปลายทางฐานข้อมูล",
+    "network": "เครือข่าย", "request id": "รหัสคำขอ", "status": "สถานะ",
+}
+_INLINE_LABEL_RE = re.compile(
+    r"(?<![A-Za-z])(" + "|".join(
+        sorted((re.escape(key) for key in INLINE_LABELS), key=len, reverse=True)
+    ) + r"):",
+    re.IGNORECASE,
+)
+_LABEL_CANONICAL = {key.lower(): key for key in INLINE_LABELS}
+
+
+def localize_labels_inline(text: str, language: str) -> str:
+    """Localize ``Label:`` tokens embedded in a longer static line."""
+    if language == "en" or not text:
+        return text
+
+    def replace(match: "re.Match") -> str:
+        key = _LABEL_CANONICAL.get(match.group(1).lower(), match.group(1).lower())
+        thai = INLINE_LABELS[key]
+        return f"{thai} / {match.group(1)}:" if language == "mixed" else f"{thai}:"
+
+    return _INLINE_LABEL_RE.sub(replace, text)
+
+
+def residual_english_labels(text: str) -> List[str]:
+    """Known English labels still untranslated in a Thai document.
+
+    Bilingual ``ไทย / English`` labels produced for mixed documents are not
+    residual English, so they are ignored.
+    """
+    found = set()
+    for line in text.splitlines():
+        for match in _INLINE_LABEL_RE.finditer(line):
+            label = match.group(1)
+            if f" / {label}:" in line or f" / {label.lower()}:" in line:
+                continue
+            found.add(label)
+    return sorted(found)
+
 
 def label(value: str, language: str) -> str:
     """Localize a table header or short label."""
@@ -401,8 +470,8 @@ def localize_text(text: str, language: str) -> str:
     if translated is None:
         translated = _status_translation(core, language)
     if translated is None:
-        return text
-    return lead + translated + trail
+        return localize_labels_inline(text, language)
+    return localize_labels_inline(lead + translated + trail, language)
 
 
 def _phrase_translation(core: str) -> str:
@@ -551,6 +620,31 @@ def document_text(doc: Doc) -> str:
     return "\n".join(part for part in parts if part)
 
 
+def _strip_placements(text: str, placements: Sequence[Placement]) -> str:
+    result = text
+    for placement in sorted(placements, key=lambda item: item.start, reverse=True):
+        result = result[:placement.start] + result[placement.end:]
+    return result
+
+
+def document_static_text(doc: Doc) -> str:
+    """Authored text only: entity values are removed before measuring scripts.
+
+    A Thai name inside an otherwise English template must not make the file look
+    Thai; the language label describes the document, not its identifiers.
+    """
+    parts: List[str] = [doc.title]
+    for block in doc.all_blocks():
+        parts.append(_strip_placements(block.text, block.placements))
+        parts.append(block.title)
+        parts.extend(block.headers)
+        for row in block.rows:
+            parts.extend(_strip_placements(cell.text, cell.placements) for cell in row)
+    if isinstance(doc.record, dict):
+        parts.extend(_walk_strings(doc.record))
+    return "\n".join(part for part in parts if part)
+
+
 def _walk_strings(value) -> List[str]:
     found: List[str] = []
     if isinstance(value, str):
@@ -564,12 +658,70 @@ def _walk_strings(value) -> List[str]:
     return found
 
 
-def script_counts(text: str) -> dict:
+def script_stats(text: str) -> dict:
+    """Measured script shares; digits, punctuation and spaces are neutral.
+
+    ``thai_share`` / ``latin_share`` use script letters as the denominator so a
+    log full of digits and punctuation is still an English log.  The neutral
+    share is reported separately over all counted characters.
+    """
     thai = len(THAI_RE.findall(text))
     latin = len(LATIN_RE.findall(text))
-    return {"thai_characters": thai, "latin_characters": latin,
-            "contains_thai": thai > 0, "contains_latin": latin > 0,
-            "contains_both": thai > 0 and latin > 0}
+    neutral = sum(1 for char in text
+                  if not char.isspace() and not THAI_RE.match(char) and not LATIN_RE.match(char))
+    letters = thai + latin
+    total = letters + neutral
+    return {
+        "thai_chars": thai,
+        "latin_chars": latin,
+        "neutral_chars": neutral,
+        "counted_chars": total,
+        "thai_share": round(thai / letters, 4) if letters else 0.0,
+        "latin_share": round(latin / letters, 4) if letters else 0.0,
+        "neutral_share": round(neutral / total, 4) if total else 0.0,
+    }
+
+
+def language_matches(stats: dict, language: str, thresholds: dict) -> bool:
+    """Whether measured script shares satisfy the declared language."""
+    thai = float(stats.get("thai_share", 0.0))
+    latin = float(stats.get("latin_share", 0.0))
+    thai_min = float(thresholds.get("th", {}).get("min_thai_share", 0.0))
+    latin_min = float(thresholds.get("en", {}).get("min_latin_share", 0.0))
+    mixed_thai = float(thresholds.get("mixed", {}).get("min_thai_share", 0.0))
+    mixed_latin = float(thresholds.get("mixed", {}).get("min_latin_share", 0.0))
+    if language == "th":
+        return thai >= thai_min
+    if language == "en":
+        return latin >= latin_min
+    if language == "mixed":
+        return thai >= mixed_thai and latin >= mixed_latin
+    return False
+
+
+def classify_language(stats: dict, thresholds: dict) -> Optional[str]:
+    """Best matching label, or ``None`` when no declared label fits.
+
+    Thai is checked first so a Thai-dominant document full of English
+    identifiers is still ``th``.  ``mixed`` is the fallback for documents whose
+    scripts are both present but neither dominates.
+    """
+    for language in ("th", "en", "mixed"):
+        if language_matches(stats, language, thresholds):
+            return language
+    return None
+
+
+def script_counts(text: str) -> dict:
+    stats = script_stats(text)
+    stats.update({
+        "thai_characters": stats["thai_chars"],
+        "latin_characters": stats["latin_chars"],
+        "contains_thai": stats["thai_chars"] > 0,
+        "contains_latin": stats["latin_chars"] > 0,
+        "contains_both": stats["thai_chars"] > 0 and stats["latin_chars"] > 0,
+    })
+    return stats
 
 
 def format_date(value, language: str, mode: str = "be") -> str:
@@ -599,6 +751,10 @@ def format_currency(amount: float, language: str, mode: str = "thb") -> str:
 def language_capability(extension: str) -> Tuple[str, ...]:
     """Content languages a renderer can carry without glyph loss."""
     if extension in ("pdf", "png", "jpg", "jpeg"):
+        return ("en",)
+    if extension == "log":
+        # Log bodies are technical English by convention; a Thai log would be
+        # an English frame with Thai prose around machine text.
         return ("en",)
     return ("th", "en", "mixed")
 

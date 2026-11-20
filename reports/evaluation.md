@@ -13,38 +13,38 @@
 | span_accuracy | PASS | 1.0 | >= 1.0 |
 | exact_duplicate_rate | PASS | 0.0 | <= 0.0 |
 | near_duplicate_rate | PASS | 0.0 | <= 0.05 |
-| domain:pii | PASS | 0.45 | >= 0.05 |
-| domain:payment | PASS | 0.2786 | >= 0.05 |
-| domain:secrets | PASS | 0.2214 | >= 0.05 |
-| domain:infrastructure | PASS | 0.2071 | >= 0.05 |
-| language:th | PASS | 0.4786 | >= 0.08 |
+| domain:pii | PASS | 0.4571 | >= 0.05 |
+| domain:payment | PASS | 0.2571 | >= 0.05 |
+| domain:secrets | PASS | 0.2286 | >= 0.05 |
+| domain:infrastructure | PASS | 0.2571 | >= 0.05 |
+| language:th | PASS | 0.5 | >= 0.08 |
 | language:en | PASS | 0.2643 | >= 0.08 |
-| language:mixed | PASS | 0.2571 | >= 0.08 |
-| length:short | PASS | 0.3714 | >= 0.08 |
-| length:medium | PASS | 0.3929 | >= 0.08 |
-| length:long | PASS | 0.2357 | >= 0.08 |
-| difficulty:1 | PASS | 0.3714 | >= 0.04 |
-| difficulty:2 | PASS | 0.1143 | >= 0.04 |
-| difficulty:3 | PASS | 0.2357 | >= 0.04 |
-| difficulty:4 | PASS | 0.2214 | >= 0.04 |
+| language:mixed | PASS | 0.2357 | >= 0.08 |
+| length:short | PASS | 0.3929 | >= 0.08 |
+| length:medium | PASS | 0.3857 | >= 0.08 |
+| length:long | PASS | 0.2214 | >= 0.08 |
+| difficulty:1 | PASS | 0.3929 | >= 0.04 |
+| difficulty:2 | PASS | 0.1214 | >= 0.04 |
+| difficulty:3 | PASS | 0.2214 | >= 0.04 |
+| difficulty:4 | PASS | 0.2071 | >= 0.04 |
 | difficulty:5 | PASS | 0.0571 | >= 0.04 |
-| entity_type_coverage | PASS | 31 | >= 25 |
-| negative_ratio | PASS | 0.2143 | 0.2 +/- 0.12 |
-| multi_domain_share | PASS | 0.2857 | >= 0.12 |
+| entity_type_coverage | PASS | 32 | >= 25 |
+| negative_ratio | PASS | 0.1857 | 0.2 +/- 0.12 |
+| multi_domain_share | PASS | 0.2786 | >= 0.12 |
 | action_coverage | PASS | ['ALLOW', 'BLOCK', 'LOCAL_ONLY', 'MASK', 'REDACT', 'TOKENIZE'] | all actions; missing=[] |
 | split_integrity | PASS | {'family_overlap': [], 'prompt_overlap': []} | no template family or exact prompt crosses splits |
 | reproducibility | PASS | True | two runs with the same seed are byte-identical |
 
 ## Coverage
 
-- Domains: `{'infrastructure': 0.2071, 'payment': 0.2786, 'pii': 0.45, 'secrets': 0.2214}`
-- Languages: `{'en': 0.2643, 'mixed': 0.2571, 'th': 0.4786}`
-- Lengths: `{'long': 0.2357, 'medium': 0.3929, 'short': 0.3714}`
-- Difficulties: `{'1': 0.3714, '2': 0.1143, '3': 0.2357, '4': 0.2214, '5': 0.0571}`
-- Actions: `{'ALLOW': 30, 'BLOCK': 31, 'LOCAL_ONLY': 29, 'MASK': 13, 'REDACT': 33, 'TOKENIZE': 4}`
-- Entity types: `31`
-- Negative ratio: `0.2143` (target `0.2`)
-- Multi-domain share: `0.2857`
+- Domains: `{'infrastructure': 0.2571, 'payment': 0.2571, 'pii': 0.4571, 'secrets': 0.2286}`
+- Languages: `{'en': 0.2643, 'mixed': 0.2357, 'th': 0.5}`
+- Lengths: `{'long': 0.2214, 'medium': 0.3857, 'short': 0.3929}`
+- Difficulties: `{'1': 0.3929, '2': 0.1214, '3': 0.2214, '4': 0.2071, '5': 0.0571}`
+- Actions: `{'ALLOW': 26, 'BLOCK': 32, 'LOCAL_ONLY': 34, 'MASK': 18, 'REDACT': 25, 'TOKENIZE': 5}`
+- Entity types: `32`
+- Negative ratio: `0.1857` (target `0.2`)
+- Multi-domain share: `0.2786`
 - Split counts: `{'train': 112, 'validation': 14, 'test': 14}`
 
 ## Duplicate analysis
@@ -55,11 +55,11 @@
 
 ## Configured vs measured distributions
 
-- language delta: `{'en': 0.0143, 'mixed': -0.0429, 'th': 0.0286}`
-- length delta: `{'long': -0.0643, 'medium': -0.0071, 'short': 0.0714}`
-- difficulty delta: `{'1': 0.2514, '2': -0.0857, '3': -0.0143, '4': -0.0286, '5': -0.1229}`
-- domain delta: `{'infrastructure': 0.0071, 'payment': 0.0286, 'pii': 0.15, 'secrets': -0.0286}`
-- Maximum absolute delta: `0.2514`
+- language delta: `{'en': 0.0143, 'mixed': -0.0643, 'th': 0.05}`
+- length delta: `{'long': -0.0786, 'medium': -0.0143, 'short': 0.0929}`
+- difficulty delta: `{'1': 0.2729, '2': -0.0786, '3': -0.0286, '4': -0.0429, '5': -0.1229}`
+- domain delta: `{'infrastructure': 0.0571, 'payment': 0.0071, 'pii': 0.1571, 'secrets': -0.0214}`
+- Maximum absolute delta: `0.2729`
 
 ## Known limitations
 

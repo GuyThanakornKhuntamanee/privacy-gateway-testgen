@@ -82,6 +82,16 @@
             "properties": {
               "thai_characters": {"type": "integer", "minimum": 0},
               "latin_characters": {"type": "integer", "minimum": 0},
+              "thai_chars": {"type": "integer", "minimum": 0},
+              "latin_chars": {"type": "integer", "minimum": 0},
+              "neutral_chars": {"type": "integer", "minimum": 0},
+              "counted_chars": {"type": "integer", "minimum": 0},
+              "thai_share": {"type": "number", "minimum": 0, "maximum": 1},
+              "latin_share": {"type": "number", "minimum": 0, "maximum": 1},
+              "neutral_share": {"type": "number", "minimum": 0, "maximum": 1},
+              "static": {"type": "object"},
+              "matches_declared_language": {"type": "boolean"},
+              "residual_english_labels": {"type": "array", "items": {"type": "string"}},
               "contains_thai": {"type": "boolean"},
               "contains_latin": {"type": "boolean"},
               "contains_both": {"type": "boolean"}
@@ -113,6 +123,7 @@
           "domain": {"enum": ["pii", "payment", "secrets", "infrastructure", "lookalike"]},
           "entity_type": {"type": "string", "minLength": 1},
           "exact_entity_value": {"type": "string", "minLength": 1},
+          "canonical_entity_value": {"type": "string", "minLength": 1},
           "detection_expected": {"type": "boolean"},
           "classification_expected": {"type": ["string", "null"]},
           "valid": {"type": "boolean"},
@@ -156,6 +167,10 @@
               "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
               "source_type": {"enum": ["native", "embedded_image", "ocr", "table"]},
               "expected_ocr_text": {"type": "string"},
+              "entity_strategy": {"enum": ["atomic_line", "fragment"]},
+              "fragment_index": {"type": "integer", "minimum": 0},
+              "fragment_count": {"type": "integer", "minimum": 1},
+              "entity_text_width": {"type": "number", "minimum": 0},
               "ocr_normalized": {"type": "boolean"},
               "case_sensitive": {"type": "boolean"},
               "bbox_space": {"enum": ["pre_render", "post_render"]},
@@ -235,12 +250,27 @@
     "content_languages": {"type": "array", "items": {"enum": ["th", "en", "mixed"]}, "uniqueItems": true},
     "language_mode": {"enum": ["th", "en", "mixed"]},
     "language_coverage": {"type": "object"},
+    "language_stats": {
+      "type": "object",
+      "properties": {
+        "prompt": {"type": "object"},
+        "attachments": {"type": "array", "items": {"type": "object"}}
+      }
+    },
     "scenario_id": {"type": "string", "minLength": 1},
+    "prompt_form": {"type": "string"},
     "bundle": {
       "type": "object",
       "properties": {
         "bundle_id": {"type": "string"},
         "kind": {"enum": ["prompt_only", "single_file", "multi_file", "same_archetype", "old_new"]},
+        "relationship": {
+          "type": "object",
+          "properties": {
+            "status": {"enum": ["related", "intentionally_unrelated", "not_applicable"]},
+            "evidence": {"type": "array", "items": {"type": "object"}}
+          }
+        },
         "members": {"type": "array", "items": {"type": "object"}},
         "revision_changes": {"type": "array", "items": {"type": "object"}}
       }
@@ -252,8 +282,10 @@
         "properties": {
           "link_id": {"type": "string"},
           "canonical_entity_id": {"type": "string"},
+          "canonical_entity_value": {"type": "string"},
           "entity_type": {"type": "string"},
           "exact_entity_value": {"type": "string"},
+          "representation_variants": {"type": "array", "items": {"type": "string"}},
           "attachments": {"type": "array", "items": {"type": "string"}},
           "filenames": {"type": "array", "items": {"type": "string"}},
           "occurrences": {"type": "integer", "minimum": 1},
@@ -272,7 +304,8 @@
           "value": {"type": ["string", "integer"]},
           "sheet": {"type": "string"},
           "valid": {"type": "boolean"},
-          "resolved": {"type": "boolean"}
+          "resolved": {"type": "boolean"},
+          "user_visible": {"type": "boolean"}
         }
       }
     },
@@ -283,7 +316,9 @@
         "type": "object",
         "properties": {
           "check": {"type": "string"},
+          "status": {"enum": ["passed", "failed", "not_applicable", "not_evaluated"]},
           "passed": {"type": "boolean"},
+          "evaluated_items": {"type": "integer", "minimum": 0},
           "attachment_id": {"type": ["string", "null"]},
           "details": {"type": "object"}
         }

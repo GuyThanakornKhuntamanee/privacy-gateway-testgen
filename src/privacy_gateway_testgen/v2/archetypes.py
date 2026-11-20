@@ -16,7 +16,7 @@ from ..models import Entity
 from .docmodel import Doc, DocBuilder, cell
 from .localization import format_currency, format_date, label as localize_label
 from .org import OrgProfile, Person
-from .scenario import ScenarioPlan, safe_negative as _safe_negative
+from .scenario import ScenarioPlan, safe_negative as _safe_negative, validate_log_order
 
 RENDERERS_ALL_TEXT = ("txt", "md", "docx", "pdf")
 TABLE_RENDERERS = ("csv", "xlsx", "docx", "pdf", "txt")
@@ -44,6 +44,7 @@ class BuildContext:
     scenario: Optional[ScenarioPlan] = None
     variant: int = 1
     attachment_id: str = "ATT-001"
+    latin_only: Optional[bool] = None
 
     def wants(self, domain: str) -> bool:
         return domain in self.domains
@@ -52,7 +53,7 @@ class BuildContext:
                key: Optional[str] = None) -> Entity:
         if self.scenario is None:
             raise RuntimeError("BuildContext.shared requires a ScenarioPlan")
-        return self.scenario.shared(domain, entity_type, key)
+        return self._latin(self.scenario.shared(domain, entity_type, key))
 
     def label(self, value: str) -> str:
         return localize_label(value, self.doc_language)
@@ -65,9 +66,15 @@ class BuildContext:
         return format_date(value, self.doc_language,
                            self.scenario.thai_date_mode if self.scenario else "be")
 
-    def check(self, name: str, passed: bool, details: dict) -> None:
+    def check(self, name: str, status, details: dict,
+              evaluated_items: Optional[int] = None) -> None:
         if self.scenario is not None:
-            self.scenario.record_check(name, passed, details, self.attachment_id)
+            self.scenario.record_check(name, status, details, self.attachment_id,
+                                       evaluated_items)
+
+    def observation(self, key: str, value) -> None:
+        if self.scenario is not None:
+            self.scenario.observe(key, value, self.attachment_id, self.doc_language)
 
     def csv_delimiter(self) -> str:
         return self.rng.choices([",", ";", "\t"], weights=[0.72, 0.20, 0.08], k=1)[0]
@@ -80,7 +87,11 @@ class BuildContext:
         return self._latin(self.pool.draw(domain, self._pick_type(domain, types)))
 
     def _latin(self, entity: Entity) -> Entity:
-        return self.scenario.latinize(entity) if self.scenario is not None else entity
+        if self.scenario is None:
+            return entity
+        latin_only = (self.latin_only if self.latin_only is not None
+                      else self.scenario.latin_only)
+        return self.scenario.latinize(entity) if latin_only else entity
 
     def _type_for(self, domain: str, types: Optional[Sequence[str]]) -> str:
         if types:
@@ -98,26 +109,25 @@ class BuildContext:
             return None
         return value if self.rng.random() < probability else None
 
+    def _document_identity(self, entity: Entity, entity_type: str) -> Entity:
+        """A realistic identity that is not the oracle's sensitive target."""
+        return Entity("lookalike", entity_type, entity.value, detection_expected=False,
+                      note="synthetic organisation identity, not an annotated target entity")
+
     def person_name(self, person: Person, index: int = 0) -> Entity | str:
-        if not self.wants("pii"):
-            return f"Contact {index + 1}"
-        if self.negative and not self.ambiguous:
-            return f"Contact {index + 1}"
+        if self.negative or not self.wants("pii"):
+            return self._document_identity(self._latin(person.name), "document_person_name")
         return self._latin(person.name)
 
     def person_email(self, person: Person, index: int = 0) -> Entity | str:
-        if not self.wants("pii"):
-            return f"contact{index + 1}@example.com"
-        if self.negative and not self.ambiguous:
-            return f"contact{index + 1}@example.com"
-        return person.email
+        if self.negative or not self.wants("pii"):
+            return self._document_identity(self._latin(person.email), "document_email")
+        return self._latin(person.email)
 
     def person_phone(self, person: Person, index: int = 0) -> Entity | str:
-        if not self.wants("pii"):
-            return f"+1-555-01{index % 100:02d}"
-        if self.negative and not self.ambiguous:
-            return f"+1-555-01{index % 100:02d}"
-        return person.phone
+        if self.negative or not self.wants("pii"):
+            return self._document_identity(self._latin(person.phone), "document_phone")
+        return self._latin(person.phone)
 
     def person_field(self, person: Person, attr: str, domain: str, types: Sequence[str]) -> Entity | str:
         if not self.wants(domain):
@@ -276,9 +286,30 @@ def _transaction_export(ctx: BuildContext) -> Doc:
     builder.heading("Transaction export - March 2026")
     headers = ["date", "customer", "email", "amount", "status"]
     rows = []
-    for index in range(7):
-        customer = ctx.org.customers[index % len(ctx.org.customers)]
+    finance = ctx.scenario.finance(4) if ctx.scenario is not None else None
+    if finance is not None:
+        # The settlement of the invoice in this bundle: same reference, same
+        # amount and same currency as the document it settles.
+        customer = ctx.org.customers[0]
         row: List[Any] = [
+            finance["payment_date"],
+            ctx.person_name(customer, 0),
+            ctx.person_email(customer, 0),
+            f"{finance['total']:,}.00",
+            "settled",
+        ]
+        if ctx.wants("payment"):
+            row[0:0] = [finance["transaction_id"]]
+            row.extend([ctx.shared("payment", "payment_card_number", "corp_card"),
+                        ctx.entity("payment", ["payment_authorization_code"])])
+        rows.append(row)
+        ctx.observation("finance.total", finance["total"])
+        ctx.observation("finance.currency", finance["currency"])
+        if ctx.wants("payment"):
+            ctx.observation("finance.transaction_reference", finance["transaction_id"])
+    for index in range(6):
+        customer = ctx.org.customers[index % len(ctx.org.customers)]
+        row = [
             f"2026-03-{10 + index:02d}",
             ctx.person_name(customer, index),
             ctx.person_email(customer, index),
@@ -286,12 +317,17 @@ def _transaction_export(ctx: BuildContext) -> Doc:
             ctx.rng.choice(["settled", "settled", "pending", "refunded"]),
         ]
         if ctx.wants("payment"):
-            row[0:0] = [ctx.shared("payment", "payment_transaction_reference", f"txn_{index}")]
+            row[0:0] = [ctx.shared("payment", "payment_transaction_reference", f"txn_{index + 1}")]
             row.extend([ctx.shared("payment", "payment_card_number", "corp_card"),
                         ctx.entity("payment", ["payment_authorization_code"])])
         rows.append(row)
     if ctx.wants("payment"):
         headers = ["transaction_ref"] + headers + ["card", "auth_code"]
+    if finance is not None:
+        headers = headers + ["currency"]
+        for position, row in enumerate(rows):
+            row.append(finance["currency"] if position == 0 else
+                       ("THB" if (ctx.scenario and ctx.scenario.currency_mode == "thb") else "XXX"))
     builder.table(headers, rows, title="Transactions")
     return builder.build(delimiter=ctx.csv_delimiter())
 
@@ -366,6 +402,12 @@ def _access_records(ctx: BuildContext) -> Doc:
             ctx.rng.choice(["read", "write", "delete", "login"]),
         ])
     builder.table(["timestamp", "user", "source_ip", "resource", "action"], rows, title="Access events")
+    log_result = validate_log_order([str(row[0]) for row in rows])
+    ctx.check("log_timestamps_ordered", log_result["status"], {
+        "entries": len(rows), "format": "iso",
+        "first": log_result.get("first"), "last": log_result.get("last"),
+        "reason": log_result.get("reason", ""),
+    }, evaluated_items=log_result["evaluated_items"])
     return builder.build(delimiter=ctx.csv_delimiter())
 
 
@@ -488,47 +530,67 @@ def _finance_document(ctx: BuildContext, kind: str) -> Doc:
     builder = DocBuilder(kind, label, filename, ctx.doc_language)
     builder.heading(label)
     customer = ctx.org.customers[0]
-    number = ctx.scenario.invoice_number(kind) if ctx.scenario else f"{kind[:3].upper()}-2026-1000"
-    builder.para("Reference: ", number, "  |  Date: ", ctx.date(ctx.scenario.issue_date if ctx.scenario else "2026-03-18"),
-                 "  |  Due: ", ctx.date(ctx.scenario.due_date if ctx.scenario else "2026-04-17"))
-    builder.para("Bill to: ", ctx.person_name(customer), " | ", ctx.person_email(customer))
-    if ctx.wants("pii"):
-        builder.para("Address: ", ctx.person_field(customer, "address", "pii", ["thai_address"]))
-    rows = []
     item_count = ctx.rng.choice((3, 4, 4, 5, 6))
-    for item in ctx.rng.sample(["Wireless Keyboard", "USB-C Dock", "Noise-cancelling Headset",
-                                "27-inch Monitor", "Ergonomic Chair", "Portable SSD 1TB",
-                                "Network Switch 24-port", "Webcam 1080p"], k=item_count):
-        quantity = ctx.rng.randint(1, 8)
-        unit = ctx.rng.randrange(1200, 18000)
-        rows.append([item, quantity, f"{unit:,}.00", f"{quantity * unit:,}.00"])
-    subtotal = sum(int(row[3].replace(",", "").replace(".00", "")) for row in rows)
-    tax = int(round(subtotal * 0.07))
-    total = subtotal + tax
-    builder.table(["description", "quantity", "unit_price", "line_total"], rows, title="Items")
-    builder.para(f"Subtotal: {subtotal:,}.00   VAT 7%: {tax:,}.00   Total: {total:,}.00")
-    line_sum = sum(int(row[3].replace(",", "").replace(".00", "")) for row in rows)
-    due_ok = True
     if ctx.scenario is not None:
-        due_ok = ctx.scenario.due_date > ctx.scenario.issue_date
-    ctx.check("invoice_arithmetic", line_sum == subtotal and subtotal + tax == total, {
+        finance = ctx.scenario.finance(item_count)
+    else:  # prompt-level builders always carry a scenario in the generator
+        finance = {
+            "invoice_number": f"{kind[:3].upper()}-2026-1000", "currency": "THB",
+            "items": [{"description": "Synthetic item", "quantity": 1, "unit_price": 1000,
+                       "line_total": 1000}],
+            "subtotal": 1000, "tax": 70, "total": 1070, "invoice_date": "2026-03-18",
+            "due_date": "2026-04-17", "payment_date": "2026-03-18",
+            "transaction_id": "TXN-2026-100000", "payment_schedule": "single_payment",
+        }
+    number = finance["invoice_number"] if kind == "invoice" else (
+        ctx.scenario.invoice_number(kind) if ctx.scenario else finance["invoice_number"])
+    builder.para(ctx.label("Reference"), ": ", number, "  |  ", ctx.label("Date"), ": ",
+                 ctx.date(finance["invoice_date"]), "  |  ", ctx.label("Due"), ": ",
+                 ctx.date(finance["due_date"]))
+    builder.para(ctx.label("Bill to"), ": ", ctx.person_name(customer), " | ", ctx.person_email(customer))
+    if ctx.wants("pii"):
+        builder.para(ctx.label("Address"), ": ", ctx.person_field(customer, "address", "pii", ["thai_address"]))
+    rows = [[item["description"], item["quantity"],
+             f"{item['unit_price']:,}.00", f"{item['line_total']:,}.00"]
+            for item in finance["items"]]
+    builder.table(["description", "quantity", "unit_price", "line_total"], rows, title="Items")
+    subtotal = sum(item["line_total"] for item in finance["items"])
+    tax = int(round(subtotal * finance.get("tax_rate", 0.07)))
+    total = subtotal + tax
+    # A summary table keeps the totals inside tabular renderers too; an XLSX
+    # invoice must actually contain the amount its transaction settles.
+    builder.table(["label", "value"], [
+        [ctx.label("Subtotal"), f"{subtotal:,}.00"],
+        [ctx.label("VAT 7%"), f"{tax:,}.00"],
+        [ctx.label("Total"), f"{total:,}.00"],
+        [ctx.label("Currency"), finance["currency"]],
+    ], title="Summary")
+    builder.para(f"{ctx.label('Subtotal')}: {subtotal:,}.00   "
+                 f"{ctx.label('VAT 7%')}: {tax:,}.00   "
+                 f"{ctx.label('Total')}: {total:,}.00   {finance['currency']}")
+    ctx.observation("finance.total", total)
+    ctx.observation("finance.currency", finance["currency"])
+    ctx.check("invoice_arithmetic", subtotal + tax == total, {
         "line_items": len(rows), "subtotal": subtotal, "tax": tax, "total": total,
-    })
+    }, evaluated_items=len(rows))
+    due_ok = finance["due_date"] > finance["invoice_date"]
     ctx.check("invoice_due_date", due_ok, {
-        "issue_date": ctx.scenario.issue_date if ctx.scenario else "2026-03-18",
-        "due_date": ctx.scenario.due_date if ctx.scenario else "2026-04-17",
+        "issue_date": finance["invoice_date"], "due_date": finance["due_date"],
         "terms_days": ctx.scenario.payment_terms_days if ctx.scenario else 30,
-    })
+    }, evaluated_items=1)
     if ctx.wants("payment"):
-        builder.para("Transaction reference: ",
-                     ctx.shared("payment", "payment_transaction_reference", "txn_0"))
-        builder.para("Card on file: ", ctx.shared("payment", "payment_card_number", "corp_card"),
-                     "  Expiry: ", ctx.entity("payment", ["card_expiry_date"]),
-                     "  Authorization: ", ctx.entity("payment", ["payment_authorization_code"]))
+        builder.para(ctx.label("Transaction reference"), ": ", finance["transaction_id"])
+        ctx.observation("finance.transaction_reference", finance["transaction_id"])
+        builder.para(ctx.label("Card on file"), ": ",
+                     ctx.shared("payment", "payment_card_number", "corp_card"),
+                     "  ", ctx.label("Expiry"), ": ", ctx.entity("payment", ["card_expiry_date"]),
+                     "  ", ctx.label("Authorization"), ": ",
+                     ctx.entity("payment", ["payment_authorization_code"]))
     if ctx.wants("secrets"):
-        builder.para("Payment gateway key: ", ctx.shared("secrets", "api_key", "api_key"))
+        builder.para(ctx.label("Payment gateway key"), ": ", ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("infrastructure"):
-        builder.para("Billing service endpoint: ", ctx.shared("infrastructure", "internal_url", "url"))
+        builder.para(ctx.label("Billing service endpoint"), ": ",
+                     ctx.shared("infrastructure", "internal_url", "url"))
     builder.para("Synthetic example document. Not a real invoice or payment instruction.")
     return builder.build(header=cell(f"{ctx.org.name} - Finance"),
                          footer=cell("Synthetic example - all values are fictional"))
@@ -1119,6 +1181,11 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
         ]
     else:
         lines = ["# synthetic source file", "API_KEY=example"]
+    if not any(isinstance(part, Entity) for line in lines
+               for part in (line if isinstance(line, (list, tuple)) else [line])):
+        # A code screenshot without any entity would carry no OCR ground truth;
+        # a maintainer contact in a comment is realistic and keeps the case useful.
+        lines.append(["# contact: ", ctx.person_email(ctx.org.employees[0])])
     builder.code(lines)
     return builder.build()
 
@@ -1132,13 +1199,13 @@ def _log_lines(ctx: BuildContext, kind: str) -> Doc:
         return ctx.shared("infrastructure", types[0], key) if ctx.wants("infrastructure") else fallback
 
     def stamp(index: int) -> str:
-        timestamp = ctx.scenario.timestamp(index) if ctx.scenario else f"2026-03-18T09:{12 + index:02d}:00Z"
-        if log_format != "bracket":
-            return timestamp
-        return timestamp.replace("-", "/")[:11].replace("T", ":") + f"{index:02d} +0000"
+        if ctx.scenario is not None:
+            return ctx.scenario.format_timestamp(index, log_format)
+        if log_format == "bracket":
+            return f"2026/03/18 {9 + index // 60:02d}:{12 + index * 3:02d}:{(index * 7) % 60:02d} +0000"
+        return f"2026-03-18T09:{12 + index * 3:02d}:{(index * 7) % 60:02d}Z"
 
-    lines: List[Any] = []
-    for index in range(8):
+    def row(index: int) -> List[Any]:
         person = ctx.org.employees[index % len(ctx.org.employees)]
         timestamp = stamp(index)
         request_id = ctx.scenario.request_id(index) if ctx.scenario else f"req-{10000 + index}"
@@ -1163,23 +1230,33 @@ def _log_lines(ctx: BuildContext, kind: str) -> Doc:
                      infra(["internal_ipv4"], f"ip_{index % 4}", "192.0.2.10"),
                      ' msg="order processed"']
         if log_format == "json":
-            lines.append(['{"ts":"', timestamp, '","level":"INFO","service":"', kind,
-                          '","user":"', ctx.person_email(person, index),
-                          '","request_id":"', request_id,
-                          '","db":"', infra(["database_endpoint"], "db_endpoint", "db.example.org:5432"),
-                          '","msg":"order processed"}'])
-        else:
-            lines.append(parts)
+            return ['{"ts":"', timestamp, '","level":"INFO","service":"', kind,
+                    '","user":"', ctx.person_email(person, index),
+                    '","request_id":"', request_id,
+                    '","db":"', infra(["database_endpoint"], "db_endpoint", "db.example.org:5432"),
+                    '","msg":"order processed"}']
+        return parts
+
+    lines: List[Any] = [row(index) for index in range(8)]
     if ctx.wants("secrets"):
-        lines.append(["2026-03-18T09:20:01Z ERROR auth failed for key ",
-                      ctx.shared("secrets", "api_key", "api_key"), " retry=true"])
-    first_stamp = ctx.scenario.timestamp(0) if ctx.scenario else "2026-03-18T09:12:00Z"
-    last_stamp = ctx.scenario.timestamp(7) if ctx.scenario else "2026-03-18T09:33:00Z"
-    ctx.check("log_timestamps_ordered", True, {
-        "entries": len(lines), "format": log_format,
-        "first": first_stamp, "last": last_stamp,
-    })
+        # The failure is the last event on the shared timeline, never a
+        # hardcoded wall-clock value.
+        error_stamp = stamp(8)
+        if log_format == "json":
+            lines.append(['{"ts":"', error_stamp, '","level":"ERROR","service":"', kind,
+                          '","msg":"auth failed","key":"',
+                          ctx.shared("secrets", "api_key", "api_key"), '"}'])
+        else:
+            lines.append([error_stamp, " ERROR auth failed for key ",
+                          ctx.shared("secrets", "api_key", "api_key"), " retry=true"])
     builder.log(lines)
+    rendered = builder.doc.blocks[-1].text
+    result = validate_log_order(rendered.splitlines())
+    ctx.check("log_timestamps_ordered", result["status"], {
+        "entries": len(lines), "format": log_format,
+        "first": result.get("first"), "last": result.get("last"),
+        "reason": result.get("reason", ""),
+    }, evaluated_items=result["evaluated_items"])
     return builder.build()
 
 

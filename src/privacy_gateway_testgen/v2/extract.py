@@ -30,6 +30,10 @@ def _issue(kind: str, message: str, annotation: Optional[dict] = None) -> dict:
     return {"kind": kind, "message": message, "annotation_id": (annotation or {}).get("annotation_id")}
 
 
+def is_ascii(value: str) -> bool:
+    return all(ord(char) < 128 for char in value)
+
+
 def _json_resolve(value: Any, path: str) -> Any:
     if path == "$":
         return value
@@ -493,6 +497,20 @@ def _image_verify(data: bytes, ext: str, rendered_locations: List[dict]) -> Tupl
         bbox = loc.get("bbox", [])
         if len(bbox) != 4 or bbox[0] < 0 or bbox[1] < 0 or bbox[0] + bbox[2] > width or bbox[1] + bbox[3] > height:
             issues.append(_issue("image_bbox_invalid", f"bbox {bbox} outside {width}x{height}", item))
+        value = item["entity"].value
+        line_text = loc.get("expected_ocr_text", "")
+        if loc.get("entity_strategy") == "atomic_line":
+            if value.upper() not in line_text.upper():
+                issues.append(_issue(
+                    "image_entity_fragment",
+                    f"entity {value!r} is not fully present in one image line: {line_text!r}",
+                    item))
+            if loc.get("fragment_count") != 1 or loc.get("fragment_index") != 0:
+                issues.append(_issue("image_fragment_metadata",
+                                     "atomic entity must be a single fragment", item))
+            if not is_ascii(value):
+                issues.append(_issue("image_non_latin_entity",
+                                     f"Latin-only image carries {value!r}", item))
     return [loc.get("expected_ocr_text", "") for loc in (item["location"] for item in rendered_locations)], issues
 
 

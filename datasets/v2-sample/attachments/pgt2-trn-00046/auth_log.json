@@ -1,0 +1,13 @@
+{
+  "title": "บันทึกแอปพลิเคชัน",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "auth_log - synthetic"
+    },
+    {
+      "kind": "code",
+      "text": "2026-03-18T09:12:00Z INFO auth chanida.somchai26@example.net from 192.0.2.10 result=success request_id=req-22697\n2026-03-18T09:15:07Z INFO auth maneerat.somchai79@example.org from 192.0.2.10 result=success request_id=req-83438\n2026-03-18T09:18:14Z INFO auth anan.naree31@example.com from 192.0.2.10 result=success request_id=req-19382\n2026-03-18T09:21:21Z INFO auth lalita.wichai35@example.org from 192.0.2.10 result=success request_id=req-99186\n2026-03-18T09:24:28Z INFO auth naree.piyada@example.net from 192.0.2.10 result=success request_id=req-52911\n2026-03-18T09:27:35Z INFO auth maneerat.naree54@example.org from 192.0.2.10 result=success request_id=req-12744\n2026-03-18T09:30:42Z INFO auth chanida.somchai26@example.net from 192.0.2.10 result=success request_id=req-63680\n2026-03-18T09:33:49Z INFO auth maneerat.somchai79@example.org from 192.0.2.10 result=success request_id=req-71294\n"
+    }
+  ]
+}

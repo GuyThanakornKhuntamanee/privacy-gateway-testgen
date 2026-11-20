@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <item>
+    <customer_id>CUS-1000</customer_id>
+    <customer_name>อารีย์ รุ่งเรือง</customer_name>
+    <email>piyada.wichai16@example.net</email>
+    <phone>092-476-7517</phone>
+    <card_on_file>6011119582021129</card_on_file>
+    <card_expiry>02/2027</card_expiry>
+  </item>
+  <item>
+    <customer_id>CUS-1001</customer_id>
+    <customer_name>อนุชา วงศ์ไทย</customer_name>
+    <email>prasert.maneerat@example.org</email>
+    <phone>093-522-5429</phone>
+    <card_on_file>5555553365097738</card_on_file>
+    <card_expiry>04/2030</card_expiry>
+  </item>
+  <item>
+    <customer_id>CUS-1002</customer_id>
+    <customer_name>อนุชา ใจดี</customer_name>
+    <email>naree.naree21@example.org</email>
+    <phone>090-741-2147</phone>
+    <card_on_file>6011117424640882</card_on_file>
+    <card_expiry>12/2029</card_expiry>
+  </item>
+  <item>
+    <customer_id>CUS-1003</customer_id>
+    <customer_name>จุฑามาศ บุญมี</customer_name>
+    <email>piyada.somchai90@example.com</email>
+    <phone>084-393-8551</phone>
+    <card_on_file>4242426548619953</card_on_file>
+    <card_expiry>01/2027</card_expiry>
+  </item>
+</document>

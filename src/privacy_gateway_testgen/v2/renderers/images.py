@@ -400,6 +400,57 @@ def _jpeg_gray(width: int, height: int, gray: bytes) -> bytes:
 # --------------------------------------------------------------------------
 
 
+def _wrap_atomic(text: str, max_chars: int, protected: Sequence[tuple]) -> List[Tuple[int, int]]:
+    """Line ranges that never break inside a protected (entity) span.
+
+    A long entity is moved to its own line and the canvas is widened to fit it,
+    so the full value stays one visual span.  Returns ``(start, end)`` ranges
+    into ``text``; pieces never start with the break space.
+    """
+    spans = sorted((start, end) for start, end in protected if end > start)
+
+    def inside(position: int) -> bool:
+        return any(start < position < end for start, end in spans)
+
+    ranges: List[Tuple[int, int]] = []
+    cursor = 0
+    length = len(text)
+    while cursor < length:
+        limit = cursor + max_chars
+        if limit >= length:
+            ranges.append((cursor, length))
+            break
+        cut = -1
+        for position in range(limit, cursor, -1):
+            if text[position] == " " and not inside(position):
+                cut = position
+                break
+        if cut == -1:
+            following = next((position for position in range(limit, length)
+                              if text[position] == " " and not inside(position)), None)
+            if following is None:
+                ranges.append((cursor, length))
+                break
+            cut = following
+        ranges.append((cursor, cut))
+        cursor = cut + 1
+    return ranges or [(0, length)]
+
+
+def _clipped_placements(piece_start: int, piece_end: int, placements) -> List[tuple]:
+    clipped = []
+    for placement in placements:
+        if placement.start < piece_end and placement.end > piece_start:
+            local_start = max(0, placement.start - piece_start)
+            local_end = min(piece_end - piece_start, placement.end - piece_start)
+            if local_start != placement.start - piece_start or local_end != placement.end - piece_start:
+                raise ValueError(
+                    "image entity would be split across lines; layout must keep it atomic"
+                )
+            clipped.append((placement.entity, local_start, local_end, placement.role))
+    return clipped
+
+
 def _doc_lines(doc: Doc, max_chars: int) -> List[dict]:
     lines: List[dict] = []
     for block in doc.blocks:
@@ -408,22 +459,15 @@ def _doc_lines(doc: Doc, max_chars: int) -> List[dict]:
         elif block.kind in ("paragraph", "note", "bullet"):
             prefix = "- " if block.kind == "bullet" else ""
             text = prefix + block.text
-            ranges = Canvas(10, 10).wrap(text, max_chars)
-            cursor = 0
-            for piece in ranges:
-                start = text.find(piece, cursor)
-                if start < 0:
-                    start = cursor
-                end = start + len(piece)
-                placements = []
-                for placement in block.placements:
-                    adjusted_start = placement.start + len(prefix)
-                    adjusted_end = placement.end + len(prefix)
-                    if adjusted_start < end and adjusted_end > start:
-                        placements.append((placement.entity, max(0, adjusted_start - start),
-                                           min(len(piece), adjusted_end - start), placement.role))
-                lines.append({"text": piece, "placements": placements, "kind": "body"})
-                cursor = end + 1
+            placements = [type(item)(item.entity, item.start + len(prefix),
+                                     item.end + len(prefix), item.role)
+                          for item in block.placements]
+            for start, end in _wrap_atomic(text, max_chars,
+                                           [(p.start, p.end) for p in placements]):
+                piece = text[start:end]
+                lines.append({"text": piece,
+                              "placements": _clipped_placements(start, end, placements),
+                              "kind": "body"})
         elif block.kind in ("code", "log"):
             for raw_line in block.text.splitlines():
                 lines.append({"text": raw_line, "placements": [], "kind": "code"})
@@ -442,8 +486,8 @@ def _doc_lines(doc: Doc, max_chars: int) -> List[dict]:
                     ))
         elif block.kind == "table":
             header = " | ".join(block.headers)
-            for piece in Canvas(10, 10).wrap(header, max_chars):
-                lines.append({"text": piece, "placements": [], "kind": "header"})
+            for start, end in _wrap_atomic(header, max_chars, []):
+                lines.append({"text": header[start:end], "placements": [], "kind": "header"})
             for row in block.rows:
                 text = " | ".join(cell.text for cell in row)
                 placements = []
@@ -453,19 +497,22 @@ def _doc_lines(doc: Doc, max_chars: int) -> List[dict]:
                         placements.append((placement.entity, column_start + placement.start,
                                            column_start + placement.end, placement.role))
                     column_start += len(cell.text) + 3
-                cursor = 0
-                for piece in Canvas(10, 10).wrap(text, max_chars):
-                    start = text.find(piece, cursor)
-                    if start < 0:
-                        start = cursor
-                    end = start + len(piece)
+                protected = [(item_start, item_end) for _entity, item_start, item_end, _role
+                             in placements]
+                for start, end in _wrap_atomic(text, max_chars, protected):
+                    piece = text[start:end]
                     clipped = []
                     for entity, item_start, item_end, role in placements:
                         if item_start < end and item_end > start:
-                            clipped.append((entity, max(0, item_start - start),
-                                            min(len(piece), item_end - start), role))
+                            local_start = max(0, item_start - start)
+                            local_end = min(end - start, item_end - start)
+                            if (local_start != item_start - start
+                                    or local_end != item_end - start):
+                                raise ValueError(
+                                    "image table entity would be split across lines"
+                                )
+                            clipped.append((entity, local_start, local_end, role))
                     lines.append({"text": piece, "placements": clipped, "kind": "body"})
-                    cursor = end + 1
     if doc.record is not None and not any(block.kind in ("code", "log", "table") for block in doc.blocks):
         def flatten(value: Any, prefix: str = "") -> List[tuple]:
             pairs: List[tuple] = []
@@ -492,13 +539,22 @@ def render_raster(doc: Doc, style: str = "scan", difficulty: int = 2) -> dict:
     scale = 3 if difficulty <= 2 else 2
     char_width = 6 * scale
     max_chars = max(20, (width - 80) // char_width)
-    lines = _doc_lines(doc, max_chars)
-    line_height = 7 * scale + 8
-    height = max(420, 110 + line_height * len(lines) + 70)
     if style == "receipt":
         width = max(420, width // 2)
         max_chars = max(20, (width - 60) // char_width)
+    lines = _doc_lines(doc, max_chars)
+    # Widen the page rather than break an entity: a long value must stay one
+    # visual span for image ground truth to remain exact.
+    needed = max((len(line["text"]) for line in lines), default=0)
+    if needed > max_chars:
+        max_chars = needed
+        width = max(width, 80 + max_chars * char_width)
         lines = _doc_lines(doc, max_chars)
+        needed = max((len(line["text"]) for line in lines), default=0)
+        width = max(width, 80 + needed * char_width)
+    line_height = 7 * scale + 8
+    height = max(420, 110 + line_height * len(lines) + 70)
+    if style == "receipt":
         height = max(300, 80 + line_height * len(lines) + 50)
     canvas = Canvas(width, height, COLORS["white"])
     text_color = COLORS["black"]
@@ -589,10 +645,16 @@ def render_raster(doc: Doc, style: str = "scan", difficulty: int = 2) -> dict:
         placements = []
         for entity, start, end, role in line["placements"]:
             left = x_draw + start * 6 * line_scale
+            entity_width = (end - start) * 6 * line_scale
             placements.append({
                 "entity": entity, "role": role,
-                "bbox": [left, y, max(1, min((end - start) * 6 * line_scale, max(1, width - left))),
+                "bbox": [left, y, max(1, min(entity_width, max(1, width - left))),
                          line_height - 4],
+                "entity_width": max(1, entity_width),
+                "full_width": entity_width,
+                "line_text": line["text"],
+                "fragment_index": 0,
+                "fragment_count": 1,
             })
         output_lines.append({"text": line["text"], "bbox": bbox, "placements": placements})
         y += line_height
@@ -635,6 +697,8 @@ def render_image(doc: Doc, ext: str, filename: str) -> RenderedFile:
                 "location": {
                     "kind": "image_ocr", "width": raster["width"], "height": raster["height"],
                     "bbox": placement["bbox"], "expected_ocr_text": line["text"],
+                    "entity_strategy": "atomic_line", "fragment_index": 0,
+                    "fragment_count": 1, "entity_text_width": placement["full_width"],
                     "ocr_normalized": False, "case_sensitive": False,
                     "bbox_space": "pre_render", "rotation_applied": difficulty >= 3,
                 },
@@ -644,4 +708,5 @@ def render_image(doc: Doc, ext: str, filename: str) -> RenderedFile:
                         {"image_style": style, "ocr_difficulty": difficulty,
                          "width": canvas.width, "height": canvas.height,
                          "text_line_count": len(raster["lines"]),
+                         "entity_ground_truth": "atomic_entity_no_line_break",
                          "ocr_text_source": "pre_render"})

@@ -101,39 +101,71 @@ their offsets never change. Machine formats (`json`, `xml`, `yaml`, `env`,
 be Thai, and JSON/XML/config documents receive a `_language_note`.
 
 `mixed` is verified as **intra-document code-switching**: `attachment.language_check`
-counts Thai and Latin characters and the evaluator requires both. A Thai name in
-an English template is not enough.
+counts Thai, Latin and neutral characters and reports shares over authored text
+(entity values are measured separately and excluded from the classification, so
+a Thai name in an English template does not make the file Thai). Labels come from
+measurement, not from the request: `th` requires a Thai share of at least 0.30,
+`en` a Latin share of at least 0.80, and `mixed` both at least 0.10 (all
+configurable in `language_thresholds`). A file that does not satisfy its
+requested language is relabelled (`language_routing: relabelled_from_*`) or
+rejected; it is never silently accepted.
 
-PDF and image renderers are Latin-only. A Thai request is routed to English with
-`language_routing` recorded; the renderer raises on non-Latin characters instead
-of writing `?`. This is Option B in the brief: explicit unsupported, not
-silently degraded.
+PDF, image and log renderers are English-only. Routing is per attachment: a Thai
+DOCX in the same case keeps Thai content while the PDF next to it is rendered in
+Latin with `language_routing`. A Latin-only rendering of a Thai identity
+(`ลลิตา พูลสวัสดิ์` -> `Lalita Poolsawat`) keeps the canonical value, so both
+representations link to the same identity. The renderers raise on non-Latin
+characters instead of writing `?`.
 
 ### Scenario plan and cross-file links (2.1)
 
 One `ScenarioPlan` per case owns shared people, organisation, hosts, database
 endpoint, internal URL, private network, incident/ticket/invoice/request IDs,
-timestamps, payment terms and transaction references. Builders request shared
-values by key; the plan caches and returns the same `Entity`.
+timestamps, payment terms, transaction references and the financial facts of the
+case (line items, subtotal, VAT, total, currency, invoice/due/payment dates and
+payment schedule). Builders request shared values by key; the plan caches and
+returns the same `Entity`. A quotation/invoice and its transaction export read
+`subtotal`, `tax`, `total`, `transaction_id` and `currency` from the same plan,
+so one settled invoice means invoice total == transaction amount. An installment
+plan would be recorded explicitly in `payment_schedule` instead of producing
+accidental mismatches.
 
 After rendering, every canonical entity that occurs in at least two attachments
-becomes a `cross_file_link`; `bundle` records whether the case is a single file,
-a related multi-file bundle, a same-archetype bundle or an old/new revision.
-Old/new pairs use a deep copy of the first document plus one traceable change
-(status, date or text field), never a full re-generation under the same name.
+becomes a `cross_file_link` with its canonical value and representation
+variants; `bundle` records whether the case is a single file, a related
+multi-file bundle, a same-archetype bundle or an old/new revision. A multi-file
+bundle must carry relationship evidence (a shared canonical entity, a controlled
+revision or the same archetype); otherwise it is marked
+`intentionally_unrelated` and must be an explicit negative/ambiguous case.
+Old/new pairs use a deep copy of the first document plus one meaningful change:
+status, due date, amount, phone, timeline time or endpoint, recorded with
+before/after values and a location in both documents. Cosmetic "(revised)"
+suffixes and note-only revisions are not produced.
+
+Log timestamps come from the scenario timeline in one format per log (ISO,
+bracket or JSON), including the final ERROR line. The rendered lines are parsed
+back and compared chronologically; a single line is `not_evaluated`, never
+`passed`.
 
 ### Consistency and structure (2.1)
 
 `consistency_checks` records invoice line arithmetic, VAT total, due date vs
-payment terms, payroll gross/tax/net, statement running balance, ordered log
-timestamps, cross-file identifier consistency and structure-reference
-resolution. A failed check fails generation; `validate-v2` re-checks the
-exported case.
+payment terms, payroll gross/tax/net, statement running balance, parsed log
+timestamp order, linked amount/currency/transaction-reference agreement,
+cross-file identifier consistency and structure-reference resolution. Every
+check has `check`, `status` (`passed`, `failed`, `not_applicable`,
+`not_evaluated`), `evaluated_items` and `details`; the legacy `passed` boolean is
+kept as `status == "passed"`. A check with nothing to evaluate is
+`not_applicable`, not a pass: `all([])` is not evidence. `validate-v2` rejects a
+failed check and a status/boolean contradiction.
 
-`structure_references` are chosen only from structures the renderer reports
-(sheets, rows, columns, pages, slides, headings, lines, keys). The prompt
-contains a natural clause such as `ดู tab employee` or `หน้า 3`, and the
-reference resolves against `attachment.structure`.
+`structure_references` are chosen only from structures a reader can see
+(sheets/rows/columns for XLSX, rows/columns for CSV, pages/sections for PDF,
+slides for PPTX, sections/lines for text and logs, keys for structured config).
+Images are deliberately excluded: a flattened screenshot has no user-visible row
+or column to cite. The prompt contains a natural clause such as `ดู tab
+employee` or `หน้า 3`, and the reference resolves against
+`attachment.structure`.
 
 ## Dataset layout
 
@@ -143,6 +175,8 @@ dataset/
   cases.jsonl
   all.json
   stats.json
+  benchmark_safe_cases.jsonl
+  benchmark_excluded_cases.jsonl
   train.jsonl validation.jsonl test.jsonl
   ground_truth/entities.jsonl
   attachments/TC-.../file.ext
@@ -150,17 +184,35 @@ dataset/
 
 The manifest includes the dataset ID, schema and generator versions, seed,
 profile, fixed dataset epoch (no wall-clock timestamp, so output stays
-byte-identical), distributions, verification summary, config/policy hashes and
-per-file SHA-256.
+byte-identical), distributions, structured consistency status, verification
+summary, config/policy hashes and per-file SHA-256. `benchmark_safe_cases.jsonl`
+contains only cases whose ground truth is fully verified, whose language and
+consistency evidence is valid and which are not `verified_partial`;
+`benchmark_excluded_cases.jsonl` lists every excluded case with its reasons.
+
+## Benchmark readiness
+
+`report-v2` computes `benchmark_ready` from the dataset and its verification
+output, not from the unit tests. It requires: no failed ground-truth
+verification, no failed or unevaluated consistency check, no known high
+correctness issue, a valid log timeline and atomic image entities, valid
+measured language metadata, passing safety checks, no unresolved schema error
+and a measured reproducibility check (`--check-reproducible`). Reasons are
+listed when it is false. Reports themselves are deterministic:
+`evaluation.json` and `evaluation.md` contain no timestamp or absolute path and
+are byte-identical across `PYTHONHASHSEED` values; `verification.json` contains
+the dataset path, so it is identical for the same location.
 
 ## Safety
 
 Only synthetic values are generated. Reserved example domains, RFC 1918 /
 RFC 5737 / ULA networks, documented test card BINs, and `example`/`fake`
 credential markers are reused from v1. Office files are macro-free ZIP/XML.
-Spreadsheet formulas are limited to arithmetic over generated numbers. PDFs and
-images contain no JavaScript, remote content or executables. Images are marked
-`SYNTHETIC SAMPLE` and do not depict real people or real identity documents.
+No spreadsheet formulas are emitted (cells hold values; sheets can be hidden).
+PDFs and images contain no JavaScript, remote content or executables. Images are
+marked `SYNTHETIC SAMPLE` and do not depict real people or real identity
+documents. Synthetic phone numbers, national-ID-shaped values and bank accounts
+are realistic by design; their collision risk is documented in `SECURITY.md`.
 
 ## Renderer dependencies
 
@@ -195,13 +247,16 @@ the same case JSON and attachment bytes.
 ## Migration from 2.0
 
 - `schema_version` is `2.1`; 2.0 files still load and validate with
-  `validate-v2`, and `report-v2` skips 2.1-only gates for them.
+  `validate-v2`, and `report-v2` skips 2.1-only gates for them. The immutable
+  fixture `datasets/compat/v2.0-sample/` is validated in the test suite and in
+  CI; sample generation never writes into it.
 - Additive 2.1 fields: `prompt_language`, `content_languages`, `language_mode`,
-  `language_coverage`, `scenario_id`, `cross_file_links`, `structure_references`,
-  `document_profile`, `consistency_checks`, `bundle`; per attachment
-  `language`, `language_mode`, `language_mix`, `language_capability`,
-  `language_routing`, `language_check`, `structure`, `renderer_version`,
-  `dependency_renderer` and `revision_changes`.
+  `language_coverage`, `language_stats`, `scenario_id`, `cross_file_links`,
+  `structure_references`, `document_profile`, `consistency_checks`, `bundle`;
+  per attachment `language`, `language_mode`, `language_mix`,
+  `language_capability`, `language_routing`, `language_check`, `structure`,
+  `renderer_version`, `dependency_renderer` and `revision_changes`; per entity
+  `canonical_entity_value`.
 - Existing 2.0 fields keep their meaning. No field was renamed or removed.
 
 ## Acceptance criteria

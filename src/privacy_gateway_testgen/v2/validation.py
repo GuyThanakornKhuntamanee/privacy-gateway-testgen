@@ -9,6 +9,8 @@ from ..models import (
 )
 from ..policies import resolve_policy
 from ..models import Entity
+from .config import DEFAULT_LANGUAGE_THRESHOLDS
+from .localization import language_matches, script_stats
 
 VERIFICATION_STATUSES = ("verified", "verified_partial", "unverified")
 ATTACHMENT_VERIFICATION_STATUSES = ("verified", "verified_layout", "unverified")
@@ -25,6 +27,23 @@ LOCATION_KINDS = {
     "docx_footer", "pptx_shape", "pdf_text", "pdf_image", "image_ocr",
 }
 STRUCTURES = {"file_attachment", "pasted_text", "unstructured", "report", "markdown", "json", "yaml", "xml", "log", "table", "code"}
+# References a reader of the rendered file can actually see.  A flattened
+# screenshot has no row/column grid to point at.
+STRUCTURE_REF_KINDS = {
+    "xlsx": {"sheet", "row", "column"},
+    "csv": {"row", "column"},
+    "docx": {"section", "page", "table"},
+    "pdf": {"page", "section"},
+    "pptx": {"slide"},
+    "txt": {"section", "line"},
+    "md": {"section", "line"},
+    "log": {"line"},
+    "json": {"key"}, "xml": {"key"}, "yaml": {"key"}, "yml": {"key"},
+    "env": {"key"}, "ini": {"key"}, "conf": {"key"}, "toml": {"key"},
+    "sql": {"line"}, "tf": {"line"}, "py": {"line"}, "js": {"line"},
+    "ts": {"line"}, "java": {"line"}, "go": {"line"},
+}
+CONSISTENCY_STATUSES = ("passed", "failed", "not_applicable", "not_evaluated")
 
 REQUIRED_CASE_FIELDS = (
     "schema_version", "test_id", "prompt", "language", "persona", "intent", "formality",
@@ -147,6 +166,17 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
                     _check(bool(check.get("contains_both")), f"{prefix}: mixed document lacks Thai or English", issues)
                 elif language == "en":
                     _check(bool(check.get("contains_latin")), f"{prefix}: English document has no Latin script", issues)
+                stats = check.get("thai_share")
+                if stats is None:
+                    issues.append(f"{prefix}: language_check has no measured script shares")
+                else:
+                    thresholds = case.get("language_coverage", {}).get(
+                        "thresholds", DEFAULT_LANGUAGE_THRESHOLDS)
+                    classification = check.get("static", check)
+                    _check(language_matches(classification, language, thresholds),
+                           f"{prefix}: measured script shares do not satisfy {language}", issues)
+                    _check(check.get("matches_declared_language") is True,
+                           f"{prefix}: declared language was not verified", issues)
             _check(isinstance(attachment.get("structure"), dict), f"{prefix}: structure must be an object", issues)
     _check(sorted(case["file_types"]) == sorted({item["extension"] for item in case["attachments"]}),
            "file_types do not match attachments", issues)
@@ -184,6 +214,12 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
             bbox = location.get("bbox")
             _check(isinstance(bbox, list) and len(bbox) == 4 and all(isinstance(value, (int, float)) for value in bbox),
                    f"{prefix}: invalid bbox", issues)
+            if location.get("kind") == "image_ocr":
+                line_text = location.get("expected_ocr_text", "")
+                _check(annotation["exact_entity_value"].upper() in line_text.upper(),
+                       f"{prefix}: image entity is a fragment, not a full line span", issues)
+                _check(location.get("fragment_count", 1) == 1,
+                       f"{prefix}: image ground truth must be one atomic fragment", issues)
         if annotation["detection_expected"]:
             _check(annotation["classification_expected"] == annotation["entity_type"],
                    f"{prefix}: classification_expected must equal entity_type", issues)
@@ -276,19 +312,52 @@ def _check_21(case: dict, issues: List[str], attachment_ids: set) -> None:
                    "mixed attachments are not script-verified", issues)
     _check(len(case.get("document_profile", [])) == len(case["attachments"]),
            "document_profile does not match attachments", issues)
+    stats = case.get("language_stats")
+    _check(isinstance(stats, dict), "language_stats must be an object", issues)
+    if isinstance(stats, dict):
+        prompt_stats = stats.get("prompt", {})
+        thresholds = coverage.get("thresholds", DEFAULT_LANGUAGE_THRESHOLDS) if isinstance(coverage, dict) else DEFAULT_LANGUAGE_THRESHOLDS
+        _check(isinstance(prompt_stats, dict)
+               and language_matches(prompt_stats.get("static", prompt_stats),
+                                    prompt_language, thresholds),
+               "prompt script shares do not satisfy prompt_language", issues)
+        attachment_stats = stats.get("attachments", [])
+        _check(isinstance(attachment_stats, list)
+               and len(attachment_stats) == len(case["attachments"]),
+               "language_stats.attachments does not match attachments", issues)
+    for index, annotation in enumerate(case["entities"]):
+        if annotation.get("source") == "attachment":
+            _check(bool(annotation.get("canonical_entity_value")),
+                   f"entities[{index}]: missing canonical_entity_value", issues)
     checks = case.get("consistency_checks")
     _check(isinstance(checks, list) and bool(checks), "consistency_checks must be a non-empty array", issues)
     if isinstance(checks, list):
         for check in checks:
             _check(isinstance(check, dict) and bool(check.get("check")),
                    "consistency check is malformed", issues)
-            _check(check.get("passed") is True, f"consistency check failed: {check.get('check')}", issues)
+            status = check.get("status")
+            _check(status in CONSISTENCY_STATUSES,
+                   f"consistency check {check.get('check')} has no structured status", issues)
+            _check(check.get("passed") is (status == "passed"),
+                   f"consistency check {check.get('check')} passed flag contradicts status", issues)
+            _check(isinstance(check.get("evaluated_items"), int),
+                   f"consistency check {check.get('check')} has no evaluated_items", issues)
+            if status in ("not_applicable", "not_evaluated"):
+                _check(check.get("evaluated_items") == 0,
+                       f"consistency check {check.get('check')} claims items it did not evaluate", issues)
+            _check(status != "failed", f"consistency check failed: {check.get('check')}", issues)
     refs = case.get("structure_references")
     _check(isinstance(refs, list), "structure_references must be an array", issues)
     if isinstance(refs, list):
+        extensions = {item["attachment_id"]: item["extension"] for item in case["attachments"]}
         for ref in refs:
             _check(ref.get("attachment_id") in attachment_ids,
                    "structure reference attachment does not exist", issues)
+            allowed = STRUCTURE_REF_KINDS.get(extensions.get(ref.get("attachment_id"), ""), set())
+            _check(ref.get("kind") in allowed,
+                   f"structure reference kind {ref.get('kind')} is not user-visible in this file type",
+                   issues)
+            _check(ref.get("user_visible") is True, "structure reference is not user-visible", issues)
             _check(ref.get("resolved") is True and _structure_ref_resolves(ref, case["attachments"]),
                    f"structure reference does not resolve: {ref.get('kind')}", issues)
     links = case.get("cross_file_links")
@@ -301,14 +370,42 @@ def _check_21(case: dict, issues: List[str], attachment_ids: set) -> None:
         for link in links:
             _check(link.get("consistent") is True, "cross-file link is inconsistent", issues)
             _check(len(link.get("attachments", [])) >= 2, "cross-file link needs two attachments", issues)
+            _check(bool(link.get("canonical_entity_value")), "cross-file link has no canonical value", issues)
             for attachment_id in link.get("attachments", []):
                 _check(attachment_id in attachment_ids, "cross-file link attachment missing", issues)
                 annotation = annotated.get((attachment_id, link.get("canonical_entity_id")))
-                _check(annotation is not None and annotation["exact_entity_value"] == link.get("exact_entity_value"),
-                       "cross-file link value does not match annotation", issues)
+                _check(annotation is not None
+                       and annotation.get("canonical_entity_value") == link.get("canonical_entity_value"),
+                       "cross-file link does not share one canonical identity", issues)
+                _check(annotation is not None
+                       and annotation["exact_entity_value"] in link.get("representation_variants", []),
+                       "cross-file link representation is not recorded", issues)
+    bundle = case.get("bundle", {})
+    relationship = bundle.get("relationship", {}) if isinstance(bundle, dict) else {}
+    _check(isinstance(relationship, dict), "bundle.relationship must be an object", issues)
+    if len(case["attachments"]) > 1:
+        status = relationship.get("status")
+        _check(status in ("related", "intentionally_unrelated"), "multi-file bundle has no relationship", issues)
+        if status == "related":
+            _check(bool(relationship.get("evidence")), "related bundle has no relationship evidence", issues)
+        elif status == "intentionally_unrelated":
+            _check(case.get("test_category") in ("ambiguous", "negative"),
+                   "unrelated bundle must be an explicit negative/ambiguous case", issues)
+    changes = bundle.get("revision_changes", []) if isinstance(bundle, dict) else []
+    if bundle.get("kind") == "old_new":
+        _check(bool(changes), "old/new bundle has no revision change", issues)
+        for change in changes:
+            _check(bool(change.get("change_type")), "revision change has no change type", issues)
+            _check(change.get("before") != change.get("after"), "revision does not change a value", issues)
+            _check("(revised)" not in str(change.get("after", "")),
+                   "revision is a cosmetic suffix", issues)
+            for key in ("source_v1", "source_v2"):
+                _check(isinstance(change.get(key), dict), f"revision change lacks {key} location", issues)
     verification = case.get("verification", {})
     if isinstance(verification, dict):
         _check(verification.get("language_passed") is True, "attachment language verification failed", issues)
+        _check(verification.get("prompt_language_passed") is True,
+               "prompt language verification failed", issues)
 
 
 def validate_dataset_v2(cases: Iterable[dict], policy: Optional[dict] = None) -> List[dict]:

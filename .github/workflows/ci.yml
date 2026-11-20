@@ -17,18 +17,62 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run test suite
+      - name: Run test suite (v1 + v2 + correctness regressions)
         env:
           PYTHONPATH: src
+          PYTHONHASHSEED: "0"
         run: python -m unittest discover -s tests -t . -v
-      - name: Run quality gates
+      - name: Run v1 quality gates and regenerate the v1 sample
         env:
           PYTHONPATH: src
         run: >
           python -m privacy_gateway_testgen evaluate
-          --config configs/default.json --out reports
-      - name: Upload evaluation report
+          --config configs/default.json --out reports --dataset-out datasets/sample
+      - name: Generate representative v2 dataset
+        env:
+          PYTHONPATH: src
+        run: >
+          python -m privacy_gateway_testgen generate-v2
+          --config configs/v2/default.json --profile benchmark-balanced
+          --out build/v2-dataset
+      - name: Validate v2 dataset (schema + file verification)
+        env:
+          PYTHONPATH: src
+        run: python -m privacy_gateway_testgen validate-v2 --dataset build/v2-dataset
+      - name: Verify v2 dataset (reopen every attachment)
+        env:
+          PYTHONPATH: src
+        run: python -m privacy_gateway_testgen verify-v2 --dataset build/v2-dataset
+      - name: Report v2 dataset with reproducibility check
+        env:
+          PYTHONPATH: src
+        run: >
+          python -m privacy_gateway_testgen report-v2
+          --dataset build/v2-dataset --out reports/v2 --check-reproducible
+      - name: Check v1 sample and report regeneration drift
+        run: git diff --exit-code -- datasets/sample reports/evaluation.json reports/evaluation.md
+      - name: Reports are byte-identical under a different PYTHONHASHSEED
+        env:
+          PYTHONPATH: src
+          PYTHONHASHSEED: "424242"
+        run: >
+          python -m privacy_gateway_testgen report-v2
+          --dataset build/v2-dataset --out build/reports-hashseed
+      - name: Compare hash-seeded reports
+        run: |
+          cmp build/reports-hashseed/evaluation.json reports/v2/evaluation.json
+          cmp build/reports-hashseed/evaluation.md reports/v2/evaluation.md
+          cmp build/reports-hashseed/verification.json reports/v2/verification.json
+      - name: Schema 2.0 compatibility fixture
+        env:
+          PYTHONPATH: src
+        run: python -m privacy_gateway_testgen validate-v2 --dataset datasets/compat/v2.0-sample
+      - name: Upload evaluation reports
         uses: actions/upload-artifact@v4
         with:
           name: evaluation-${{ matrix.python-version }}
-          path: reports/
+          path: |
+            reports/
+            build/v2-dataset/manifest.json
+            build/v2-dataset/benchmark_safe_cases.jsonl
+            build/v2-dataset/benchmark_excluded_cases.jsonl

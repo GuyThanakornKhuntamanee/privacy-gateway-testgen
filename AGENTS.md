@@ -10,12 +10,15 @@ agreement.
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -t . -v
 PYTHONPATH=src python -m privacy_gateway_testgen evaluate --config configs/default.json --out reports --dataset-out datasets/sample
+PYTHONPATH=src python -m privacy_gateway_testgen generate-v2 --config configs/v2/default.json --profile benchmark-balanced --out datasets/v2-sample
 PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 --dataset datasets/v2-sample
 PYTHONPATH=src python -m privacy_gateway_testgen verify-v2 --dataset datasets/v2-sample
-PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2
+PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2 --check-reproducible
+PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 --dataset datasets/compat/v2.0-sample
 ```
 
-130 tests, ~42 s, standard library only. A change is done when all pass and the
+166 tests, ~60 s, standard library only. A change is done when all pass,
+`benchmark_ready` is `true` (or its reasons are intended), and the
 `datasets/sample`, `datasets/v2-sample` and `reports/` diffs are intended.
 
 ## Invariants
@@ -43,7 +46,13 @@ PYTHONPATH=src python -m privacy_gateway_testgen report-v2 --dataset datasets/v2
   come from `v2/scenario.py`; `cross_file_links` and `consistency_checks` are
   validated, not assumed.
 - **Structure references resolve.** A prompt may cite a sheet/page/section/row
-  only when the referenced attachment structure proves it exists.
+  only when the referenced attachment structure proves it exists, and only when
+  a reader could see it (never row/column on a flat image).
+- **Checks have status.** `passed` / `failed` / `not_applicable` /
+  `not_evaluated` with `evaluated_items`; empty input is never a pass.
+- **Benchmark readiness is measured.** `report-v2 --check-reproducible` computes
+  `benchmark_ready` and the safe subset; a smaller honest dataset beats a larger
+  inconsistent one.
 
 ## Where to look
 

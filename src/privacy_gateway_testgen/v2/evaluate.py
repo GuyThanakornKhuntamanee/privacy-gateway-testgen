@@ -15,7 +15,10 @@ from typing import Iterable, List
 
 from ..models import ACTIONS
 from ..textsim import duplicate_report
+from .generate import benchmark_safe_reasons
 from .validation import prompt_span_accuracy, validate_dataset_v2
+
+KNOWN_HIGH_CORRECTNESS_ISSUES: List[str] = []
 
 KNOWN_LIMITATIONS = [
     "PDF content is English/Latin only because the standard-library PDF writer uses built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT and the routing is recorded on the attachment.",
@@ -57,7 +60,7 @@ def _openings(cases: Iterable[dict]) -> dict:
         opening = " ".join(normalized.split()[:3])
         counts[opening] += 1
         total += 1
-    top = counts.most_common(10)
+    top = sorted(counts.items(), key=lambda item: (-item[1], item[0]))[:10]
     return {
         "top": [{"opening": value, "count": count} for value, count in top],
         "top_share": _share(top[0][1], total) if top else 0.0,
@@ -71,10 +74,12 @@ def _repeated_phrases(cases: Iterable[dict]) -> dict:
     for case in cases:
         normalized = " ".join(case["prompt"].lower().split())
         words = normalized.split()
-        grams = {" ".join(words[index:index + 4]) for index in range(max(0, len(words) - 3))}
+        grams = sorted({" ".join(words[index:index + 4])
+                        for index in range(max(0, len(words) - 3))})
         counts.update(grams)
         total += 1
-    repeated = [(phrase, count) for phrase, count in counts.most_common(10) if count > 1]
+    repeated = sorted(((phrase, count) for phrase, count in counts.items() if count > 1),
+                      key=lambda item: (-item[1], item[0]))[:10]
     return {
         "top": [{"phrase": phrase, "count": count} for phrase, count in repeated],
         "top_share": _share(repeated[0][1], total) if repeated else 0.0,
@@ -167,6 +172,14 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
     same_archetype_cases = 0
     consistency_total = 0
     consistency_passed = 0
+    consistency_status = Counter()
+    prompt_forms = Counter()
+    prompt_only_forms = Counter()
+    language_share_sum = {"th": 0.0, "en": 0.0, "mixed": 0.0}
+    language_share_count = Counter()
+    language_mismatches = 0
+    residual_labels = 0
+    language_by_file_type: dict = {}
     prompt_lengths: List[int] = []
     for case in cases:
         domains.update(case["domains"])
@@ -210,7 +223,27 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         cross_file_links += len(links)
         checks = case.get("consistency_checks", [])
         consistency_total += len(checks)
-        consistency_passed += sum(1 for check in checks if check.get("passed"))
+        consistency_passed += sum(1 for check in checks if check.get("status") == "passed")
+        consistency_status.update(check.get("status", "not_evaluated") for check in checks)
+        prompt_forms[case.get("prompt_form", "with_attachment")] += 1
+        if case["attachment_count"] == 0:
+            prompt_only_forms[case.get("prompt_form", "with_attachment")] += 1
+        stats = case.get("language_stats", {})
+        prompt_stats = stats.get("prompt", {})
+        if case["language"] in language_share_sum and prompt_stats:
+            language_share_sum[case["language"]] += float(prompt_stats.get("thai_share", 0.0))
+            language_share_count[case["language"]] += 1
+        for item in stats.get("attachments", []):
+            if item.get("matches_declared_language") is not True:
+                language_mismatches += 1
+            residual_labels += len(item.get("residual_english_labels", []))
+            bucket = language_by_file_type.setdefault(
+                item.get("extension", "unknown"), {"files": 0, "declared": {}, "mismatches": 0})
+            bucket["files"] += 1
+            bucket["declared"][item.get("language", "unknown")] = (
+                bucket["declared"].get(item.get("language", "unknown"), 0) + 1)
+            if item.get("matches_declared_language") is not True:
+                bucket["mismatches"] += 1
         prompt_lengths.append(case["prompt_length"])
         count = len(case["entities"])
         entity_density["0" if count == 0 else ("1-3" if count <= 3 else ("4-6" if count <= 6 else "7+"))] += 1
@@ -233,8 +266,12 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         _share(structure_references_resolved, structure_references_total)
         if structure_references_total else 1.0
     )
-    consistency_rate = _share(consistency_passed, consistency_total) if consistency_total else 1.0
+    consistency_rate = (_share(consistency_passed,
+                               consistency_status["passed"] + consistency_status["failed"])
+                        if (consistency_status["passed"] + consistency_status["failed"]) else 0.0)
     mixed_script_rate = _share(mixed_attachments_verified, mixed_attachments) if mixed_attachments else 1.0
+    prompt_form_top = (max(prompt_only_forms.values()) / sum(prompt_only_forms.values())
+                       if prompt_only_forms else 0.0)
     opening = _openings(cases)
     phrases = _repeated_phrases(cases)
     safety = _safety(cases)
@@ -300,6 +337,17 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         gate("cross_file_consistency",
              consistency_rate >= gates_config.get("min_consistency_rate", 1.0),
              consistency_rate, f">= {gates_config.get('min_consistency_rate', 1.0)}")
+        gate("consistency_evaluated",
+             consistency_status["failed"] == 0 and consistency_status["not_evaluated"] == 0,
+             dict(sorted(consistency_status.items())),
+             "0 failed, 0 not_evaluated (not_applicable allowed)")
+        gate("language_share_check", language_mismatches == 0, language_mismatches,
+             "0 attachments below their declared script-share thresholds")
+        gate("localization_residual_labels", residual_labels == 0, residual_labels,
+             "0 untranslated static labels in Thai documents")
+        gate("prompt_form_concentration",
+             prompt_form_top <= gates_config.get("max_prompt_form_share", 0.5),
+             round(prompt_form_top, 4), f"<= {gates_config.get('max_prompt_form_share', 0.5)}")
     gate("domain_coverage", len(domains) >= gates_config["min_domain_count"],
          sorted(domains), f">= {gates_config['min_domain_count']}")
     gate("negative_share", negative_ratio >= gates_config["min_negative_ratio"],
@@ -326,6 +374,47 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
     if gates_config.get("require_reproducibility", False):
         gate("reproducibility", reproducible, reproducible, "same seed + config reproduce bytes")
     passed = all(item["passed"] for item in gates)
+    safe_cases = [case for case in cases if not benchmark_safe_reasons(case)]
+    readiness_reasons: List[str] = []
+    if validation_issues:
+        readiness_reasons.append(f"schema_validation_issues:{len(validation_issues)}")
+    if consistency_status["failed"]:
+        readiness_reasons.append(f"failed_consistency_checks:{consistency_status['failed']}")
+    if consistency_status["not_evaluated"]:
+        readiness_reasons.append(
+            f"not_evaluated_consistency_checks:{consistency_status['not_evaluated']}")
+    if language_mismatches:
+        readiness_reasons.append(f"language_metadata_mismatches:{language_mismatches}")
+    if not safety["passed"]:
+        readiness_reasons.append(f"safety_issues:{safety['issue_count']}")
+    if any(case.get("verification_status") not in ("verified", "verified_partial") for case in cases):
+        readiness_reasons.append("unverified_cases")
+    if KNOWN_HIGH_CORRECTNESS_ISSUES:
+        readiness_reasons.append(
+            "known_high_issues:" + ",".join(KNOWN_HIGH_CORRECTNESS_ISSUES))
+    if not reproducible:
+        readiness_reasons.append("dataset_reproducibility_not_checked")
+    benchmark_ready = {
+        "benchmark_ready": not readiness_reasons,
+        "reasons": readiness_reasons,
+        "benchmark_safe_cases": len(safe_cases),
+        "excluded_cases": total - len(safe_cases),
+        "checks": {
+            "no_failed_ground_truth_verification": file_open_rate == 1.0 and not extraction_failures,
+            "no_known_high_correctness_issue": not KNOWN_HIGH_CORRECTNESS_ISSUES,
+            "linked_financial_data_consistent": consistency_status["failed"] == 0,
+            "timeline_valid": all(
+                check.get("status") != "failed"
+                for case in cases for check in case.get("consistency_checks", [])
+                if check.get("check") == "log_timestamps_ordered"),
+            "entity_fragments_valid": extraction_failures == 0,
+            "language_metadata_valid": language_mismatches == 0,
+            "required_safety_checks": safety["passed"],
+            "no_unresolved_schema_errors": not validation_issues,
+            "deterministic_dataset_output": reproducible,
+            "deterministic_report_output": True,
+        },
+    }
     return {
         "schema_version": "2.1",
         "dataset_version": config["dataset_version"],
@@ -336,6 +425,7 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         "passed": passed,
         "gates": gates,
         "failed_gates": [item["name"] for item in gates if not item["passed"]],
+        "benchmark_ready": benchmark_ready,
         "metrics": {
             "schema_validity": round(schema_validity, 4),
             "prompt_span_accuracy": round(prompt_accuracy, 4),
@@ -365,7 +455,27 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
             "cross_file_links": cross_file_links,
             "consistency_checks": consistency_total,
             "consistency_passed": consistency_passed,
+            "consistency_status": dict(sorted(consistency_status.items())),
             "consistency_rate": consistency_rate,
+            "prompt_forms": dict(sorted(prompt_forms.items())),
+            "prompt_only_forms": dict(sorted(prompt_only_forms.items())),
+            "prompt_form_top_share": round(prompt_form_top, 4),
+            "language_share_means": {
+                key: round(language_share_sum[key] / language_share_count[key], 4)
+                if language_share_count[key] else 0.0
+                for key in ("th", "en", "mixed")
+            },
+            "language_share_samples": dict(sorted(language_share_count.items())),
+            "language_by_file_type": {
+                key: {
+                    "files": value["files"],
+                    "declared": dict(sorted(value["declared"].items())),
+                    "mismatches": value["mismatches"],
+                }
+                for key, value in sorted(language_by_file_type.items())
+            },
+            "language_mismatches": language_mismatches,
+            "residual_english_labels": residual_labels,
             "detection_evaluated": False,
             "detection_note": "No detector or gateway was run; these metrics cover file ingestion and annotation provenance only.",
             "validation_issues": validation_issues[:50],
@@ -419,6 +529,14 @@ def markdown_report_v2(report: dict) -> str:
         f"- Cases: `{report['total_cases']}`",
         f"- Files: `{report['total_files']}`",
         f"- Overall: **{'PASS' if report['passed'] else 'FAIL'}**",
+        f"- Benchmark ready: **{'YES' if report['benchmark_ready']['benchmark_ready'] else 'NO'}**"
+        f" ({report['benchmark_ready']['benchmark_safe_cases']} safe cases,"
+        f" {report['benchmark_ready']['excluded_cases']} excluded)",
+        "",
+        "## Benchmark readiness",
+        "",
+        f"- Reasons: `{report['benchmark_ready']['reasons']}`",
+        f"- Checks: `{report['benchmark_ready']['checks']}`",
         "",
         "## Quality gates",
         "",
@@ -456,7 +574,12 @@ def markdown_report_v2(report: dict) -> str:
         f"- Same-archetype bundle cases: `{metrics['same_archetype_bundle_cases']}`",
         f"- Structure-reference cases: `{metrics['structure_reference_cases']}` (`{metrics['structure_references_resolved']}/{metrics['structure_references_total']}` resolved)",
         f"- Cross-file link cases: `{metrics['cross_file_link_cases']}` (`{metrics['cross_file_links']}` links)",
-        f"- Consistency checks: `{metrics['consistency_passed']}/{metrics['consistency_checks']}` passed",
+        f"- Consistency checks: `{metrics['consistency_passed']}/{metrics['consistency_checks']}` passed; status `{metrics['consistency_status']}`",
+        f"- Prompt forms: `{metrics['prompt_forms']}` (top share `{metrics['prompt_form_top_share']}`)",
+        f"- Mean Thai script share by prompt language: `{metrics['language_share_means']}`",
+        f"- Language mismatches: `{metrics['language_mismatches']}`",
+        f"- Language coverage by file type: `{metrics['language_by_file_type']}`",
+        f"- Residual English labels in Thai documents: `{metrics['residual_english_labels']}`",
         f"- OCR cases: `{metrics['ocr_cases']}`",
         "",
         "## Verification",

@@ -147,8 +147,12 @@ def cmd_report_v2(args) -> int:
     report["verification"] = {key: value for key, value in verification.items() if key not in ("file_results",)}
     report["manifest"] = {
         key: manifest.get(key) for key in ("dataset_id", "schema_version", "generator_version",
-                                            "generated_at", "seed", "profile", "total_cases", "total_files")
+                                            "seed", "profile", "total_cases", "total_files")
     }
+    # ``generated_at`` and absolute paths are machine/time specific and are
+    # deliberately excluded, so evaluation.json / evaluation.md are
+    # byte-identical for the same dataset on any PYTHONHASHSEED.
+    report["deterministic_report"] = True
     os.makedirs(args.out, exist_ok=True)
     with open(os.path.join(args.out, "evaluation.json"), "w", encoding="utf-8", newline="\n") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
@@ -165,6 +169,12 @@ def cmd_report_v2(args) -> int:
         for gate in report["gates"]:
             print(f"  [{'PASS' if gate['passed'] else 'FAIL'}] {gate['name']}: {gate['value']} ({gate['requirement']})")
         print("verification:", "PASS" if verification["passed"] else "FAIL")
+        readiness = report["benchmark_ready"]
+        print("benchmark_ready:", "YES" if readiness["benchmark_ready"] else "NO",
+              "safe_cases:", readiness["benchmark_safe_cases"],
+              "excluded:", readiness["excluded_cases"])
+        for reason in readiness["reasons"]:
+            print("  -", reason)
         print("OVERALL:", "PASS" if report["passed"] and verification["passed"] else "FAIL")
     return 0 if report["passed"] and verification["passed"] else 1
 

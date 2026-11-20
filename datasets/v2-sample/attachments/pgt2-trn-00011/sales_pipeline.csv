@@ -1,5 +1,0 @@
-โอกาสขาย / opportunity,ลูกค้า / customer,อีเมลผู้ติดต่อ / contact_email,จำนวนเงิน / amount,ขั้นตอน / stage,อ้างอิง / reference
-OPP-2000,Contact 1,contact1@example.com,"748,225",ผ่านคุณสมบัติ / qualified,TXN-2026-09868401
-OPP-2001,Contact 2,contact2@example.com,"887,179",ผ่านคุณสมบัติ / qualified,TXN-2026-13023243
-OPP-2002,Contact 3,contact3@example.com,"70,255",ผ่านคุณสมบัติ / qualified,TXN-2026-11327518
-OPP-2003,Contact 4,contact4@example.com,"415,885",เจรจา / negotiation,TXN-2026-67450142

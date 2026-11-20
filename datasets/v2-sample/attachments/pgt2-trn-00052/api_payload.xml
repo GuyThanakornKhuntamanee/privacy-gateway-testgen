@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event>
+  <event>order.created</event>
+  <id>evt_333946</id>
+  <created_at>2026-03-18T09:12:44Z</created_at>
+  <customer>
+    <id>CUS-9138</id>
+  </customer>
+  <source_ip>10.40.6.44</source_ip>
+  <_language_note>เอกสารตัวอย่างสังเคราะห์สำหรับทดสอบ privacy gateway เท่านั้น</_language_note>
+</event>

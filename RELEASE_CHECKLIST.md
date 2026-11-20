@@ -28,23 +28,35 @@ Run every item before publishing a tag. Do not publish if any gate fails.
 
 - [ ] Regenerate the sample: `generate --config configs/default.json --out datasets/sample`.
 - [ ] Regenerate the v2 sample:
-      `generate-v2 --config configs/v2/default.json --profile real-world-enterprise --out datasets/v2-sample`.
+      `generate-v2 --config configs/v2/default.json --profile benchmark-balanced --out datasets/v2-sample`.
 - [ ] `validate` passes on `all.jsonl`, `train.jsonl`, `validation.jsonl`,
       `test.jsonl`.
 - [ ] `validate-v2 --dataset datasets/v2-sample` and
       `verify-v2 --dataset datasets/v2-sample` pass.
+- [ ] `validate-v2 --dataset datasets/compat/v2.0-sample` passes and the fixture
+      hash in `tests/test_v2_correctness.py` is unchanged.
 - [ ] `evaluate` passes with the shipped config and writes
       `reports/evaluation.json` / `.md`.
-- [ ] `report-v2 --dataset datasets/v2-sample --out reports/v2` passes and
-      writes `evaluation.json`, `evaluation.md`, `verification.json`.
+- [ ] `report-v2 --dataset datasets/v2-sample --out reports/v2 --check-reproducible`
+      passes and reports `benchmark_ready: true` (or the listed reasons are
+      intended and documented).
+- [ ] Reports are byte-identical under two different `PYTHONHASHSEED` values.
 - [ ] Split integrity is clean (no template family or near-duplicate across
       splits).
-- [ ] Language gate passes: Thai documents contain Thai, mixed documents contain
-      both scripts, and PDF/image attachments are English with a routing reason.
+- [ ] Language gate passes: measured shares meet the configured thresholds, and
+      PDF/image/log attachments are English with a routing reason.
 - [ ] Prompt/attachment language matrix is reported and non-trivial.
-- [ ] `cross_file_links` are consistent and `consistency_checks` all pass.
-- [ ] Every `structure_reference` resolves to a real sheet/page/section/row.
-- [ ] Old/new and same-archetype bundles show a traceable change.
+- [ ] `cross_file_links` are consistent and no `consistency_checks` entry is
+      `failed` or `not_evaluated` (`not_applicable` is allowed).
+- [ ] Linked invoice/transaction amount, currency and reference agree.
+- [ ] Log timestamps are ordered when parsed from the rendered file.
+- [ ] Every `structure_reference` resolves to a user-visible sheet/page/section
+      (never a row/column on an image).
+- [ ] Every multi-file bundle has relationship evidence.
+- [ ] Old/new and same-archetype bundles show a traceable before/after change.
+- [ ] No image entity is annotated as a line fragment.
+- [ ] `benchmark_safe_cases.jsonl` and `benchmark_excluded_cases.jsonl` are
+      consistent with the readiness report.
 - [ ] All six actions appear in the sample.
 - [ ] Security scan tests pass; inspect any new entity shape manually.
 - [ ] Manifest hashes match the committed files, including v2 attachment hashes.

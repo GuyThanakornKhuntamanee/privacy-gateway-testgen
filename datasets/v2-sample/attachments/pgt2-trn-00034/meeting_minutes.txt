@@ -1,0 +1,21 @@
+ประชุมแพลตฟอร์มรายสัปดาห์
+
+วันที่: 18 มี.ค. 2569  |  Location: internal video call
+
+ผู้เข้าร่วม
+
+- อรทัย สุขสวัสดิ์ - wichai.prasert@example.net
+- มณีรัตน์ ภักดี - somchai.kittipong33@example.com
+- รัตนา รุ่งเรือง - piyada.siriporn26@example.com
+บันทึก
+
+ทีมทบทวน checklist การ deploy และแผนย้ายข้อมูลลูกค้า ยังมีงานค้างหนึ่งรายการสำหรับเจ้าของฐานข้อมูล
+
+Migration target: db-replica.mekong-byte.internal:5432 via https://notify.mekong-byte.internal/internal/report
+
+The shared integration key was pasted in chat during the demo: sk_example_fake_e37693cdee35435c74c847ab
+
+รายการที่ต้องทำ
+
+- ผู้รับผิดชอบ / Owner: มณีรัตน์ ภักดี - confirm the migration window.
+- ผู้รับผิดชอบ / Owner: รัตนา รุ่งเรือง - remove the old deployment credential.

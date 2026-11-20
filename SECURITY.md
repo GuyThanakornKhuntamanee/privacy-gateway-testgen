@@ -41,8 +41,8 @@ The schema 2.1 generator writes real files. It enforces additional controls:
   relationships other than safe `example.org`/`example.com` documentation links.
 - PDFs contain no JavaScript, `/OpenAction`, `/Launch`, embedded files or remote
   content. They may embed a locally generated RGB image for scanned-page tests.
-- Spreadsheet formulas are limited to harmless arithmetic over generated numbers;
-  no external workbook links or WebDAV paths are emitted.
+- Spreadsheets contain values, not formulas; no external workbook links or
+  WebDAV paths are emitted.
 - Images are synthetic screenshots/scans drawn by the renderer. They are marked
   `SYNTHETIC SAMPLE` where appropriate, contain no real identity documents and
   do not depict real people.
@@ -63,6 +63,36 @@ or text formats. No Thai PDF or Thai OCR-image capability is claimed.
 
 Cross-file links and arithmetic checks describe the generated scenario only.
 They do not certify that a downstream gateway performs the same correlation.
+
+## Collision risk of synthetic identifiers
+
+Some entity factories deliberately produce shape-valid values so detectors face
+realistic input. They are synthetic, but they are not guaranteed collision-free:
+
+- **Thai phone numbers** follow a real mobile shape (`06`, `08` or `09`
+  prefix). The value space is shared with assigned numbers, so a random value
+  can resemble a real subscriber number. No reserved Thai mobile range exists
+  that would keep the format useful for detection tests.
+- **Thai national-ID-shaped values** are 13 digits with a valid modulus-11 check
+  digit. A random number can therefore be checksum-valid; the probability of
+  matching any real citizen ID is small per value but not zero across a large
+  dataset.
+- **Bank account numbers** follow a common Thai display shape but do not encode
+  a real bank/branch/account scheme and are not verified against any bank.
+- **Thai addresses** use public province/district/subdistrict names from a
+  curated table, but the house number, moo and soi are random and no street
+  number is derived from real household data.
+
+Mitigations: values are only generated inside synthetic scenarios, every value
+is annotated as synthetic, and the collision risk is documented here rather than
+silently assumed away. Do not publish a dataset as "safe PII" on the basis of
+this generator; treat it as a test fixture. If an exact match with a real person
+or account is ever discovered, report it as a security issue and remove that
+value from the released dataset.
+
+The alternative (invalid prefixes or obviously fake values) was rejected because
+it would make the detector benchmark trivial. The tradeoff is deliberate:
+synthetic realism for detector testing, with documented residual risk.
 
 
 

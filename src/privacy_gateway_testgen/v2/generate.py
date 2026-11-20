@@ -7,6 +7,7 @@ import json
 import os
 import random
 import re
+import shutil
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 import copy
@@ -24,13 +25,15 @@ from .archetypes import ARCHETYPES, Archetype, BuildContext
 from .docmodel import Block, Doc
 from .extract import verify_attachment
 from .localization import (
-    document_text, language_capability, language_mix_description, localize_doc,
-    script_counts,
+    classify_language, document_static_text, document_text, language_capability,
+    language_matches, language_mix_description, localize_doc,
+    residual_english_labels, script_counts,
 )
 from .org import make_org
 from .realism import PERSONAS, build_prompt
 from .renderers import render
-from .scenario import ScenarioPlan, make_scenario, safe_negative
+from .scenario import ScenarioPlan, finance_checks, make_scenario, safe_negative
+from .validation import STRUCTURE_REF_KINDS
 
 GENERATION_METHOD = "archetype+span_first+scenario_plan+real_file_renderer"
 INLINE_ARCHETYPES = {
@@ -39,7 +42,32 @@ INLINE_ARCHETYPES = {
     "employee_list", "order_export", "customer_complaint", "api_payload",
 }
 LATIN_ONLY_RENDERERS = {"pdf", "png", "jpg", "jpeg"}
+ENGLISH_ONLY_RENDERERS = LATIN_ONLY_RENDERERS | {"log"}
 MACHINE_KEY_RENDERERS = {"json", "xml", "yaml", "yml", "env", "ini", "conf", "toml", "sql"}
+# Prompt-only content sources: not every no-attachment request is a fenced paste.
+PROMPT_ONLY_FORMS = {
+    "pasted_email": {"th": "\n\n--- ข้อความที่ forward ต่อ ---\n", "en": "\n\n--- forwarded message ---\n",
+                     "mixed": "\n\n--- forwarded message ---\n"},
+    "copied_chat": {"th": "\n\nแปะจากแชท:\n", "en": "\n\ncopied from chat:\n",
+                    "mixed": "\n\nแปะจากแชท:\n"},
+    "copied_ticket": {"th": "\n\nเนื้อหาตั๋ว:\n", "en": "\n\nticket text:\n", "mixed": "\n\nticket text:\n"},
+    "raw_notes": {"th": "\n\nโน้ตที่พิมพ์ไว้:\n", "en": "\n\nnotes I typed up:\n",
+                  "mixed": "\n\nnotes I typed up:\n"},
+    "log_fragment": {"th": "\n\nจาก log:\n", "en": "\n\nfrom the log:\n", "mixed": "\n\nfrom the log:\n"},
+    "pasted_table": {"th": "\n\nตารางที่ copy มา:\n", "en": "\n\ntable I copied:\n",
+                     "mixed": "\n\ntable I copied:\n"},
+    "report_excerpt": {"th": "\n\nตัดตอนจากรายงาน:\n", "en": "\n\nexcerpt from the report:\n",
+                       "mixed": "\n\nexcerpt from the report:\n"},
+    "code_config": {"th": "\n\n snippet:\n", "en": "\n\nsnippet:\n", "mixed": "\n\nsnippet:\n"},
+    "pasted_file": {"th": "\n\nอันนี้แปะมาจากไฟล์:\n", "en": "\n\npasted from the file:\n",
+                    "mixed": "\n\nอันนี้แปะมาจากไฟล์:\n"},
+    "short_no_paste": {"th": "", "en": "", "mixed": ""},
+}
+PROMPT_ONLY_WEIGHTS = {
+    "pasted_email": 0.12, "copied_chat": 0.10, "copied_ticket": 0.09, "raw_notes": 0.10,
+    "log_fragment": 0.08, "pasted_table": 0.09, "report_excerpt": 0.08, "code_config": 0.07,
+    "pasted_file": 0.12, "short_no_paste": 0.15,
+}
 BUNDLE_PAIRS = {
     "transaction_export": ("invoice", "bank_statement"),
     "invoice": ("transaction_export", "purchase_order"),
@@ -94,7 +122,9 @@ def _sha256(data: bytes) -> str:
 
 
 def _canonical_id(entity: Entity) -> str:
-    return "canon-" + hashlib.sha1(f"{entity.domain}|{entity.entity_type}|{entity.value}".encode("utf-8")).hexdigest()[:12]
+    canonical = entity.canonical_value or entity.value
+    return "canon-" + hashlib.sha1(
+        f"{entity.domain}|{entity.entity_type}|{canonical}".encode("utf-8")).hexdigest()[:12]
 
 
 def _replace_entities(text: str, placements) -> str:
@@ -185,43 +215,53 @@ def _choose_structure_refs(rng: random.Random, attachments: Sequence[dict]) -> L
     for attachment in attachments:
         structure = attachment["structure"]
         extension = attachment["extension"]
+        allowed = STRUCTURE_REF_KINDS.get(extension, set())
+        if not allowed:
+            # A flattened screenshot has no columns or rows a user could name.
+            continue
         for sheet in structure.get("sheets", []):
-            candidates.append({"attachment_id": attachment["attachment_id"],
-                               "filename": attachment["filename"],
-                               "kind": "sheet", "value": sheet["name"]})
-            if sheet.get("rows", 0) > 1:
+            if "sheet" in allowed:
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "sheet", "value": sheet["name"]})
+            if "row" in allowed and sheet.get("rows", 0) > 1:
                 candidates.append({"attachment_id": attachment["attachment_id"],
                                    "filename": attachment["filename"],
                                    "kind": "row", "value": rng.randint(2, sheet["rows"]),
                                    "sheet": sheet["name"]})
-        for index in range(1, structure.get("slides", 0) + 1):
-            candidates.append({"attachment_id": attachment["attachment_id"],
-                               "filename": attachment["filename"],
-                               "kind": "slide", "value": index})
-        for index in range(1, structure.get("pages", 0) + 1):
-            candidates.append({"attachment_id": attachment["attachment_id"],
-                               "filename": attachment["filename"],
-                               "kind": "page", "value": index})
-        for heading in structure.get("headings", [])[1:]:
-            candidates.append({"attachment_id": attachment["attachment_id"],
-                               "filename": attachment["filename"],
-                               "kind": "section", "value": heading})
-        if structure.get("rows", 0) > 1:
+        if "slide" in allowed:
+            for index in range(1, structure.get("slides", 0) + 1):
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "slide", "value": index})
+        if "page" in allowed:
+            for index in range(1, structure.get("pages", 0) + 1):
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "page", "value": index})
+        if "section" in allowed:
+            for heading in structure.get("headings", [])[1:]:
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "section", "value": heading})
+        if "row" in allowed and structure.get("rows", 0) > 1:
             candidates.append({"attachment_id": attachment["attachment_id"],
                                "filename": attachment["filename"],
                                "kind": "row", "value": rng.randint(2, structure["rows"])})
-        for header in structure.get("headers", []):
-            candidates.append({"attachment_id": attachment["attachment_id"],
-                               "filename": attachment["filename"],
-                               "kind": "column", "value": header})
-        if structure.get("lines", 0) > 3 and extension in ("txt", "md", "log"):
+        if "column" in allowed:
+            for header in structure.get("headers", []):
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "column", "value": header})
+        if "line" in allowed and structure.get("lines", 0) > 3:
             candidates.append({"attachment_id": attachment["attachment_id"],
                                "filename": attachment["filename"],
                                "kind": "line", "value": rng.randint(1, structure["lines"])})
-        for key in structure.get("keys", [])[:5]:
-            candidates.append({"attachment_id": attachment["attachment_id"],
-                               "filename": attachment["filename"],
-                               "kind": "key", "value": key})
+        if "key" in allowed:
+            for key in structure.get("keys", [])[:5]:
+                candidates.append({"attachment_id": attachment["attachment_id"],
+                                   "filename": attachment["filename"],
+                                   "kind": "key", "value": key})
     if not candidates:
         return []
     first = rng.choice(candidates)
@@ -233,6 +273,7 @@ def _choose_structure_refs(rng: random.Random, attachments: Sequence[dict]) -> L
     for ref in refs:
         ref["valid"] = True
         ref["resolved"] = True
+        ref["user_visible"] = True
     return refs
 
 
@@ -247,17 +288,19 @@ def _cross_file_links(annotations: Sequence[dict]) -> List[dict]:
         attachment_ids = sorted({item["source_attachment"] for item in items})
         if len(attachment_ids) < 2:
             continue
-        values = {item["exact_entity_value"] for item in items}
-        filenames = sorted({item["filename"] for item in items})
+        canonicals = {item["canonical_entity_value"] for item in items}
+        variants = sorted({item["exact_entity_value"] for item in items})
         links.append({
             "link_id": f"XFL-{len(links) + 1:03d}",
             "canonical_entity_id": canonical,
+            "canonical_entity_value": items[0]["canonical_entity_value"],
             "entity_type": items[0]["entity_type"],
             "exact_entity_value": items[0]["exact_entity_value"],
+            "representation_variants": variants,
             "attachments": attachment_ids,
-            "filenames": filenames,
+            "filenames": sorted({item["filename"] for item in items}),
             "occurrences": len(items),
-            "consistent": len(values) == 1,
+            "consistent": len(canonicals) == 1,
         })
     return links
 
@@ -302,55 +345,114 @@ def _reference_exists(ref: dict, attachments: Sequence[dict]) -> bool:
 
 
 def _revise_doc(doc: Doc, rng: random.Random) -> List[dict]:
-    """Make a traceable old/new pair without breaking arithmetic checks."""
+    """Make a meaningful, traceable old/new pair.
+
+    The revision always changes a value a reviewer could act on: a status, a
+    due date, a monetary amount, a phone number or a system endpoint.  Cosmetic
+    "(revised)" suffixes and note-only revisions are not produced.
+    """
     changes: List[dict] = []
     status_map = {
         "pending": "settled", "settled": "refunded", "shipped": "delivered",
         "packed": "shipped", "proposal": "negotiation", "negotiation": "won",
         "production": "staging", "staging": "production",
+        "รอดำเนินการ": "ชำระแล้ว", "ชำระแล้ว": "คืนเงินแล้ว",
+        "แพ็กแล้ว": "จัดส่งแล้ว", "จัดส่งแล้ว": "ส่งถึงแล้ว",
+        "เสนอราคา": "เจรจา", "เจรจา": "ปิดการขาย",
+        "โปรดักชัน": "สเตจจิง", "สเตจจิง": "โปรดักชัน",
     }
     date_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    money_pattern = re.compile(r"^(\d{1,3}(?:,\d{3})*)(\.00)?$")
+    phone_pattern = re.compile(r"0\d-\d{3}-\d{4}")
+
+    def record(change_type: str, block, row: int, column: int, before: str, after: str,
+               table: str) -> dict:
+        location = {"block": block.kind, "table": table, "row": row, "column": column}
+        change = {
+            "change_type": change_type,
+            "kind": change_type,
+            "from": before,
+            "to": after,
+            "before": before,
+            "after": after,
+            "source_v1": dict(location),
+            "source_v2": dict(location),
+        }
+        changes.append(change)
+        return change
+
     for block in doc.blocks:
         if block.kind != "table":
             continue
         for row_index, row in enumerate(block.rows, start=1):
             for column_index, value in enumerate(row, start=1):
-                if value.placements or changes:
-                    continue
+                if value.placements:
+                    continue  # never rewrite an entity value
                 text = value.text
                 if text.lower() in status_map:
                     replacement = status_map[text.lower()]
                     value.text = replacement
-                    changes.append({"kind": "status", "table": block.title, "row": row_index,
-                                    "column": column_index, "from": text, "to": replacement})
-                elif date_pattern.match(text):
-                    day = _dt.date.fromisoformat(text)
-                    replacement = (day + _dt.timedelta(days=1)).isoformat()
-                    value.text = replacement
-                    changes.append({"kind": "date", "table": block.title, "row": row_index,
-                                    "column": column_index, "from": text, "to": replacement})
-    if not changes:
-        for block in doc.blocks:
-            if block.kind != "table":
-                continue
-            for row_index, row in enumerate(block.rows, start=1):
-                for column_index, value in enumerate(row, start=1):
-                    if value.placements:
-                        continue
-                    text = value.text.strip()
-                    if len(text) < 3 or not any(ch.isalpha() for ch in text):
-                        continue
-                    if re.match(r"^[\d,.\-]+$", text):
-                        continue
-                    replacement = text + " (revised)"
-                    value.text = replacement
-                    changes.append({"kind": "field", "table": block.title, "row": row_index,
-                                    "column": column_index, "from": text, "to": replacement})
+                    record("status_changed", block, row_index, column_index, text, replacement,
+                           block.title)
                     return changes
-    if not changes:
-        note = "Revised version: one field was corrected for this synthetic scenario."
-        doc.blocks.append(Block("note", text=note))
-        changes.append({"kind": "note", "field": "revision", "from": "original", "to": note})
+    for block in doc.blocks:
+        if block.kind != "table":
+            continue
+        for row_index, row in enumerate(block.rows, start=1):
+            for column_index, value in enumerate(row, start=1):
+                if value.placements or not date_pattern.match(value.text):
+                    continue
+                day = _dt.date.fromisoformat(value.text)
+                replacement = (day + _dt.timedelta(days=1)).isoformat()
+                before = value.text
+                value.text = replacement
+                record("due_date_updated", block, row_index, column_index, before, replacement,
+                       block.title)
+                return changes
+    arithmetic_docs = {"invoice", "quotation", "purchase_order", "payroll",
+                       "bank_statement", "expense_report"}
+    for block in doc.blocks:
+        if block.kind != "table":
+            continue
+        for row_index, row in enumerate(block.rows, start=1):
+            for column_index, value in enumerate(row, start=1):
+                match = money_pattern.match(value.text.strip())
+                if value.placements or not match or doc.archetype in arithmetic_docs:
+                    continue
+                amount = int(match.group(1).replace(",", ""))
+                corrected = amount + max(1, round(amount * 0.01))
+                before = value.text
+                value.text = f"{corrected:,}.00"
+                record("amount_corrected", block, row_index, column_index, before, value.text,
+                       block.title)
+                return changes
+    time_pattern = re.compile(r"\b\d{2}:\d{2}\b")
+    for block in doc.blocks:
+        if block.placements or block.kind not in ("paragraph", "note", "bullet"):
+            continue
+        match = time_pattern.search(block.text)
+        if match:
+            before = match.group(0)
+            hour, minute = before.split(":")
+            replacement = f"{hour}:{(int(minute) + 5) % 60:02d}"
+            block.text = block.text.replace(before, replacement, 1)
+            record("timeline_time_updated", block, 0, 0, before, replacement, block.kind)
+            return changes
+    for block in doc.blocks:
+        if block.placements:
+            continue
+        match = phone_pattern.search(block.text)
+        if match and block.kind in ("paragraph", "note", "bullet"):
+            before = match.group(0)
+            replacement = before[:-4] + f"{rng.randint(1000, 9999):04d}"
+            block.text = block.text.replace(before, replacement)
+            record("phone_changed", block, 0, 0, before, replacement, block.kind)
+            return changes
+    # Last resort for prose-only documents: a controlled approval change.
+    before, after = "draft", "approved"
+    block = Block("paragraph", text=f"Status: {after} (previously {before})")
+    doc.blocks.append(block)
+    record("status_changed", block, 0, 0, before, after, "document")
     return changes
 
 
@@ -631,9 +733,7 @@ class V2Generator:
 
         latin_only = any(renderer in LATIN_ONLY_RENDERERS for _, renderer, _ in plan)
         requested_languages = list(target.attachment_languages) or [target.language]
-        if latin_only:
-            org_language = "en"
-        elif target.language in ("th", "mixed") or any(
+        if target.language in ("th", "mixed") or any(
                 item in ("th", "mixed") for item in requested_languages):
             org_language = "th"
         else:
@@ -642,9 +742,9 @@ class V2Generator:
         pool = EntityPool(self.rng, org_language, org.as_pool_org())
         test_id = f"pgt2-{SPLIT_CODES[split]}-{sequence:05d}"
         localization = self.config.get("localization", {})
+        thresholds = self.config.get("language_thresholds", {})
         scenario = make_scenario(
             test_id, self.rng, org, pool, org_language, target.negative, target.ambiguous,
-            latin_only=latin_only,
             thai_date_mode=localization.get("thai_date_mode", "be"),
             currency_mode=localization.get("currency_mode", "thb"),
         )
@@ -655,10 +755,23 @@ class V2Generator:
         fingerprints: List[str] = []
         previous_doc: Optional[Doc] = None
         for index, (archetype, renderer, role) in enumerate(plan, start=1):
+            revision_changes: List[dict] = []
+            revision_source = role == "revised" and previous_doc is not None
+            if revision_source:
+                candidate = copy.deepcopy(previous_doc)
+                revision_changes = _revise_doc(candidate, self.rng)
+                if not revision_changes:
+                    # No meaningful controlled change exists for this document:
+                    # ship a related render instead of a fake "revised" copy.
+                    role = "related"
+                    revision_source = False
+                    alternatives = [item for item in archetype.renderers if item != renderer]
+                    if alternatives:
+                        renderer = self.rng.choice(alternatives)
             desired = requested_languages[(index - 1) % len(requested_languages)]
-            if renderer in LATIN_ONLY_RENDERERS:
+            if renderer in ENGLISH_ONLY_RENDERERS:
                 attachment_language = "en"
-                routing = f"{renderer}_latin_only"
+                routing = f"{renderer}_english_only" if renderer == "log" else f"{renderer}_latin_only"
             else:
                 attachment_language = desired
                 routing = None
@@ -669,11 +782,10 @@ class V2Generator:
                 density=2, doc_language=attachment_language,
                 image_style="scan", ocr_difficulty=target.ocr_difficulty,
                 scenario=scenario, variant=index, attachment_id=attachment_id,
+                latin_only=renderer in LATIN_ONLY_RENDERERS,
             )
-            revision_changes: List[dict] = []
-            if role == "revised" and previous_doc is not None:
-                doc = copy.deepcopy(previous_doc)
-                revision_changes = _revise_doc(doc, self.rng)
+            if revision_source:
+                doc = candidate
             else:
                 doc = archetype.builder(ctx)
                 previous_doc = doc
@@ -682,6 +794,25 @@ class V2Generator:
             doc.metadata.setdefault("ocr_difficulty", target.ocr_difficulty)
             localize_doc(doc, attachment_language,
                          localize_headers=renderer not in MACHINE_KEY_RENDERERS)
+            text = document_text(doc)
+            static_stats = script_counts(document_static_text(doc))
+            language_check = script_counts(text)
+            language_check["static"] = static_stats
+            measured_language = classify_language(static_stats, thresholds)
+            if measured_language is None:
+                raise GenerationError(
+                    f"{archetype.id}:{renderer} has no measurable language: "
+                    f"thai_share={static_stats['thai_share']} "
+                    f"latin_share={static_stats['latin_share']}"
+                )
+            if measured_language != attachment_language:
+                routing = f"relabelled_from_{attachment_language}"
+                attachment_language = measured_language
+                doc.language = attachment_language
+            if attachment_language == "th":
+                language_check["residual_english_labels"] = residual_english_labels(text)
+            language_check["matches_declared_language"] = language_matches(
+                static_stats, attachment_language, thresholds)
             stem = re.sub(r"[^A-Za-z0-9._-]", "_", os.path.splitext(os.path.basename(doc.filename))[0]) or archetype.id
             if role in ("original", "revised"):
                 stem = f"{stem}_{'v1' if role == 'original' else 'v2'}"
@@ -708,7 +839,6 @@ class V2Generator:
                     item["entity"], "attachment", attachment_id, filename, loc, item["role"],
                     "verified_layout" if renderer in ("png", "jpg", "jpeg") else "verified",
                 ))
-            language_check = script_counts(document_text(doc))
             structure = _doc_structure(doc, rendered)
             attachments.append({
                 "attachment_id": attachment_id,
@@ -758,6 +888,8 @@ class V2Generator:
             typo_rate=target.typo_rate, destination=target.destination, prompt_entity=prompt_entity,
             structure_refs=structure_refs,
         )
+        if prompt_info["quality_issues"]:
+            raise GenerationError("prompt composition: " + "; ".join(prompt_info["quality_issues"]))
         for span in prompt_info["spans"]:
             annotations.append(self._annotation(
                 span.entity, "prompt", None, None,
@@ -768,7 +900,11 @@ class V2Generator:
         expected = [item for item in annotations if item["detection_expected"]]
         if not expected and not target.negative:
             raise GenerationError("positive case produced no detection-expected entity")
-        bundle_meta = self._bundle_meta(sequence, target, attachments)
+        scenario.checks.extend(finance_checks(scenario))
+        bundle_meta = self._bundle_meta(sequence, target, attachments, annotations)
+        if (len(attachments) > 1 and bundle_meta["relationship"]["status"] != "related"
+                and not (target.ambiguous or target.negative)):
+            raise GenerationError("multi-file bundle has no relationship evidence")
         case = self._assemble_case(
             split, sequence, target, prompt_info, attachments, annotations,
             _aggregate_language([item["language"] for item in attachments]),
@@ -780,8 +916,10 @@ class V2Generator:
         case.pop("_files", None)
         return case, files
 
-    def _bundle_meta(self, sequence: int, target: Target, attachments: Sequence[dict]) -> dict:
-        if target.old_new_bundle:
+    def _bundle_meta(self, sequence: int, target: Target, attachments: Sequence[dict],
+                     annotations: Sequence[dict] = ()) -> dict:
+        changes = [change for item in attachments for change in item.get("revision_changes", [])]
+        if changes and len(attachments) > 1:
             kind = "old_new"
         elif target.same_archetype_bundle and len(attachments) > 1:
             kind = "same_archetype"
@@ -789,10 +927,29 @@ class V2Generator:
             kind = "multi_file"
         else:
             kind = "single_file"
-        changes = [change for item in attachments for change in item.get("revision_changes", [])]
+        evidence: List[dict] = []
+        canonical_groups: Dict[str, set] = defaultdict(set)
+        for annotation in annotations:
+            if annotation["source"] == "attachment":
+                canonical_groups[annotation["canonical_entity_id"]].add(
+                    annotation["source_attachment"])
+        for canonical, members in sorted(canonical_groups.items()):
+            if len(members) >= 2:
+                evidence.append({"kind": "shared_canonical_entity", "reference": canonical,
+                                 "attachments": sorted(members)})
+        archetypes = {item["archetype"] for item in attachments}
+        if changes:
+            evidence.append({"kind": "controlled_revision", "changes": len(changes)})
+        if len(attachments) > 1 and len(archetypes) == 1:
+            evidence.append({"kind": "same_archetype", "archetype": sorted(archetypes)[0]})
+        relationship = {
+            "status": "related" if evidence else "intentionally_unrelated",
+            "evidence": evidence,
+        }
         return {
             "bundle_id": f"BND-{sequence:05d}",
             "kind": kind,
+            "relationship": relationship,
             "members": [
                 {"attachment_id": item["attachment_id"], "filename": item["filename"],
                  "archetype": item["archetype"], "role": ("revised" if item.get("revision_changes")
@@ -807,6 +964,7 @@ class V2Generator:
         if not candidates:
             raise GenerationError("no prompt-only family")
         archetype, renderer = self._pick_family(candidates)
+        form = weighted_pick(self.rng, PROMPT_ONLY_WEIGHTS)
         content_language = "th" if target.language == "mixed" and self.rng.random() < 0.5 else target.language
         if content_language not in ("th", "en"):
             content_language = "th"
@@ -836,8 +994,6 @@ class V2Generator:
             typo_rate=target.typo_rate, destination=target.destination,
         )
         base = prompt_info["prompt"]
-        lead = "\n\nอันนี้แปะมาจากไฟล์:\n```\n" if target.language != "en" else "\n\npasted from the file:\n```\n"
-        builder_text = base + lead + snippet + "```"
         annotations: List[dict] = []
         for span in prompt_info["spans"]:
             annotations.append(self._annotation(
@@ -845,28 +1001,55 @@ class V2Generator:
                 {"kind": "prompt_span", "character_start": span.start, "character_end": span.end},
                 "body", "verified",
             ))
-        offset = len(base) + len(lead)
-        for item in rendered.entity_locations:
-            loc = item["location"]
-            start = loc.get("character_start", 0)
-            end = loc.get("character_end", start + len(item["entity"].value))
+        if prompt_info["quality_issues"]:
+            raise GenerationError("prompt composition: " + "; ".join(prompt_info["quality_issues"]))
+        if form == "short_no_paste":
+            extra = (safe_negative(self.rng, "email_address") if target.negative
+                     else pool.draw(target.domains[0]))
+            connector = (" ข้อมูลคือ " if target.language == "th"
+                         else " details: " if target.language == "en"
+                         else " รายละเอียด: ")
+            suffix = " ครับ" if target.language == "th" else ""
+            start = len(base) + len(connector)
+            builder_text = base + connector + extra.value + suffix
             annotations.append(self._annotation(
-                item["entity"], "prompt", None, None,
-                {"kind": "prompt_span", "character_start": offset + start, "character_end": offset + end},
-                item["role"], "verified",
+                extra, "prompt", None, None,
+                {"kind": "prompt_span", "character_start": start,
+                 "character_end": start + len(extra.value)},
+                "body", "verified",
             ))
+        else:
+            lead = PROMPT_ONLY_FORMS[form][target.language]
+            fenced = form in ("pasted_email", "pasted_table", "report_excerpt",
+                              "log_fragment", "code_config")
+            builder_text = base + lead + ("```\n" if fenced else "") + snippet
+            builder_text += "```" if fenced else ""
+            offset = len(base) + len(lead) + (4 if fenced else 0)
+            for item in rendered.entity_locations:
+                loc = item["location"]
+                start = loc.get("character_start", 0)
+                end = loc.get("character_end", start + len(item["entity"].value))
+                annotations.append(self._annotation(
+                    item["entity"], "prompt", None, None,
+                    {"kind": "prompt_span", "character_start": offset + start,
+                     "character_end": offset + end},
+                    item["role"], "verified",
+                ))
         expected = [item for item in annotations if item["detection_expected"]]
         if not expected and not target.negative:
             raise GenerationError("positive prompt-only case produced no entity")
         prompt_info = dict(prompt_info)
         prompt_info["prompt"] = builder_text
+        prompt_info["prompt_form"] = form
         attachments: List[dict] = []
         case = self._assemble_case(split, sequence, target, prompt_info, attachments, annotations,
                                    content_language, org.name, test_id, scenario=scenario,
                                    content_languages=[content_language],
                                    bundle={"bundle_id": f"BND-{sequence:05d}", "kind": "prompt_only",
+                                           "relationship": {"status": "not_applicable", "evidence": []},
                                            "members": [], "revision_changes": []})
         case["document_fingerprint"] = _doc_fingerprint(doc)
+        case["prompt_form"] = form
         return case, {}
 
     def _annotation(self, entity: Entity, source: str, attachment_id: Optional[str],
@@ -874,6 +1057,7 @@ class V2Generator:
         annotation = {
             "annotation_id": "",
             "canonical_entity_id": _canonical_id(entity),
+            "canonical_entity_value": entity.canonical_value or entity.value,
             "domain": entity.domain,
             "entity_type": entity.entity_type,
             "exact_entity_value": entity.value,
@@ -951,21 +1135,43 @@ class V2Generator:
             ref["valid"] = ref["resolved"]
         cross_file_links = _cross_file_links(annotations)
         consistency_checks = list(scenario.checks) if scenario is not None else []
-        consistency_checks.append({
-            "check": "structure_reference_resolution",
-            "passed": all(ref["resolved"] for ref in structure_references),
-            "attachment_id": None,
-            "details": {"references": len(structure_references),
-                        "resolved": sum(1 for ref in structure_references if ref["resolved"])},
-        })
-        consistency_checks.append({
-            "check": "cross_file_identifiers",
-            "passed": all(link["consistent"] for link in cross_file_links),
-            "attachment_id": None,
-            "details": {"links": len(cross_file_links),
-                        "linked_attachments": len({item for link in cross_file_links
-                                                   for item in link["attachments"]})},
-        })
+        if structure_references:
+            resolved_count = sum(1 for ref in structure_references if ref["resolved"])
+            consistency_checks.append({
+                "check": "structure_reference_resolution",
+                "status": "passed" if resolved_count == len(structure_references) else "failed",
+                "passed": resolved_count == len(structure_references),
+                "evaluated_items": len(structure_references),
+                "attachment_id": None,
+                "details": {"references": len(structure_references), "resolved": resolved_count},
+            })
+        else:
+            consistency_checks.append({
+                "check": "structure_reference_resolution",
+                "status": "not_applicable", "passed": False, "evaluated_items": 0,
+                "attachment_id": None,
+                "details": {"references": 0, "reason": "the prompt cites no structure"},
+            })
+        if cross_file_links:
+            consistent = sum(1 for link in cross_file_links if link["consistent"])
+            consistency_checks.append({
+                "check": "cross_file_identifiers",
+                "status": "passed" if consistent == len(cross_file_links) else "failed",
+                "passed": consistent == len(cross_file_links),
+                "evaluated_items": len(cross_file_links),
+                "attachment_id": None,
+                "details": {"links": len(cross_file_links),
+                            "consistent": consistent,
+                            "linked_attachments": len({item for link in cross_file_links
+                                                       for item in link["attachments"]})},
+            })
+        else:
+            consistency_checks.append({
+                "check": "cross_file_identifiers",
+                "status": "not_applicable", "passed": False, "evaluated_items": 0,
+                "attachment_id": None,
+                "details": {"links": 0, "reason": "no shared identifier across attachments"},
+            })
         tags = set()
         tags.update(domains)
         tags.update(entity_types)
@@ -1000,13 +1206,16 @@ class V2Generator:
         if target.destination:
             tags.add("destination_context")
         verification_statuses = [item["verification"]["status"] for item in attachments]
-        language_ok = all(
-            item["language_check"]["contains_thai"] if item["language"] == "th"
-            else item["language_check"]["contains_both"] if item["language"] == "mixed"
-            else item["language_check"]["contains_latin"]
-            for item in attachments
-        )
-        if any(status == "unverified" for status in verification_statuses) or not language_ok:
+        language_ok = all(item["language_check"].get("matches_declared_language") is True
+                          for item in attachments)
+        prompt_stats = script_counts(prompt)
+        prompt_static = prompt
+        for span in sorted(prompt_info["spans"], key=lambda item: -item.start):
+            prompt_static = prompt_static[:span.start] + prompt_static[span.end:]
+        prompt_static_stats = script_counts(prompt_static)
+        prompt_language_ok = language_matches(
+            prompt_static_stats, target.language, self.config.get("language_thresholds", {}))
+        if any(status == "unverified" for status in verification_statuses) or not language_ok or not prompt_language_ok:
             verification_status = "unverified"
         elif any(status == "verified_layout" for status in verification_statuses):
             verification_status = "verified_partial"
@@ -1023,6 +1232,23 @@ class V2Generator:
                 for item in attachments if item["language"] == "mixed"
             ),
             "routed_attachments": sum(1 for item in attachments if item.get("language_routing")),
+            "thresholds": self.config.get("language_thresholds", {}),
+            "by_file_type": {},
+        }
+        for item in attachments:
+            bucket = language_coverage["by_file_type"].setdefault(
+                item["extension"], {"attachments": 0, "declared": {}, "matches": 0})
+            bucket["attachments"] += item["language_check"].get("counted_chars", 0)
+            bucket["declared"][item["language"]] = bucket["declared"].get(item["language"], 0) + 1
+            bucket["matches"] += 1 if item["language_check"].get("matches_declared_language") else 0
+        language_stats = {
+            "prompt": dict(prompt_stats, static=prompt_static_stats,
+                           matches_declared_language=prompt_language_ok),
+            "attachments": [
+                dict(item["language_check"], attachment_id=item["attachment_id"],
+                     language=item["language"], extension=item["extension"])
+                for item in attachments
+            ],
         }
         document_profile = [
             {
@@ -1052,6 +1278,7 @@ class V2Generator:
             "content_languages": content_languages,
             "language_mode": content_language,
             "language_coverage": language_coverage,
+            "language_stats": language_stats,
             "scenario_id": scenario.scenario_id if scenario else f"SCN-{test_id.split('-')[-1]}",
             "domains": domains,
             "entity_types": entity_types,
@@ -1113,11 +1340,16 @@ class V2Generator:
                 "ocr_layout_only": sum(1 for item in attachments if item["verification"]["status"] == "verified_layout"),
                 "language_checked": len(attachments),
                 "language_passed": language_ok,
+                "prompt_language_passed": prompt_language_ok,
                 "mixed_language_verified": language_coverage["mixed_script_verified"],
+                "residual_english_labels": sum(
+                    len(item["language_check"].get("residual_english_labels", []))
+                    for item in attachments),
             },
             "prompt_length": len(prompt),
             "prompt_length_class": prompt_length_class,
             "prompt_style": target.length,
+            "prompt_form": prompt_info.get("prompt_form", "with_attachment"),
             "prompt_styles": [prompt_length_class],
             "context_complexity": prompt_info.get("context_complexity", "medium"),
             "structure": "file_attachment" if attachments else "pasted_text",
@@ -1167,6 +1399,8 @@ def compute_stats(cases: Iterable[dict]) -> dict:
     by_attachment_language = Counter()
     language_matrix = Counter()
     by_bundle_kind = Counter()
+    by_prompt_form = Counter()
+    consistency_status = Counter()
     domain_combinations = Counter()
     prompt_lengths = []
     entity_counts = []
@@ -1193,6 +1427,7 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         by_attachment_language.update(item["language"] for item in case["attachments"])
         language_matrix.update(case.get("language_coverage", {}).get("matrices", []))
         by_bundle_kind[case.get("bundle", {}).get("kind", "unknown")] += 1
+        by_prompt_form[case.get("prompt_form", "with_attachment")] += 1
         if "ocr" in case["tags"]:
             ocr_cases += 1
         if case.get("structure_references"):
@@ -1206,7 +1441,8 @@ def compute_stats(cases: Iterable[dict]) -> dict:
             same_archetype_bundle_cases += 1
         checks = case.get("consistency_checks", [])
         consistency_total += len(checks)
-        consistency_passed += sum(1 for item in checks if item.get("passed"))
+        consistency_passed += sum(1 for item in checks if item.get("status") == "passed")
+        consistency_status.update(item.get("status", "not_evaluated") for item in checks)
     return {
         "total_cases": total,
         "total_files": file_total,
@@ -1220,7 +1456,10 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         "cross_file_link_cases": cross_file_link_cases,
         "consistency_checks": consistency_total,
         "consistency_passed": consistency_passed,
-        "consistency_rate": round(consistency_passed / consistency_total, 4) if consistency_total else 1.0,
+        "consistency_status": dict(sorted(consistency_status.items())),
+        "consistency_rate": (round(consistency_passed / (consistency_status["passed"]
+                                                          + consistency_status["failed"]), 4)
+                             if (consistency_status["passed"] + consistency_status["failed"]) else 0.0),
         "ocr_cases": ocr_cases,
         "mean_entities_per_case": _mean(entity_counts),
         "mean_files_per_case": round(file_total / total, 3) if total else 0.0,
@@ -1229,6 +1468,7 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         "by_attachment_language": dict(sorted(by_attachment_language.items())),
         "language_matrix": dict(sorted(language_matrix.items())),
         "by_bundle_kind": dict(sorted(by_bundle_kind.items())),
+        "by_prompt_form": dict(sorted(by_prompt_form.items())),
         "by_persona": dict(sorted(by_persona.items())),
         "by_intent": dict(sorted(by_intent.items())),
         "by_difficulty": dict(sorted(by_difficulty.items())),
@@ -1263,10 +1503,47 @@ def _write_jsonl(path: str, rows: Iterable[dict]) -> None:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def benchmark_safe_reasons(case: dict) -> List[str]:
+    """Why a case may not enter the benchmark-safe subset (empty means safe)."""
+    reasons: List[str] = []
+    if case.get("verification_status") != "verified":
+        reasons.append(f"verification_status:{case.get('verification_status')}")
+    for check in case.get("consistency_checks", []):
+        status = check.get("status")
+        if status == "failed":
+            reasons.append(f"consistency_failed:{check.get('check')}")
+        elif status == "not_evaluated":
+            reasons.append(f"consistency_not_evaluated:{check.get('check')}")
+    verification = case.get("verification", {})
+    if verification.get("language_passed") is not True:
+        reasons.append("attachment_language_failed")
+    if verification.get("prompt_language_passed") is not True:
+        reasons.append("prompt_language_failed")
+    for attachment in case.get("attachments", []):
+        if attachment.get("language_check", {}).get("matches_declared_language") is not True:
+            reasons.append(f"language_mismatch:{attachment['attachment_id']}")
+    return reasons
+
+
 def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -> dict:
     os.makedirs(out_dir, exist_ok=True)
     cases = dataset["cases"]
     files: Dict[str, bytes] = dataset["files"]
+    # Re-exporting into an existing dataset must not leave attachments from a
+    # previous seed behind.  The manifest marks the directory as ours.
+    if os.path.exists(os.path.join(out_dir, "manifest.json")):
+        attachments_dir = os.path.join(out_dir, "attachments")
+        if os.path.isdir(attachments_dir):
+            shutil.rmtree(attachments_dir)
+        for name in ("cases.jsonl", "all.json", "stats.json", "train.jsonl",
+                     "validation.jsonl", "test.jsonl", "benchmark_safe_cases.jsonl",
+                     "benchmark_excluded_cases.jsonl"):
+            path = os.path.join(out_dir, name)
+            if os.path.exists(path):
+                os.remove(path)
+        ground_truth_dir = os.path.join(out_dir, "ground_truth")
+        if os.path.isdir(ground_truth_dir):
+            shutil.rmtree(ground_truth_dir)
     by_split: Dict[str, List[dict]] = defaultdict(list)
     for case in cases:
         by_split[case["split"]].append(case)
@@ -1300,9 +1577,21 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
     _write_jsonl(os.path.join(out_dir, "ground_truth", "entities.jsonl"),
                  sorted(entity_rows, key=lambda item: (item["test_id"], item["annotation_id"])))
 
+    safe_cases = []
+    excluded_rows = []
+    for case in cases:
+        reasons = benchmark_safe_reasons(case)
+        if reasons:
+            excluded_rows.append({"test_id": case["test_id"], "reasons": reasons})
+        else:
+            safe_cases.append(case)
+    _write_jsonl(os.path.join(out_dir, "benchmark_safe_cases.jsonl"), safe_cases)
+    _write_jsonl(os.path.join(out_dir, "benchmark_excluded_cases.jsonl"), excluded_rows)
+
     config_for_hash = {key: value for key, value in config.items() if not key.startswith("_")}
     generated_names = ["cases.jsonl", "train.jsonl", "validation.jsonl", "test.jsonl", "all.json", "stats.json",
-                       "ground_truth/entities.jsonl"]
+                       "ground_truth/entities.jsonl", "benchmark_safe_cases.jsonl",
+                       "benchmark_excluded_cases.jsonl"]
     file_hashes = {}
     for name in generated_names:
         with open(os.path.join(out_dir, name), "rb") as handle:
@@ -1331,7 +1620,11 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
         "structure_reference_cases": stats["structure_reference_cases"],
         "cross_file_link_cases": stats["cross_file_link_cases"],
         "consistency_checks": stats["consistency_checks"],
+        "consistency_passed": stats["consistency_passed"],
+        "consistency_status": stats["consistency_status"],
         "consistency_rate": stats["consistency_rate"],
+        "benchmark_safe_cases": len(safe_cases),
+        "benchmark_excluded_cases": len(excluded_rows),
         "persona_distribution": stats["by_persona"],
         "intent_distribution": stats["by_intent"],
         "difficulty_distribution": stats["by_difficulty"],

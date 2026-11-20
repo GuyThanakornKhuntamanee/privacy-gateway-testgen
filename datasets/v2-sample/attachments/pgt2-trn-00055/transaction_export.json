@@ -1,0 +1,58 @@
+[
+  {
+    "date": "2026-03-18",
+    "customer": "ธีรภัทร พูลสวัสดิ์",
+    "email": "wichai.anan@example.org",
+    "amount": "147,415.00",
+    "status": "settled",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-10",
+    "customer": "ธีรภัทร พูลสวัสดิ์",
+    "email": "wichai.anan@example.org",
+    "amount": "22,191.00",
+    "status": "settled",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-11",
+    "customer": "อารีย์ วิริยะ",
+    "email": "naree.kittipong53@example.org",
+    "amount": "749.00",
+    "status": "settled",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-12",
+    "customer": "ปรีชา ธีรวงศ์",
+    "email": "lalita.siriporn85@example.org",
+    "amount": "12,090.00",
+    "status": "refunded",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-13",
+    "customer": "ปรีชา วงศ์ไทย",
+    "email": "maneerat.somchai@example.net",
+    "amount": "907.00",
+    "status": "pending",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-14",
+    "customer": "ธีรภัทร พูลสวัสดิ์",
+    "email": "wichai.anan@example.org",
+    "amount": "19,974.00",
+    "status": "settled",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-15",
+    "customer": "อารีย์ วิริยะ",
+    "email": "naree.kittipong53@example.org",
+    "amount": "12,778.00",
+    "status": "pending",
+    "currency": "THB"
+  }
+]

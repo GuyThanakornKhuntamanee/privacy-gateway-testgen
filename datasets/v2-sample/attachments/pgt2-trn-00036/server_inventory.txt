@@ -1,0 +1,9 @@
+ทะเบียนเซิร์ฟเวอร์
+
+Servers
+ชื่อโฮสต์ | IP ภายใน | บทบาท | อีเมลผู้รับผิดชอบ | สภาพแวดล้อม
+--------------------------------------------------------------
+auth-24.aurora-teak.internal | 10.30.7.123 | gateway | lalita.maneerat@example.org | โปรดักชัน
+notify-07.aurora-teak.internal | 10.10.10.168 | worker | naree.lalita28@example.net | โปรดักชัน
+inventory-10.aurora-teak.internal | 10.20.14.28 | worker | kittipong.anan@example.org | สเตจจิง
+scheduler-21.aurora-teak.internal | 10.20.6.152 | gateway | wichai.prasert@example.com | โปรดักชัน

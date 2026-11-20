@@ -60,14 +60,19 @@ default for prompt-only datasets; do not mix v1 and v2 rows in one file.
 
 ```bash
 python -m privacy_gateway_testgen generate-v2 \
-  --config configs/v2/default.json --profile real-world-enterprise \
+  --config configs/v2/default.json --profile benchmark-balanced \
   --out datasets/v2-sample
 python -m privacy_gateway_testgen validate-v2 --dataset datasets/v2-sample
-python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2
+python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2 --check-reproducible
 python -m privacy_gateway_testgen verify-v2 --dataset datasets/v2-sample
 python -m privacy_gateway_testgen list-profiles-v2
 python -m privacy_gateway_testgen list-archetypes-v2
 ```
+
+`report-v2 --check-reproducible` prints `benchmark_ready` and the safe-case
+count. Reports are byte-identical for the same dataset across
+`PYTHONHASHSEED` values; `evaluation.json`/`evaluation.md` contain no timestamp
+or absolute path.
 
 v2 emits actual files: TXT, CSV, JSON, YAML/YML, XML, LOG, MD, ENV, INI, CONF,
 TOML, SQL, Terraform, Python/JS/TS/Java/Go, DOCX, XLSX, PPTX, PDF, PNG and

@@ -41,7 +41,7 @@ checkout; evidence is a test module, a generated report, or a document.
 | AC-32 | File-aware ground truth with file-specific locations | PASS | `pdf_text`, `pdf_image`, `xlsx_cell`, `docx_paragraph`, `pptx_shape`, `csv_cell`, `json_path`, `image_ocr`; verifier resolves each |
 | AC-33 | Human-like prompts, personas, intents, imperfections and incidental sensitive data | PASS | `v2/realism.py`; prompt diversity test; sample prompts |
 | AC-34 | Multi-attachment and cross-file cases with per-file provenance | PASS | multi-attachment test; `source_attachment` on every file annotation |
-| AC-35 | Negative, ambiguous, multi-domain and mixed-domain cases | PASS | negative/ambiguous distribution tests; sample negative share 0.1528, multi-domain share 0.1389 |
+| AC-35 | Negative, ambiguous, multi-domain and mixed-domain cases | PASS | negative/ambiguous distribution tests; sample negative share 0.2361, multi-domain share 0.2083 |
 | AC-36 | Reproducible case JSON and attachment bytes | PASS | determinism test; `report-v2 --check-reproducible` |
 | AC-37 | Duplicate/near-duplicate and template-leakage control | PASS | prompt shingles, document fingerprints, family-disjoint splits; 0.0 exact/near/document rates |
 | AC-38 | Measured file, entity, coverage and realism report | PASS | `reports/v2/evaluation.json`; `report-v2` |
@@ -55,7 +55,25 @@ checkout; evidence is a test module, a generated report, or a document.
 | AC-46 | Invoice, payroll and statement arithmetic are validated | PASS | `consistency_checks`; test and report |
 | AC-47 | Structure references resolve to real file structures | PASS | `structure_references`; validation and gate |
 | AC-48 | Same-archetype and old/new bundles record traceable changes | PASS | `bundle` metadata; test |
-| AC-49 | 2.0 datasets remain readable and reportable | PASS | `validate-v2` accepts 2.0; `report-v2` skips 2.1-only gates |
+| AC-49 | 2.0 datasets remain readable and reportable | PASS | `validate-v2` accepts 2.0; immutable fixture `datasets/compat/v2.0-sample/`; test and CI |
+| AC-50 | Log timestamps are parsed and chronologically validated | PASS | `validate_log_order`; `tests/test_v2_correctness.py` |
+| AC-51 | Linked financial values come from one scenario source | PASS | `ScenarioPlan.finance`, `linked_*_matches`; tests |
+| AC-52 | Image ground truth never labels an entity fragment | PASS | atomic image layout + verifier rejection; tests |
+| AC-53 | Language labels reflect measured script shares | PASS | `script_stats`, `language_thresholds`, `language_stats`; tests |
+| AC-54 | No placeholder people in realistic documents | PASS | organisation identity marked non-target; regression test |
+| AC-55 | Reports are byte-identical across `PYTHONHASHSEED` | PASS | sorted n-grams, no timestamps; subprocess test and CI |
+| AC-56 | Compound static labels are localized | PASS | inline label localization; residual-label gate |
+| AC-57 | Latin-only routing is attachment-scoped and identity-linked | PASS | per-attachment `latin_only`, canonical value; tests |
+| AC-58 | Thai addresses are internally coherent | PASS | curated geographic table; test |
+| AC-59 | Thai imperfection stays readable | PASS | particle/spacing only; test |
+| AC-60 | Prompt composition has no duplicated or incompatible phrases | PASS | intent cores, context compatibility, quality check; tests |
+| AC-61 | Prompt-only cases vary their content source | PASS | seven forms; concentration gate |
+| AC-62 | Structure references only cite user-visible structures | PASS | per-extension allowed kinds; test and validation |
+| AC-63 | Multi-file bundles carry relationship evidence | PASS | `bundle.relationship`; test and validation |
+| AC-64 | Old/new revisions contain meaningful before/after values | PASS | `_revise_doc`; test |
+| AC-65 | Consistency checks distinguish N/A from passed | PASS | structured `status`; report and test |
+| AC-66 | `benchmark_ready` is computed from dataset evidence | PASS | `report-v2 --check-reproducible`; safe subset files |
+| AC-67 | CI exercises v1 and all v2 gates | PASS | `.github/workflows/ci.yml` |
 
 ## Partial or not executed
 
@@ -70,7 +88,8 @@ checkout; evidence is a test module, a generated report, or a document.
 ## Release decision
 
 The repository checks, security scans and quality gates pass on this checkout.
-That supports a **v0.3.0 public testing release** with the additive schema 2.1
-file-aware generator. It does not certify any downstream privacy gateway, and it
-is not a claim of legal or PCI DSS compliance. Review
-`docs/evaluation-report.md` and `reports/v2/evaluation.md` before publishing.
+That supports a **v0.3.1 public testing release** with the additive schema 2.1
+file-aware generator and the v2.1.1 correctness hardening. It does not certify
+any downstream privacy gateway, and it is not a claim of legal or PCI DSS
+compliance. Review `docs/evaluation-report.md` and `reports/v2/evaluation.md`
+before publishing.

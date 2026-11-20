@@ -8,7 +8,8 @@ it is not a claim about a downstream gateway.
 
 | Format | Generate | Reopen | Verify | Thai | Mixed | Structure-aware | Optional dependency |
 |---|---|---|---|---|---|---|---|
-| TXT / MD / LOG | yes | yes | text span | yes | yes | line | no |
+| TXT / MD | yes | yes | text span | yes | yes | line, section | no |
+| LOG | yes | yes | text span | **no** (technical English) | **no** | line | no |
 | CSV | yes | `csv` | cell | yes | yes | row, column | no |
 | JSON | yes | `json` | JSON path | note + entities | note + entities | key | no |
 | YAML / YML | yes | strict subset | YAML path | note + entities | note + entities | key | no |
@@ -30,10 +31,12 @@ it is not a claim about a downstream gateway.
 | DOCX / XLSX / PPTX | yes | yes | yes | full Thai labels and bilingual mixed headers |
 | PDF | no | yes | no | `language_routing: pdf_latin_only`, content rendered in English |
 | PNG / JPG / JPEG | no | yes | no | `language_routing: <ext>_latin_only`, content rendered in English |
+| LOG | no | yes | no | `language_routing: log_english_only`, technical English log |
 
-The PDF and image renderers **raise** on non-Latin text instead of replacing it
-with `?`. A requested Thai PDF/image is therefore routed to English and the
-routing is recorded on the attachment; it is never silently mangled.
+The PDF, image and log renderers **raise** on non-Latin text instead of replacing
+it with `?`. A requested Thai PDF/image is therefore routed to English and the
+routing is recorded per attachment; a Thai DOCX in the same case keeps Thai
+content. It is never silently mangled.
 
 ## Ground-truth location kinds
 
@@ -47,7 +50,12 @@ routing is recorded on the attachment; it is never silently mangled.
   location is resolved before the case is accepted.
 - Images and scanned PDFs are `verified_layout` / `verified_partial`: the
   expected text and bounding box come from the pre-render document, not from an
-  OCR engine.
+  OCR engine. Image entities are atomic: a value is never split across lines
+  (`entity_strategy: atomic_line`, `fragment_count: 1`), the canvas widens
+  instead, and the verifier rejects a fragment annotation.
+- Log lines are parsed back after rendering and their timestamps must be
+  non-decreasing; a single line or an unparseable line is never accepted as
+  ordered.
 - No OCR accuracy, detector accuracy, gateway benchmark or latency claim is
   made.
 - Optional dependencies: none. The runtime is standard library only.
@@ -59,9 +67,12 @@ routing is recorded on the attachment; it is never silently mangled.
 | Shared scenario IDs (incident, request, invoice, ticket, transaction) | yes | `tests/test_v2_consistency.py` |
 | Shared hosts, database endpoints, internal URLs | yes | `tests/test_v2_consistency.py`, `cross_file_links` |
 | Shared people/customers across files | yes | `cross_file_links` |
-| Invoice arithmetic and due-date check | yes | `consistency_checks` |
+| Invoice arithmetic, due-date and linked transaction amount/currency/reference | yes | `consistency_checks` (structured status) |
 | Payroll gross - tax = net check | yes | `consistency_checks` |
 | Statement running balance | yes | `consistency_checks` |
-| Structure references resolve | yes | `structure_references` + validation |
-| Same-archetype and old/new bundles | yes | `bundle` metadata + tests |
-| Mixed-script content check | yes | `attachment.language_check` + gate |
+| Log timestamp ordering (parsed from rendered lines) | yes | `consistency_checks` |
+| Structure references resolve and are user-visible | yes | `structure_references` + validation |
+| Multi-file relationship evidence | yes | `bundle.relationship` + validation |
+| Same-archetype and old/new bundles with before/after values | yes | `bundle` metadata + tests |
+| Mixed-script content check | yes | `attachment.language_check` + measured gate |
+| Measured language shares (thai/latin/neutral) | yes | `language_stats` + gate |

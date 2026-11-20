@@ -140,15 +140,16 @@ adds a new package at `src/privacy_gateway_testgen/v2/`.
 profile + seed
   -> target sampling (persona, intent, prompt language, domains, attachments)
   -> ScenarioPlan (shared people, hosts, database endpoints, IDs, transactions)
-  -> per-attachment language (th/en/mixed, with explicit PDF/image routing)
+  -> per-attachment language (th/en/mixed) and per-attachment English-only routing
   -> document archetype (business meaning)
   -> renderer (txt/csv/json/yaml/xml/log/md/env/ini/conf/toml/sql/tf/code
                docx/xlsx/pptx/pdf/png/jpg)
   -> span-first document composition + localization
   -> real file bytes
   -> reopen, parse, locate and verify
-  -> cross-file links + consistency checks
+  -> cross-file links + structured consistency checks
   -> case + attachment metadata + file-aware ground truth
+  -> benchmark-safe subset + benchmark_ready in the report
 ```
 
 The same rule as v1 applies: entities are created first and inserted through a
@@ -175,19 +176,26 @@ file-specific provenance rather than searching the finished file.
 ### Language boundary
 
 Localization rewrites only static text between placements; entity values and
-their offsets are untouched. `mixed` is verified by counting Thai and Latin
-script in the generated document. PDF and image renderers declare English-only
-capability and raise on non-Latin characters, so a Thai request is routed to
-DOCX/XLSX/TXT or rendered as English with `language_routing` — never silently as
-`?`.
+their offsets are untouched. Language labels are measured from Thai/Latin shares
+over authored text (numeric characters are neutral), so a Thai name in an English
+template does not make the file Thai. PDF, image and log renderers declare
+English-only capability and raise on non-Latin characters, so a Thai request for
+one of them is rendered as English with `language_routing` — per attachment,
+never case-wide — while a Thai DOCX in the same bundle keeps Thai content.
 
 ### Scenario and consistency boundary
 
 `ScenarioPlan.shared()` caches a value per role, so the database endpoint in
 `prod.env`, the incident report and the deployment log are the same `Entity`.
-After rendering, `generate.py` derives `cross_file_links` from annotations and
-records arithmetic/timeline checks in `consistency_checks`. `validate-v2`
-re-checks both, plus structure-reference resolution, on the exported dataset.
+Financial facts (line items, subtotal, VAT, total, currency, transaction
+reference, payment schedule) are plan-level, so an invoice and its transaction
+export agree by construction. After rendering, `generate.py` derives
+`cross_file_links` from canonical identities and records structured
+`consistency_checks` (`passed` / `failed` / `not_applicable` /
+`not_evaluated`, with `evaluated_items`). Log timestamps are parsed from the
+rendered lines, not asserted. `validate-v2` re-checks all of it, plus
+structure-reference resolution and bundle relationship evidence, on the exported
+dataset.
 
 ### v2 trust boundary
 
@@ -206,7 +214,9 @@ is reopened with the same class of parser an evaluation harness would use:
 
 Image OCR is **not** performed by the test suite. Image and scanned-PDF cases
 are marked `verified_layout` / `verified_partial`; the expected OCR line is
-pre-render ground truth, not an OCR result. This distinction is intentional.
+pre-render ground truth, not an OCR result. An entity is never split across image
+lines: the layout moves it or widens the canvas, and the verifier rejects a
+fragment annotation.
 
 ### Determinism and safety in v2
 
@@ -215,7 +225,7 @@ pre-render ground truth, not an OCR result. This distinction is intentional.
 - Office packages are macro-free and contain no executables or external
   relationships except safe `example` hyperlinks.
 - PDFs contain no JavaScript, launch actions, embedded files or remote content.
-- Spreadsheet formulas are limited to generated arithmetic; no external links.
+- Spreadsheets contain values, not formulas; no external links.
 - Images are synthetic screenshots and clearly marked; no real identity
   documents or biometric data are generated.
 - `v2/evaluate.py` reports measured gates, not aspirational claims.

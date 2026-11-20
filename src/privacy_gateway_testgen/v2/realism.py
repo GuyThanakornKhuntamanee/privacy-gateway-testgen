@@ -144,6 +144,38 @@ INTENT_PHRASES: Dict[str, dict] = {
                       "en": ("write the docs", "turn this into a README", "document this")},
 }
 
+# Particle-free intent cores used by the slot composer.  Particles such as
+# "หน่อย" / "please" live in the templates, so a task can never duplicate them.
+INTENT_CORES: Dict[str, Dict[str, tuple]] = {
+    "summarize": {"th": ("สรุป", "สรุปใจความ"), "en": ("summarize this", "give me a summary")},
+    "compare": {"th": ("เทียบให้ดู", "เทียบสองอันนี้"), "en": ("compare these", "reconcile these")},
+    "translate": {"th": ("แปล", "แปลเป็นอังกฤษ"), "en": ("translate this", "put this in English")},
+    "rewrite": {"th": ("แก้ถ้อยคำ", "ปรับภาษา"), "en": ("rewrite this", "clean up the wording")},
+    "analyze": {"th": ("วิเคราะห์", "ดูว่ามีอะไรผิดปกติ"), "en": ("analyze this", "tell me what stands out")},
+    "troubleshoot": {"th": ("หาสาเหตุที่ต่อไม่ได้", "ดูว่า error อยู่ตรงไหน"),
+                     "en": ("figure out why it is failing", "find the error")},
+    "extract_fields": {"th": ("ดึงข้อมูลออกมาเป็นตาราง", "แยกฟิลด์"),
+                       "en": ("pull out the fields I need", "extract the data into a table")},
+    "calculate": {"th": ("คำนวณยอดรวม", "เช็กยอด"), "en": ("check the numbers", "work out the amounts")},
+    "classify": {"th": ("จัดประเภท", "แยกหมวด"), "en": ("classify these", "sort these into groups")},
+    "prepare_report": {"th": ("ทำรายงาน", "เตรียมสรุปสำหรับหัวหน้า"),
+                       "en": ("put a report together", "prepare a summary for my manager")},
+    "find_anomalies": {"th": ("หารายการที่ผิดปกติ", "หา anomaly"), "en": ("find anything unusual", "look for anomalies")},
+    "explain_error": {"th": ("อธิบาย error นี้", "บอกว่า error นี้หมายความว่าอะไร"),
+                      "en": ("explain this error", "tell me what this error means")},
+    "convert_format": {"th": ("แปลงเป็น CSV", "เปลี่ยน format"), "en": ("convert this to CSV", "turn it into JSON")},
+    "draft_email": {"th": ("ร่างอีเมล", "เขียนตอบลูกค้า"), "en": ("draft an email", "write a reply to the customer")},
+    "review_document": {"th": ("ตรวจเอกสาร", "รีวิวเอกสารนี้"), "en": ("review this document", "check it before I send it")},
+    "modify_document": {"th": ("แก้เอกสารนี้", "ปรับถ้อยคำ"), "en": ("edit this document", "change the wording")},
+    "find_missing": {"th": ("หาข้อมูลที่ขาด", "ดูว่าช่องไหนว่าง"), "en": ("find the missing values", "check for blanks")},
+    "create_chart": {"th": ("ทำกราฟ", "สร้าง chart"), "en": ("make a chart", "plot this data")},
+    "answer_questions": {"th": ("ตอบคำถามจากไฟล์นี้", "ดึงคำตอบจากเอกสาร"),
+                         "en": ("answer questions from this file", "pull the answer from the document")},
+    "inspect_config": {"th": ("ตรวจ config", "ดูค่าตั้งค่า"), "en": ("check this config", "look at these settings")},
+    "check_code": {"th": ("ตรวจโค้ด", "ดูว่าโค้ดมีปัญหาตรงไหน"), "en": ("check this code", "review the code")},
+    "generate_docs": {"th": ("เขียนเอกสารประกอบ", "ทำ README"), "en": ("write the docs", "turn this into a README")},
+}
+
 FORMAL_OPENERS = {
     "th": ("รบกวนช่วย", "ช่วย", "ขอให้ช่วย"),
     "en": ("Could you", "Please", "Would you"),
@@ -153,30 +185,27 @@ CASUAL_OPENERS = {
     "en": ("can you", "could you", "pls", "quick one"),
 }
 
+# Templates take a particle-free task core, so composing them cannot produce
+# "ช่วยสรุปให้หน่อยหน่อย".  File slots are protected from typo mutation.
 TH_TEMPLATES = {
     "file": (
         "{file} ช่วย{task}หน่อย",
-        "อันนี้ {file} {task}ให้ที",
-        "ดู {file} ให้หน่อย {task}",
-        "พี่ช่วย{task} {file} นี้หน่อย",
-        "{file} ล่าสุดนะ {task}",
-        "งงกับ {file} นี้ {task}",
-        "{file} อยู่ในแนบ {task} ให้ที",
-        "ฝากดู {file} หน่อย {task}",
+        "{file} {task}ให้ที",
+        "ช่วย{task}จาก {file} หน่อย",
+        "ดู {file} แล้ว{task}ให้ที",
+        "ฝาก{task} {file} หน่อย",
     ),
     "ref": (
-        "อันนี้ {task} หน่อย",
-        "ช่วย{task}ให้ที",
-        "{task} ให้หน่อย",
-        "อันนี้มัน {task}",
-        "ฝากดูให้หน่อย {task}",
-        "พี่ช่วย{task}ที",
+        "อันนี้ช่วย{task}หน่อย",
+        "ฝาก{task}ให้ที",
+        "ช่วย{task}ที",
+        "อยากให้{task}",
     ),
     "multi": (
-        "สองไฟล์นี้ {task} หน่อย",
-        "เทียบ {files} ให้ที {task}",
-        "เอาสองอันนี้ {task}",
-        "{files} ช่วย{task}ให้หน่อย",
+        "สองไฟล์นี้ช่วย{task}หน่อย",
+        "เทียบ {files} ให้ที แล้ว{task}",
+        "เอาสองอันนี้{task}ให้หน่อย",
+        "{files} ช่วย{task}ให้ที",
     ),
     "vague": (
         "อันนี้มัน error ตรงไหนอะ",
@@ -195,8 +224,6 @@ EN_TEMPLATES = {
         "quick one: {task} from {file}",
         "not sure what's wrong with {file}, {task}",
         "{file} attached. {task}",
-        "can you {task} for {file}?",
-        "I've attached {file}; {task}",
         "could you take a look at {file} and {task}?",
     ),
     "ref": (
@@ -204,7 +231,6 @@ EN_TEMPLATES = {
         "could you {task} for me",
         "{task} please",
         "this one is weird, {task}",
-        "take a look and {task}",
         "help me out, {task}",
     ),
     "multi": (
@@ -225,23 +251,22 @@ EN_TEMPLATES = {
 
 MIXED_TEMPLATES = {
     "file": (
-        "ช่วย {task} {file} หน่อย",
-        "this {file} {task} ให้ที",
-        "{file} นี้ {task} please",
-        "ดู {file} แล้ว {task} ให้หน่อย",
-        "อันนี้ {file} ล่าสุด {task}",
-        "help ดู {file} หน่อย {task}",
+        "ช่วย{task} {file} หน่อย",
+        "{file} {task} ให้ที",
+        "{file} {task} please",
+        "ดู {file} แล้ว{task}ให้หน่อย",
+        "help ดู {file} หน่อย แล้ว{task}",
     ),
     "ref": (
-        "อันนี้ {task} ให้หน่อย",
+        "อันนี้ช่วย{task}ให้หน่อย",
         "help me {task} หน่อย",
         "this one {task} please",
-        "ช่วย {task} ที",
+        "ช่วย{task}ที",
     ),
     "multi": (
-        "สองไฟล์นี้ {task} ให้ที",
-        "compare {files} แล้ว {task}",
-        "เอาสองอันนี้ {task} หน่อย",
+        "สองไฟล์นี้ช่วย{task}ให้ที",
+        "compare {files} แล้ว{task}",
+        "เอาสองอันนี้{task}หน่อย",
         "{files} help {task} ให้ที",
     ),
     "vague": (
@@ -253,44 +278,48 @@ MIXED_TEMPLATES = {
     ),
 }
 
+# (phrase, categories the phrase is plausible for).  A technical deployment
+# comment never lands on an HR document.
 CONTEXTS_TH = (
-    "คือเมื่อคืน deploy แล้วมันพัง",
-    "หัวหน้าขอภายในวันนี้",
-    "ข้อมูลเมื่อวานนะ",
-    "เครื่องผมรันปกตินะ",
-    "ลูกค้าเร่งอยู่",
-    "ยังไม่ได้แก้เลย",
-    "อันเก่ายังใช้ได้ปกติ",
-    "พี่เมย์ฝากถาม",
-    "เพิ่ง export มาเมื่อเช้า",
-    "ไม่แน่ใจว่าใช่ไฟล์เดียวกันไหม",
-    "ทีมภายนอกขอมาด่วน",
-    "พี่เขาบอกให้ส่งก่อนเที่ยง",
+    ("คือเมื่อคืน deploy แล้วมันพัง", ("IT", "Engineering")),
+    ("หัวหน้าขอภายในวันนี้", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM", "Healthcare")),
+    ("ข้อมูลเมื่อวานนะ", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM", "Healthcare", "IT", "Engineering")),
+    ("เครื่องผมรันปกตินะ", ("IT", "Engineering")),
+    ("ลูกค้าเร่งอยู่", ("Support", "Sales", "CRM", "Operations")),
+    ("ยังไม่ได้แก้เลย", ("IT", "Engineering", "Operations")),
+    ("อันเก่ายังใช้ได้ปกติ", ("IT", "Engineering", "Operations")),
+    ("พี่เมย์ฝากถาม", ("HR", "Finance", "Management", "Corporate", "Operations")),
+    ("เพิ่ง export มาเมื่อเช้า", ("HR", "Finance", "Management", "Corporate", "Operations", "Sales", "CRM", "Healthcare")),
+    ("ไม่แน่ใจว่าใช่ไฟล์เดียวกันไหม", ("HR", "Finance", "Management", "Corporate", "Operations")),
+    ("ทีมภายนอกขอมาด่วน", ("Support", "Sales", "CRM", "Management", "Corporate")),
+    ("พี่เขาบอกให้ส่งก่อนเที่ยง", ("HR", "Finance", "Management", "Corporate", "Operations")),
 )
 CONTEXTS_EN = (
-    "it worked yesterday",
-    "prod only, staging is fine",
-    "boss wants it by 5",
-    "the customer is waiting",
-    "this is the latest export",
-    "not urgent but today please",
-    "the old file still works",
-    "I exported it this morning",
-    "not sure it's the right file",
-    "the vendor asked for it",
-    "we need it before the meeting",
-    "someone changed this last night",
+    ("it worked yesterday", ("IT", "Engineering", "Operations")),
+    ("prod only, staging is fine", ("IT", "Engineering")),
+    ("boss wants it by 5", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM", "Healthcare")),
+    ("the customer is waiting", ("Support", "Sales", "CRM", "Operations")),
+    ("this is the latest export", ("HR", "Finance", "Management", "Corporate", "Operations", "Sales", "CRM", "Healthcare")),
+    ("not urgent but today please", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM", "Healthcare")),
+    ("the old file still works", ("IT", "Engineering", "Operations")),
+    ("I exported it this morning", ("HR", "Finance", "Management", "Corporate", "Operations", "Sales", "CRM", "Healthcare")),
+    ("not sure it's the right file", ("HR", "Finance", "Management", "Corporate", "Operations")),
+    ("the vendor asked for it", ("Operations", "Sales", "Finance", "Management", "Corporate")),
+    ("we need it before the meeting", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM")),
+    ("someone changed this last night", ("IT", "Engineering", "Operations")),
 )
 CONTEXTS_MIXED = (
-    "คือเมื่อคืน deploy แล้วมันพัง",
-    "boss wants it by 5",
-    "ข้อมูลเมื่อวานนะ",
-    "customer is waiting",
-    "เพิ่ง export มาเมื่อเช้า",
-    "prod only นะ",
-    "พี่เมย์ฝากถาม",
-    "use this one instead",
+    ("คือเมื่อคืน deploy แล้วมันพัง", ("IT", "Engineering")),
+    ("boss wants it by 5", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM", "Healthcare")),
+    ("ข้อมูลเมื่อวานนะ", ("HR", "Finance", "Management", "Corporate", "Operations", "Support", "Sales", "CRM", "Healthcare", "IT", "Engineering")),
+    ("customer is waiting", ("Support", "Sales", "CRM", "Operations")),
+    ("เพิ่ง export มาเมื่อเช้า", ("HR", "Finance", "Management", "Corporate", "Operations", "Sales", "CRM", "Healthcare")),
+    ("prod only นะ", ("IT", "Engineering")),
+    ("พี่เมย์ฝากถาม", ("HR", "Finance", "Management", "Corporate", "Operations")),
+    ("use this one instead", ("HR", "Finance", "Management", "Corporate", "Operations")),
 )
+
+DESTINATION_PERSONAS = {"support", "sales", "executive_assistant", "manager", "compliance", "operations"}
 
 DESTINATION_CLAUSES = {
     "th": (
@@ -339,7 +368,13 @@ def _pick(rng: random.Random, values: Sequence[str]) -> str:
 
 
 def _typo_word(word: str, rng: random.Random) -> str:
-    if len(word) < 4 or not re.search(r"[A-Za-zก-๙]", word):
+    """Latin-only character mutation.
+
+    Thai is deliberately excluded: arbitrary insert/delete/swap on Thai
+    combining marks produces unreadable text rather than a plausible mistake.
+    Thai imperfection is expressed through particles, spacing and punctuation.
+    """
+    if len(word) < 4 or not re.fullmatch(r"[A-Za-z][A-Za-z'\-]*", word):
         return word
     operation = rng.randrange(4)
     index = rng.randrange(1, len(word) - 1)
@@ -353,22 +388,36 @@ def _typo_word(word: str, rng: random.Random) -> str:
 
 
 def imperfect(rng: random.Random, text: str, rate: float, language: str) -> str:
-    """Apply a small, configurable amount of human imperfection."""
+    """Apply a small, configurable amount of plausible human imperfection."""
     if not text or rate <= 0 or rng.random() >= rate:
         return text
     result = text
     words = result.split(" ")
-    candidates = [i for i, word in enumerate(words) if len(word) > 3 and not any(ch.isdigit() for ch in word)]
-    if candidates:
-        index = rng.choice(candidates)
-        words[index] = _typo_word(words[index], rng)
-        result = " ".join(words)
+    if language == "th":
+        # Conservative Thai imperfection: a repeated particle, never a glyph
+        # mutation.  "ช่วยสรุปหน่อยนะคะ" stays readable.
+        particles = [index for index, word in enumerate(words)
+                     if word.endswith(("ครับ", "ค่ะ", "คะ", "นะ"))]
+        if particles and rng.random() < 0.5:
+            index = rng.choice(particles)
+            word = words[index]
+            words[index] = word + ("คะ" if word.endswith("นะ") else "ะ")
+            result = " ".join(words)
+        elif rng.random() < 0.4:
+            result = result.rstrip(".") + rng.choice(("นะคะ", "ครับ", "ค่ะ"))
+    else:
+        candidates = [i for i, word in enumerate(words)
+                      if len(word) > 3 and not any(ch.isdigit() for ch in word)]
+        if candidates:
+            index = rng.choice(candidates)
+            words[index] = _typo_word(words[index], rng)
+            result = " ".join(words)
     if rng.random() < 0.25:
         result = result.rstrip(".!?")
-    if rng.random() < 0.18:
+    if rng.random() < 0.18 and "  " not in result:
         result = result.replace(" ", "  ", 1)
-    if rng.random() < 0.12:
-        result = result + rng.choice(("🙏", "😅", "ด่วน", ""))
+    if rng.random() < 0.08:
+        result = result + rng.choice(("🙏", "😅"))
     if language == "en" and rng.random() < 0.18:
         result = result[:1].lower() + result[1:]
     return result
@@ -382,21 +431,24 @@ def _template_set(language: str) -> dict:
     return MIXED_TEMPLATES
 
 
-def _contexts(language: str) -> tuple:
+def _contexts(language: str, persona: str = "") -> tuple:
     if language == "th":
-        return CONTEXTS_TH
-    if language == "en":
-        return CONTEXTS_EN
-    return CONTEXTS_MIXED
+        pool = CONTEXTS_TH
+    elif language == "en":
+        pool = CONTEXTS_EN
+    else:
+        pool = CONTEXTS_MIXED
+    categories = set(PERSONAS.get(persona, {}).get("categories", ()))
+    return tuple(phrase for phrase, allowed in pool if categories & set(allowed))
 
 
 def _task(rng: random.Random, intent: str, language: str) -> str:
-    phrases = INTENT_PHRASES[intent]
+    cores = INTENT_CORES[intent]
     if language == "th":
-        return _pick(rng, phrases["th"])
+        return _pick(rng, cores["th"])
     if language == "en":
-        return _pick(rng, phrases["en"])
-    return _pick(rng, phrases["th"] + phrases["en"])
+        return _pick(rng, cores["en"])
+    return _pick(rng, cores["th"] + cores["en"])
 
 
 def _file_phrase(rng: random.Random, files: Sequence[dict], language: str) -> str:
@@ -441,6 +493,41 @@ def _structure_phrase(rng: random.Random, ref: dict, language: str) -> str:
     return _pick(rng, (f"also check {english}", f"look at {english} too", f"{english} looks off"))
 
 
+def duplicated_phrases(prompt: str) -> List[str]:
+    """Repeated multi-word fragments that signal blind concatenation."""
+    normalized = " ".join(prompt.lower().split())
+    words = normalized.split()
+    found: List[str] = []
+    for size in (2, 3, 4):
+        counts: Dict[str, int] = {}
+        for index in range(max(0, len(words) - size + 1)):
+            gram = " ".join(words[index:index + size])
+            counts[gram] = counts.get(gram, 0) + 1
+        for gram, count in sorted(counts.items()):
+            if count > 1 and not re.fullmatch(r"[\d\s.,:+\-/]+", gram):
+                found.append(gram)
+    return sorted(set(found))
+
+
+def prompt_quality_issues(prompt: str) -> List[str]:
+    issues = [f"duplicated phrase: {phrase}" for phrase in duplicated_phrases(prompt)
+              if len(phrase) >= 8]
+    for particle in ("หน่อยหน่อย", "ให้ทีให้ที", "please please", "ครับครับ", "ค่ะค่ะ"):
+        if particle in prompt:
+            issues.append(f"duplicated particle: {particle}")
+    if re.search(r"(\S{3,})\s+\1", prompt, re.IGNORECASE):
+        issues.append("duplicated adjacent word")
+    return issues
+
+
+def _shares_run(first: str, second: str, size: int = 3) -> bool:
+    def grams(text: str) -> set:
+        words = text.lower().split()
+        return {" ".join(words[index:index + size])
+                for index in range(max(0, len(words) - size + 1))}
+    return bool(grams(first) & grams(second))
+
+
 def build_prompt(
     rng: random.Random,
     *,
@@ -469,31 +556,51 @@ def build_prompt(
     static = template.replace("{task}", task).replace("{file}", "\x00").replace("{files}", "\x01")
     static = imperfect(rng, static, typo_rate, language)
 
+    def _opener_fits(opener: str, text: str) -> bool:
+        lowered = text.lower()
+        if not opener.strip():
+            return True
+        if lowered.startswith(opener.lower()):
+            return False
+        first = lowered.split()[0] if lowered.split() else ""
+        if first and first in opener.lower().split():
+            return False
+        # Thai particles are multi-codepoint; compare whole particle words.
+        particles = ("ช่วย", "รบกวน", "ขอให้", "ฝาก", "ดู", "อันนี้", "pls",
+                     "please", "can you", "could you", "this")
+        return not any(lowered.startswith(particle) and particle in opener.lower()
+                       for particle in particles)
+
     if formality == "formal":
         opener = _pick(rng, FORMAL_OPENERS[language if language != "mixed" else "en"])
-        if rng.random() < 0.35:
-            static = f"{opener} {static[:1].lower() + static[1:]}"
-    elif formality == "casual" and language != "en" and rng.random() < 0.25:
-        static = static.replace("ช่วย", "ช่วย", 1)
+        if rng.random() < 0.35 and _opener_fits(opener, static):
+            static = f"{opener} {static}"
 
     persona_openers = PERSONA_OPENERS.get(persona, {}).get(
         language if language != "mixed" else "th"
     )
     if persona_openers and rng.random() < 0.35:
-        static = _pick(rng, persona_openers) + " " + static
+        opener = _pick(rng, persona_openers)
+        if _opener_fits(opener, static):
+            static = opener + " " + static
 
-    contexts = list(_contexts(language))
+    contexts = [phrase for phrase in _contexts(language, persona)
+                if not _shares_run(static, phrase)]
     rng.shuffle(contexts)
+    if not contexts:
+        contexts = [phrase for phrase, _allowed in (
+            CONTEXTS_TH if language == "th" else CONTEXTS_EN if language == "en"
+            else CONTEXTS_MIXED) if not _shares_run(static, phrase)]
     text = static.replace("\x00", file_phrase).replace("\x01", files_phrase)
-    if length in ("medium", "long"):
+    if length in ("medium", "long") and contexts:
         text += ". " + imperfect(rng, contexts[0], typo_rate, language)
-    if length == "long":
+    if length == "long" and len(contexts) > 1:
         text += "; " + imperfect(rng, contexts[1], typo_rate, language)
-        if rng.random() < 0.5:
+        if rng.random() < 0.5 and len(contexts) > 2:
             text += ". " + imperfect(rng, contexts[2], typo_rate, language)
 
     context_complexity = "low" if length == "short" else ("medium" if length == "medium" else "high")
-    if destination:
+    if destination and persona in DESTINATION_PERSONAS:
         text += ". " + imperfect(rng, _pick(rng, DESTINATION_CLAUSES[language]), typo_rate, language)
         context_complexity = "high" if context_complexity == "low" else context_complexity
     if structure_refs:
@@ -527,8 +634,9 @@ def build_prompt(
             builder.text(" - " + text)
     else:
         builder.text(text)
+    prompt = builder.build()
     return {
-        "prompt": builder.build(),
+        "prompt": prompt,
         "spans": builder.spans,
         "template_key": key,
         "intent": intent,
@@ -537,6 +645,7 @@ def build_prompt(
         "context_complexity": context_complexity,
         "prompt_style": length,
         "structure_references": list(structure_refs),
+        "quality_issues": prompt_quality_issues(prompt),
     }
 
 

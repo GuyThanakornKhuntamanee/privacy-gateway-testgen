@@ -1,0 +1,11 @@
+# synthetic example - not real data
+version: 3.9
+services:
+  api:
+    image: "example/orders-api:1.4.2"
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: "db-primary.mekong-byte.internal:5432"
+  worker:
+    image: "example/orders-worker:1.4.2"

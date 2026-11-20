@@ -1,0 +1,21 @@
+ประชุมแพลตฟอร์มรายสัปดาห์
+
+วันที่: 18 มี.ค. 2569  |  Location: internal video call
+
+ผู้เข้าร่วม
+
+- วิชัย สายทอง - anan.anan4@example.org
+- ธีรภัทร วิริยะ - anan.wichai@example.net
+- ธนกร บุญมี - piyada.naree65@example.com
+บันทึก
+
+ทีมทบทวน checklist การ deploy และแผนย้ายข้อมูลลูกค้า ยังมีงานค้างหนึ่งรายการสำหรับเจ้าของฐานข้อมูล
+
+The shared integration key was pasted in chat during the demo: sk_example_fake_8b79affd2b49c12a4b006298
+
+Finance noted a pending transaction: TXN-2026-91923275
+
+รายการที่ต้องทำ
+
+- ผู้รับผิดชอบ / Owner: ธีรภัทร วิริยะ - confirm the migration window.
+- ผู้รับผิดชอบ / Owner: ธนกร บุญมี - remove the old deployment credential.

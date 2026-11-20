@@ -30,6 +30,15 @@ DEFAULT_LOCALIZATION = {
     "currency_mode": "thb",
     "mixed_language_intensity": 0.5,
 }
+# Measured, conservative script-share thresholds.  Numbers, punctuation and
+# spaces are neutral and excluded from the denominator.  The Thai floor allows
+# English technical terms inside Thai prose; the English floor requires a
+# mostly-Latin document so a Thai name alone cannot label a file "en".
+DEFAULT_LANGUAGE_THRESHOLDS = {
+    "th": {"min_thai_share": 0.30},
+    "en": {"min_latin_share": 0.80},
+    "mixed": {"min_thai_share": 0.10, "min_latin_share": 0.10},
+}
 
 
 def _read_json(path: str) -> dict:
@@ -73,6 +82,7 @@ def load_v2_config(path: str, profile: Optional[str] = None) -> dict:
     config.setdefault("schema_version", "2.1")
     config.setdefault("realism", dict(DEFAULT_REALISM))
     config.setdefault("localization", dict(DEFAULT_LOCALIZATION))
+    config.setdefault("language_thresholds", dict(DEFAULT_LANGUAGE_THRESHOLDS))
     distributions = config.setdefault("distributions", {})
     distributions.setdefault("attachment_language", dict(DEFAULT_ATTACHMENT_LANGUAGE))
     validate_v2_config(config)
@@ -141,3 +151,14 @@ def validate_v2_config(config: dict) -> None:
         raise ValueError("localization.thai_date_mode must be be, ce or mixed")
     if localization.get("currency_mode", "thb") not in ("thb", "plain"):
         raise ValueError("localization.currency_mode must be thb or plain")
+    thresholds = config.get("language_thresholds", DEFAULT_LANGUAGE_THRESHOLDS)
+    for language, keys in DEFAULT_LANGUAGE_THRESHOLDS.items():
+        spec = thresholds.get(language)
+        if not isinstance(spec, dict):
+            raise ValueError(f"language_thresholds.{language} must be an object")
+        for key in keys:
+            value = spec.get(key)
+            if not isinstance(value, (int, float)) or not 0 <= value <= 1:
+                raise ValueError(f"language_thresholds.{language}.{key} must be between 0 and 1")
+    if (thresholds["mixed"]["min_thai_share"] + thresholds["mixed"]["min_latin_share"]) > 1.0:
+        raise ValueError("mixed language thresholds cannot both be satisfied above 1.0 combined")

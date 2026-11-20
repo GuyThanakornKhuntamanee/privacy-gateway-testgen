@@ -9,10 +9,10 @@
       "ambiguous_ratio": 0.10,
       "attachment_probability": 0.85,
       "file_type": {
-        "txt": 0.08, "csv": 0.08, "json": 0.08, "pdf": 0.08, "png": 0.06,
-        "jpg": 0.05, "jpeg": 0.03, "docx": 0.08, "xlsx": 0.08, "pptx": 0.05,
-        "yaml": 0.06, "yml": 0.02, "xml": 0.04, "log": 0.06, "md": 0.05,
-        "env": 0.02, "ini": 0.01, "conf": 0.01, "toml": 0.01, "sql": 0.01,
+        "txt": 0.07, "csv": 0.07, "json": 0.07, "pdf": 0.08, "png": 0.07,
+        "jpg": 0.04, "jpeg": 0.02, "docx": 0.08, "xlsx": 0.08, "pptx": 0.05,
+        "yaml": 0.06, "yml": 0.02, "xml": 0.04, "log": 0.09, "md": 0.05,
+        "env": 0.03, "ini": 0.01, "conf": 0.01, "toml": 0.01, "sql": 0.01,
         "tf": 0.01, "py": 0.02, "js": 0.01, "ts": 0.005, "java": 0.005, "go": 0.005
       }
     }

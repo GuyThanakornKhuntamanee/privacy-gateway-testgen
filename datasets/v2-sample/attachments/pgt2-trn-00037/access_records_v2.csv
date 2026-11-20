@@ -1,0 +1,9 @@
+เวลา / timestamp,ผู้ใช้ / user,IP ต้นทาง / source_ip,ทรัพยากร / resource,การกระทำ / action
+2026-03-10T09:10:00Z,maneerat.piyada@example.net,203.0.113.77,docs.example.org,อ่าน / read
+2026-03-11T09:11:00Z,wichai.somchai@example.net,192.0.2.10,docs.example.org,ลบ / delete
+2026-03-12T09:12:00Z,maneerat.lalita@example.com,198.51.100.25,docs.example.org,เข้าสู่ระบบ / login
+2026-03-13T09:13:00Z,chanida.somchai@example.net,192.0.2.10,docs.example.org,เข้าสู่ระบบ / login
+2026-03-14T09:14:00Z,lalita.thiraphat77@example.org,203.0.113.77,docs.example.org,เขียน / write
+2026-03-15T09:15:00Z,prasert.wichai74@example.org,192.0.2.10,docs.example.org,ลบ / delete
+2026-03-16T09:16:00Z,maneerat.piyada@example.net,198.51.100.25,docs.example.org,เข้าสู่ระบบ / login
+2026-03-17T09:17:00Z,wichai.somchai@example.net,192.0.2.10,docs.example.org,เขียน / write

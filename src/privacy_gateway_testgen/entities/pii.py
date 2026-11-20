@@ -30,19 +30,7 @@ def _email(rng: random.Random, ctx) -> Entity:
 
 
 def _address(rng: random.Random, ctx) -> Entity:
-    house = f"{rng.randint(1, 299)}/{rng.randint(1, 99)}"
-    moo = rng.randint(1, 12)
-    soi = rng.randint(1, 40)
-    road = rng.choice(["สุขุมวิท", "รัตนาธิเบศร์", "พหลโยธิน", "บางนา-ตราด", "เพชรเกษม"])
-    tambon = rng.choice(["บางพลีใหญ่", "คลองตัน", "ท่าศาลา", "บางรักน้อย", "หนองปรือ"])
-    amphoe = rng.choice(["บางพลี", "คลองเตย", "เมืองเชียงใหม่", "บางใหญ่", "บางละมุง"])
-    province = rng.choice(["สมุทรปราการ", "เชียงใหม่", "นนทบุรี", "ชลบุรี", "ปทุมธานี"])
-    postal = common.digits(rng, 5)
-    value = (
-        f"{house} หมู่ {moo} ซอย {soi} ถนน{road} "
-        f"ตำบล{tambon} อำเภอ{amphoe} จังหวัด{province} {postal}"
-    )
-    return Entity("pii", "thai_address", value)
+    return Entity("pii", "thai_address", common.thai_address(rng))
 
 
 def _postal(rng: random.Random, ctx) -> Entity:
