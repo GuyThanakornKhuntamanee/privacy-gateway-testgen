@@ -26,7 +26,7 @@ Commit: ดู §2
 ```text
 branch: feat/v2.2-thai-rendering
 base:   fix/v2.1.1-benchmark-readiness (cb008bd)
-commit: 4726f7f "feat: add Thai PDF and image rendering"
+commit: d947a0f "feat: add Thai PDF and image rendering" (code + samples + docs)
 ```
 
 `main` ไม่ถูกแก้, ไม่มี push/PR/tag ในรอบนี้
