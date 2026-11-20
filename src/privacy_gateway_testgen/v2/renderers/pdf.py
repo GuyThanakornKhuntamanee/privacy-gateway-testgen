@@ -1,370 +1,367 @@
-"""A small deterministic PDF 1.4 writer.
+"""Deterministic PDF 1.4 writer backed by ReportLab.
 
-Native pages use built-in Helvetica/Courier fonts (WinAnsi).  Scanned pages
-embed an RGB image produced by the pure-Python raster renderer.  No JavaScript,
-remote content or executable action is emitted.
+Native pages embed the bundled Sarabun TrueType font (Thai + Latin + Thai
+digits), so Thai, English and mixed content are real PDF text with a ToUnicode
+map: the page can be re-opened and its text extracted exactly.  Scanned pages
+embed a raster produced by the Pillow renderer, and hybrid pages mix native
+paragraphs with an embedded image region.  No JavaScript, remote content,
+launch action or embedded file is emitted.
+
+ReportLab runs in invariant mode (fixed document ID and creation date), so the
+same document produces the same bytes for a pinned dependency version.
 """
 
 from __future__ import annotations
 
-import zlib
-from dataclasses import dataclass, field
+import io
 from typing import List, Optional, Sequence, Tuple
+
+from reportlab.lib.colors import Color
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas as pdfcanvas
 
 from ..docmodel import Block, Doc
 from .base import EXTRACTION_METHODS, MIME_TYPES, RenderedFile
+from .fonts import FONT_FAMILY, font_path
+from .textlayout import wrap_ranges
 
 PAGE_WIDTH = 595
 PAGE_HEIGHT = 842
 MARGIN = 48
-TEXT_WIDTH = 640  # A4 minus margins, in points
-FONT = "F1"
-FONT_BOLD = "F2"
-FONT_MONO = "F3"
-FIXED_DATE = "D:20260101000000Z"
+TEXT_WIDTH = PAGE_WIDTH - 2 * MARGIN
+
+FONT = FONT_FAMILY
+FONT_BOLD = f"{FONT_FAMILY}-Bold"
+FONT_MONO = "Courier"
 
 
-def _escape(text: str) -> str:
-    return text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+def _register_fonts() -> None:
+    registered = set(pdfmetrics.getRegisteredFontNames())
+    if FONT not in registered:
+        pdfmetrics.registerFont(TTFont(FONT, str(font_path("regular"))))
+    if FONT_BOLD not in registered:
+        pdfmetrics.registerFont(TTFont(FONT_BOLD, str(font_path("bold"))))
 
 
-def _latin(text: str) -> str:
-    # Built-in fonts are WinAnsi.  PDF documents are generated with English
-    # content; refusing non-Latin text prevents a silent "?" replacement from
-    # ever becoming ground truth.  Thai PDF is routed to DOCX/XLSX/TXT.
-    unsupported = sorted({ch for ch in text if ord(ch) > 126 or ord(ch) < 32})
-    if unsupported:
-        raise ValueError(
-            "PDF renderer is Latin-only; unsupported characters "
-            f"{''.join(unsupported[:8])!r} must be routed to DOCX/XLSX/TXT"
-        )
-    return text
+def _is_ascii(text: str) -> bool:
+    return all(ord(char) < 128 for char in text)
 
 
-def _wrap(text: str, max_chars: int) -> List[Tuple[int, int]]:
-    ranges: List[Tuple[int, int]] = []
-    start = 0
-    while start < len(text):
-        end = min(len(text), start + max_chars)
-        if end < len(text):
-            space = text.rfind(" ", start, end)
-            if space > start + 20:
-                end = space
-        ranges.append((start, end))
-        start = end
-        while start < len(text) and text[start] == " ":
-            start += 1
-    return ranges or [(0, 0)]
-
-
-@dataclass
-class PdfPage:
-    content: List[str] = field(default_factory=list)
-    resources: List[str] = field(default_factory=list)
-    images: List[int] = field(default_factory=list)
+def line_width(text: str, font: str, size: float) -> float:
+    return stringWidth(text, font, size)
 
 
 class PdfWriter:
     def __init__(self, title: str, author: str = "Privacy Gateway Testgen") -> None:
-        self.title = _latin(title)
-        self.author = _latin(author)
-        self.pages: List[PdfPage] = []
-        self.page = PdfPage()
-        self.pages.append(self.page)
-        self.y = PAGE_HEIGHT - MARGIN
+        _register_fonts()
+        self.buffer = io.BytesIO()
+        self.canvas = pdfcanvas.Canvas(self.buffer, pagesize=(PAGE_WIDTH, PAGE_HEIGHT),
+                                       invariant=1, pageCompression=1)
+        self.canvas.setTitle(title)
+        self.canvas.setAuthor(author)
+        self.canvas.setSubject("synthetic privacy-gateway test document")
+        self.canvas.setCreator("privacy-gateway-testgen")
+        self.canvas.setProducer("privacy-gateway-testgen")
+        self.pages = 1
+        self.y = MARGIN  # distance from the page top to the next line box
+        self.lines: List[str] = []
+        self.text_shaping: Optional[str] = None
 
+    # -- geometry ---------------------------------------------------------
     def new_page(self) -> None:
-        self.page = PdfPage()
-        self.pages.append(self.page)
-        self.y = PAGE_HEIGHT - MARGIN
+        self.canvas.showPage()
+        self.pages += 1
+        self.y = MARGIN
 
     def ensure(self, height: float) -> None:
-        if self.y - height < MARGIN:
+        if self.y + height > PAGE_HEIGHT - MARGIN:
             self.new_page()
 
     def text(self, x: float, y: float, text: str, size: float = 10,
              font: str = FONT, color: Tuple[float, float, float] = (0.08, 0.1, 0.14)) -> None:
-        text = _latin(text)
-        r, g, b = color
-        self.page.content.append(
-            f"BT /{font} {size:.2f} Tf {r:.3f} {g:.3f} {b:.3f} rg "
-            f"1 0 0 1 {x:.2f} {PAGE_HEIGHT - y:.2f} Tm ({_escape(text)}) Tj ET"
-        )
+        if not text:
+            return
+        self.canvas.setFont(font, size)
+        self.canvas.setFillColor(Color(*color))
+        self.canvas.drawString(x, PAGE_HEIGHT - y - size, text)
+        self.lines.append(text)
 
     def line(self, x1: float, y1: float, x2: float, y2: float,
              width: float = 0.5, color: Tuple[float, float, float] = (0.7, 0.72, 0.75)) -> None:
-        r, g, b = color
-        self.page.content.append(
-            f"{r:.3f} {g:.3f} {b:.3f} RG {width:.2f} w {x1:.2f} {PAGE_HEIGHT - y1:.2f} m "
-            f"{x2:.2f} {PAGE_HEIGHT - y2:.2f} l S"
-        )
+        self.canvas.setStrokeColor(Color(*color))
+        self.canvas.setLineWidth(width)
+        self.canvas.line(x1, PAGE_HEIGHT - y1, x2, PAGE_HEIGHT - y2)
 
     def rect(self, x: float, y: float, width: float, height: float,
              fill: Optional[Tuple[float, float, float]] = None,
              stroke: Optional[Tuple[float, float, float]] = None) -> None:
         if fill:
-            r, g, b = fill
-            self.page.content.append(f"{r:.3f} {g:.3f} {b:.3f} rg {x:.2f} {PAGE_HEIGHT - y - height:.2f} {width:.2f} {height:.2f} re f")
+            self.canvas.setFillColor(Color(*fill))
+            self.canvas.rect(x, PAGE_HEIGHT - y - height, width, height, stroke=0, fill=1)
         if stroke:
-            r, g, b = stroke
-            self.page.content.append(f"{r:.3f} {g:.3f} {b:.3f} RG {x:.2f} {PAGE_HEIGHT - y - height:.2f} {width:.2f} {height:.2f} re S")
+            self.canvas.setStrokeColor(Color(*stroke))
+            self.canvas.rect(x, PAGE_HEIGHT - y - height, width, height, stroke=1, fill=0)
 
+    # -- text blocks ------------------------------------------------------
     def draw_paragraph(self, text: str, placements: Sequence, size: float = 10,
                        leading: float = 14, font: str = FONT, x: float = MARGIN,
-                       max_chars: int = 92, locations: Optional[List[dict]] = None) -> None:
-        line_ranges = _wrap(text, max_chars)
-        for start, end in line_ranges:
+                       locations: Optional[List[dict]] = None,
+                       max_width: float = TEXT_WIDTH) -> None:
+        measure = lambda value: line_width(value, font, size)
+        for start, end in wrap_ranges(text, measure, max_width,
+                                      [(item.start, item.end) for item in placements]):
+            piece = text[start:end]
             self.ensure(leading)
             top = self.y
-            self.text(x, top, text[start:end], size, font)
+            self.text(x, top, piece, size, font)
             if locations is not None:
                 for placement in placements:
                     if placement.start < end and placement.end > start:
+                        prefix = measure(piece[:max(0, placement.start - start)])
+                        value_width = measure(piece[max(0, placement.start - start):
+                                                    min(len(piece), placement.end - start)])
                         locations.append({
                             "entity": placement.entity,
                             "location": {
-                                "kind": "pdf_text", "page": len(self.pages),
-                                "x": round(x, 2), "y": round(top, 2),
-                                "width": round(min(TEXT_WIDTH, (end - start) * size * 0.55), 2),
+                                "kind": "pdf_text", "page": self.pages,
+                                "source_type": "native_text",
+                                "x": round(x + prefix, 2), "y": round(top, 2),
+                                "width": round(max(1.0, value_width), 2),
                                 "height": round(leading, 2),
                                 "character_start": placement.start,
                                 "character_end": placement.end,
                             },
                             "role": placement.role,
                         })
-            self.y -= leading
-        self.y -= 4
+            self.y += leading
+        self.y += 4
 
     def draw_table(self, block: Block, locations: List[dict], size: float = 8.5) -> None:
         columns = max(1, len(block.headers))
         available = PAGE_WIDTH - 2 * MARGIN
         col_width = available / columns
-        max_chars = max(8, int(col_width / (size * 0.52)))
+        leading = size + 3
         all_rows = [list(block.headers)] + [[cell.text for cell in row] for row in block.rows]
         for row_index, row in enumerate(all_rows):
-            wrapped = [_wrap(str(value), max_chars) for value in row]
-            height = max(len(lines) for lines in wrapped) * (size + 3) + 4
+            font = FONT_BOLD if row_index == 0 else FONT
+            measure = lambda value, _font=font: line_width(value, _font, size)
+            wrapped = [wrap_ranges(str(value), measure, col_width - 4) for value in row]
+            height = max(len(lines) for lines in wrapped) * leading + 4
             self.ensure(height)
             top = self.y
             for column_index, lines in enumerate(wrapped):
                 x = MARGIN + column_index * col_width
                 for line_index, (start, end) in enumerate(lines):
-                    value = str(row[column_index])[start:end]
-                    self.text(x + 2, top + 2 + line_index * (size + 3), value, size,
-                              FONT_BOLD if row_index == 0 else FONT)
-                if row_index > 0 and column_index < len(block.rows[0]) if block.rows else False:
+                    self.text(x + 2, top + 2 + line_index * leading,
+                              str(row[column_index])[start:end], size, font)
+                if row_index > 0 and column_index < len(row):
                     cell = block.rows[row_index - 1][column_index]
                     for placement in cell.placements:
+                        prefix = measure(str(row[column_index])[:placement.start])
+                        value_width = measure(
+                            str(row[column_index])[placement.start:placement.end])
                         locations.append({
                             "entity": placement.entity,
                             "location": {
-                                "kind": "pdf_text", "page": len(self.pages),
-                                "x": round(x + 2, 2), "y": round(top + 2, 2),
-                                "width": round(col_width, 2), "height": round(height, 2),
+                                "kind": "pdf_text", "page": self.pages,
+                                "source_type": "native_text",
+                                "x": round(x + 2 + prefix, 2), "y": round(top + 2, 2),
+                                "width": round(max(1.0, value_width), 2),
+                                "height": round(height, 2),
                                 "character_start": placement.start,
                                 "character_end": placement.end,
                             },
                             "role": placement.role,
                         })
             self.line(MARGIN, top + height, PAGE_WIDTH - MARGIN, top + height)
-            self.y -= height
+            self.y += height
 
+    def draw_code(self, block: Block, locations: List[dict]) -> None:
+        size, leading = 8.0, 10.0
+        line_starts = [0]
+        for index, char in enumerate(block.text):
+            if char == "\n":
+                line_starts.append(index + 1)
+        for number, raw in enumerate(block.text.splitlines()):
+            font = FONT_MONO if _is_ascii(raw) else FONT
+            self.ensure(leading)
+            top = self.y
+            self.text(MARGIN, top, raw, size, font)
+            line_start = line_starts[number] if number < len(line_starts) else 0
+            for placement in block.placements:
+                if not (line_start <= placement.start <= line_start + len(raw)):
+                    continue
+                local_start = max(0, placement.start - line_start)
+                local_end = min(len(raw), placement.end - line_start)
+                if local_end <= local_start:
+                    continue
+                prefix = line_width(raw[:local_start], font, size)
+                value_width = line_width(raw[local_start:local_end], font, size)
+                locations.append({
+                    "entity": placement.entity,
+                    "location": {
+                        "kind": "pdf_text", "page": self.pages,
+                        "source_type": "native_text",
+                        "x": round(MARGIN + prefix, 2), "y": round(top, 2),
+                        "width": round(max(1.0, value_width), 2), "height": leading,
+                        "character_start": placement.start,
+                        "character_end": placement.end,
+                    },
+                    "role": placement.role,
+                })
+            self.y += leading
+        self.y += 6
+
+    def draw_raster_block(self, blocks: Sequence[Block], doc: Doc, locations: List[dict]) -> None:
+        """Embed a run of blocks as a raster region inside a native page (hybrid PDF)."""
+        from .images import image_bytes, render_raster
+
+        mini = Doc(archetype=f"{doc.archetype}_screenshot", title=doc.title,
+                   filename="panel.png", blocks=list(blocks), language=doc.language,
+                   metadata={"image_style": doc.metadata.get("hybrid_style", "terminal"),
+                             "ocr_difficulty": int(doc.metadata.get("hybrid_difficulty", 1)),
+                             "image_seed": doc.metadata.get("image_seed", 0),
+                             "image_width": int(doc.metadata.get("hybrid_width", 820)),
+                             "compact": True})
+        raster = render_raster(mini, style=mini.metadata["image_style"],
+                               difficulty=mini.metadata["ocr_difficulty"])
+        self.text_shaping = raster["text_shaping"]
+        scale = min(1.0, PAGE_WIDTH / raster["width"])
+        draw_width = raster["width"] * scale
+        draw_height = raster["height"] * scale
+        self.ensure(draw_height + 10)
+        x = MARGIN
+        top = self.y
+        self.canvas.setStrokeColor(Color(0.75, 0.77, 0.8))
+        self.canvas.setLineWidth(0.5)
+        self.canvas.rect(x - 2, PAGE_HEIGHT - top - draw_height - 2,
+                         draw_width + 4, draw_height + 4, stroke=1, fill=0)
+        image = ImageReader(io.BytesIO(image_bytes(raster["image"], "png")))
+        self.canvas.drawImage(image, x, PAGE_HEIGHT - top - draw_height,
+                              width=draw_width, height=draw_height, mask=None)
+        for line in raster["lines"]:
+            for placement in line["placements"]:
+                box = placement["bbox"]
+                locations.append({
+                    "entity": placement["entity"],
+                    "location": {
+                        "kind": "pdf_image", "page": self.pages,
+                        "source_type": "embedded_image",
+                        "bbox": box, "expected_ocr_text": line["text"],
+                        "width": raster["width"], "height": raster["height"],
+                        "page_bbox": [round(x + box[0] * scale, 2),
+                                      round(top + box[1] * scale, 2),
+                                      round(box[2] * scale, 2), round(box[3] * scale, 2)],
+                        "ocr_normalized": False, "bbox_space": "image_pixels",
+                        "rotation_applied": False,
+                    },
+                    "role": placement["role"],
+                })
+        self.y = top + draw_height + 10
+
+    # -- output -----------------------------------------------------------
     def to_bytes(self) -> bytes:
-        objects: List[str] = []
+        self.canvas.showPage()
+        self.canvas.save()
+        return self.buffer.getvalue()
 
-        def add(value: str) -> int:
-            objects.append(value)
-            return len(objects)
 
-        font_regular = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>")
-        font_bold = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>")
-        font_mono = add("<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>")
-
-        page_numbers: List[int] = []
-        for page in self.pages:
-            content = "\n".join(page.content).encode("latin-1", "replace")
-            content_number = add(
-                f"<< /Length {len(content)} >>\nstream\n" + content.decode("latin-1") + "\nendstream"
-            )
-            xobjects = ""
-            if page.images:
-                refs = " ".join(f"/Im{index + 1} {image_number} 0 R" for index, image_number in enumerate(page.images))
-                xobjects = f" /XObject << {refs} >>"
-            page_number = add(
-                f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {PAGE_WIDTH} {PAGE_HEIGHT}] "
-                f"/Resources << /Font << /F1 {font_regular} 0 R /F2 {font_bold} 0 R /F3 {font_mono} 0 R >>{xobjects} >> "
-                f"/Contents {content_number} 0 R >>"
-            )
-            page_numbers.append(page_number)
-        pages_number = add(
-            f"<< /Type /Pages /Kids [{' '.join(f'{number} 0 R' for number in page_numbers)}] /Count {len(page_numbers)} >>"
-        )
-        catalog_number = add(f"<< /Type /Catalog /Pages {pages_number} 0 R >>")
-        info_number = add(
-            f"<< /Title ({_escape(self.title)}) /Author ({_escape(self.author)}) "
-            f"/Producer (privacy-gateway-testgen) /CreationDate ({FIXED_DATE}) /ModDate ({FIXED_DATE}) >>"
-        )
-
-        header = b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n"
-        output = bytearray(header)
-        offsets = [0]
-        for number, value in enumerate(objects, start=1):
-            offsets.append(len(output))
-            output.extend(f"{number} 0 obj\n{value}\nendobj\n".encode("latin-1", "replace"))
-        xref_offset = len(output)
-        output.extend(f"xref\n0 {len(objects) + 1}\n".encode("ascii"))
-        output.extend(b"0000000000 65535 f \n")
-        for offset in offsets[1:]:
-            output.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
-        output.extend(
-            f"trailer\n<< /Size {len(objects) + 1} /Root {catalog_number} 0 R /Info {info_number} 0 R >>\n"
-            f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
-        )
-        return bytes(output)
-
-    def embed_image(self, width: int, height: int, rgb: bytes) -> int:
-        compressed = zlib.compress(rgb, 6)
-        # Image objects are inserted after pages; record a placeholder number and
-        # resolve it when the page object is written.
-        image_number = 10000 + len(self.page.images)
-        self.page.images.append(image_number)
-        self._pending_images = getattr(self, "_pending_images", {})
-        self._pending_images[image_number] = (width, height, compressed)
-        return image_number
-
-    def to_bytes_with_images(self) -> bytes:
-        pending = getattr(self, "_pending_images", {})
-        # Rebuild objects manually to keep image object numbers stable.
-        objects: List[str] = []
-
-        def add(value: str) -> int:
-            objects.append(value)
-            return len(objects)
-
-        font_regular = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>")
-        font_bold = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>")
-        font_mono = add("<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>")
-        image_refs = {}
-        for image_number, (width, height, compressed) in sorted(pending.items()):
-            image_refs[image_number] = add(
-                f"<< /Type /XObject /Subtype /Image /Width {width} /Height {height} "
-                f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /Length {len(compressed)} >>\n"
-                f"stream\n{compressed.decode('latin-1')}\nendstream"
-            )
-        page_numbers = []
-        for page in self.pages:
-            content = "\n".join(page.content).encode("latin-1", "replace")
-            content_number = add(f"<< /Length {len(content)} >>\nstream\n" + content.decode("latin-1") + "\nendstream")
-            xobjects = ""
-            if page.images:
-                refs = " ".join(f"/Im{index + 1} {image_refs[number]} 0 R" for index, number in enumerate(page.images))
-                xobjects = f" /XObject << {refs} >>"
-            page_numbers.append(add(
-                f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {PAGE_WIDTH} {PAGE_HEIGHT}] "
-                f"/Resources << /Font << /F1 {font_regular} 0 R /F2 {font_bold} 0 R /F3 {font_mono} 0 R >>{xobjects} >> "
-                f"/Contents {content_number} 0 R >>"
-            ))
-        pages_number = add(f"<< /Type /Pages /Kids [{' '.join(f'{n} 0 R' for n in page_numbers)}] /Count {len(page_numbers)} >>")
-        catalog_number = add(f"<< /Type /Catalog /Pages {pages_number} 0 R >>")
-        info_number = add(
-            f"<< /Title ({_escape(self.title)}) /Author ({_escape(self.author)}) "
-            f"/Producer (privacy-gateway-testgen) /CreationDate ({FIXED_DATE}) /ModDate ({FIXED_DATE}) >>"
-        )
-        header = b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n"
-        output = bytearray(header)
-        offsets = [0]
-        for number, value in enumerate(objects, start=1):
-            offsets.append(len(output))
-            output.extend(f"{number} 0 obj\n{value}\nendobj\n".encode("latin-1", "replace"))
-        xref_offset = len(output)
-        output.extend(f"xref\n0 {len(objects) + 1}\n".encode("ascii"))
-        output.extend(b"0000000000 65535 f \n")
-        for offset in offsets[1:]:
-            output.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
-        output.extend(
-            f"trailer\n<< /Size {len(objects) + 1} /Root {catalog_number} 0 R /Info {info_number} 0 R >>\n"
-            f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
-        )
-        return bytes(output)
+def _draw_block(writer: PdfWriter, block: Block, locations: List[dict]) -> None:
+    if block.kind == "heading":
+        writer.ensure(30)
+        writer.text(MARGIN, writer.y, block.text, 13, FONT_BOLD)
+        writer.y += 20
+    elif block.kind in ("paragraph", "note"):
+        writer.draw_paragraph(block.text, block.placements, locations=locations)
+    elif block.kind == "bullet":
+        writer.draw_paragraph("- " + block.text, [
+            type(item)(item.entity, item.start + 2, item.end + 2, item.role)
+            for item in block.placements
+        ], locations=locations)
+    elif block.kind in ("code", "log"):
+        writer.draw_code(block, locations)
+    elif block.kind == "table":
+        writer.draw_table(block, locations)
 
 
 def _render_document(doc: Doc, filename: str) -> RenderedFile:
     writer = PdfWriter(doc.title)
     locations: List[dict] = []
+    hybrid_index = doc.metadata.get("hybrid_block")
+    hybrid_span = int(doc.metadata.get("hybrid_span", 1))
     writer.text(MARGIN, writer.y, doc.title, 18, FONT_BOLD, (0.1, 0.12, 0.18))
-    writer.y -= 26
-    for block in doc.blocks:
-        if block.kind == "heading":
-            writer.ensure(30)
-            writer.text(MARGIN, writer.y, block.text, 13, FONT_BOLD)
-            writer.y -= 20
-        elif block.kind in ("paragraph", "note"):
-            writer.draw_paragraph(block.text, block.placements, locations=locations)
-        elif block.kind == "bullet":
-            writer.draw_paragraph("- " + block.text, [
-                type(p)(p.entity, p.start + 2, p.end + 2, p.role) for p in block.placements
-            ], locations=locations)
-        elif block.kind in ("code", "log"):
-            for line in block.text.splitlines():
-                writer.ensure(10)
-                writer.text(MARGIN, writer.y, line, 8, FONT_MONO)
-                writer.y -= 10
-            writer.y -= 6
-            # Code placements: record the enclosing line box.
-            line_starts = [0]
-            for index, char in enumerate(block.text):
-                if char == "\n":
-                    line_starts.append(index + 1)
-            for placement in block.placements:
-                line_index = max(i for i, start in enumerate(line_starts) if start <= placement.start)
-                locations.append({
-                    "entity": placement.entity,
-                    "location": {
-                        "kind": "pdf_text", "page": len(writer.pages),
-                        "x": MARGIN, "y": max(MARGIN, writer.y + (len(line_starts) - 1 - line_index) * 10),
-                        "width": max(20.0, (placement.end - placement.start) * 5.0), "height": 10.0,
-                        "character_start": placement.start, "character_end": placement.end,
-                    },
-                    "role": placement.role,
-                })
-        elif block.kind == "table":
-            writer.draw_table(block, locations)
+    writer.y += 30
+    index = 0
+    while index < len(doc.blocks):
+        block = doc.blocks[index]
+        if hybrid_index is not None and index == hybrid_index:
+            writer.draw_raster_block(doc.blocks[index:index + hybrid_span], doc, locations)
+            index += hybrid_span
+            continue
+        index += 1
+        _draw_block(writer, block, locations)
+    if not doc.blocks:
+        # A slide archetype rendered as PDF: one page per slide, so the content
+        # is real PDF text instead of a title-only page.
+        for number, slide in enumerate(doc.slides, start=1):
+            if number > 1:
+                writer.new_page()
+            writer.text(MARGIN, writer.y, slide.title, 18, FONT_BOLD, (0.1, 0.12, 0.18))
+            writer.y += 30
+            for block in slide.blocks:
+                _draw_block(writer, block, locations)
+    mode = "hybrid" if hybrid_index is not None else "native"
+    metadata = {"pages": writer.pages, "mode": mode,
+                "font": {"family": FONT_FAMILY, "embedded": True,
+                         "weights": ["regular", "bold"]},
+                "text_source": "native_text",
+                "canonical_lines": writer.lines}
+    if writer.text_shaping:
+        metadata["text_shaping"] = writer.text_shaping
     return RenderedFile(filename, writer.to_bytes(), MIME_TYPES["pdf"], "pdf_native",
-                        EXTRACTION_METHODS["pdf"], locations,
-                        {"pages": len(writer.pages), "mode": "native", "latin_only": True})
+                        EXTRACTION_METHODS["pdf"], locations, metadata)
 
 
 def _render_scanned(doc: Doc, filename: str) -> RenderedFile:
-    from .images import render_raster
+    from .images import image_bytes, render_raster
 
-    raster = render_raster(doc, style=doc.metadata.get("image_style", "scan"),
-                           difficulty=int(doc.metadata.get("ocr_difficulty", 2)))
+    style = doc.metadata.get("image_style", "scan")
+    difficulty = int(doc.metadata.get("ocr_difficulty", 2))
+    raster = render_raster(doc, style=style, difficulty=difficulty)
     writer = PdfWriter(doc.title)
     writer.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT, fill=(1.0, 1.0, 1.0))
-    image_number = writer.embed_image(raster["width"], raster["height"], raster["rgb"])
-    writer.page.content.append(
-        f"q {PAGE_WIDTH} 0 0 {PAGE_HEIGHT} 0 0 cm /Im1 Do Q"
-    )
+    image = ImageReader(io.BytesIO(image_bytes(raster["image"], "png")))
+    writer.canvas.drawImage(image, 0, 0, width=PAGE_WIDTH, height=PAGE_HEIGHT, mask=None)
+    scale_x = PAGE_WIDTH / raster["width"]
+    scale_y = PAGE_HEIGHT / raster["height"]
     locations: List[dict] = []
     for line in raster["lines"]:
         for placement in line["placements"]:
+            box = placement["bbox"]
             locations.append({
                 "entity": placement["entity"],
                 "location": {
-                    "kind": "pdf_image", "page": 1, "source_type": "embedded_image",
-                    "bbox": placement["bbox"], "expected_ocr_text": line["text"],
+                    "kind": "pdf_image", "page": 1, "source_type": "scanned_page",
+                    "bbox": box, "expected_ocr_text": line["text"],
                     "width": raster["width"], "height": raster["height"],
-                    "ocr_normalized": False, "bbox_space": "pre_render",
-                    "rotation_applied": int(doc.metadata.get("ocr_difficulty", 2)) >= 3,
+                    "page_bbox": [round(box[0] * scale_x, 2), round(box[1] * scale_y, 2),
+                                  round(box[2] * scale_x, 2), round(box[3] * scale_y, 2)],
+                    "ocr_normalized": False, "bbox_space": "image_pixels",
+                    "rotation_applied": raster["rotation_applied"],
                 },
                 "role": placement["role"],
             })
-    data = writer.to_bytes_with_images()
-    return RenderedFile(filename, data, MIME_TYPES["pdf"], "pdf_scanned",
+    return RenderedFile(filename, writer.to_bytes(), MIME_TYPES["pdf"], "pdf_scanned",
                         "ocr", locations,
-                        {"pages": 1, "mode": "scanned", "image_width": raster["width"],
-                         "image_height": raster["height"], "ocr_difficulty": doc.metadata.get("ocr_difficulty", 2),
-                         "ocr_text_source": "pre_render"})
+                        {"pages": 1, "mode": "scanned",
+                         "image_width": raster["width"], "image_height": raster["height"],
+                         "ocr_difficulty": difficulty,
+                         "text_shaping": raster["text_shaping"],
+                         "ocr_text_source": "pre_render",
+                         "text_source": "raster_page"})
 
 
 def render_pdf(doc: Doc, filename: str) -> RenderedFile:

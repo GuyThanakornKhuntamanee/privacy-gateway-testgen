@@ -1,0 +1,671 @@
+{
+  "benchmark_ready": {
+    "benchmark_ready": true,
+    "benchmark_safe_cases": 16,
+    "benchmark_safe_ocr_cases": 13,
+    "benchmark_safe_text_cases": 3,
+    "checks": {
+      "deterministic_dataset_output": true,
+      "deterministic_report_output": true,
+      "entity_fragments_valid": true,
+      "language_metadata_valid": true,
+      "linked_financial_data_consistent": true,
+      "no_failed_ground_truth_verification": true,
+      "no_known_high_correctness_issue": true,
+      "no_replacement_glyphs": true,
+      "no_unresolved_schema_errors": true,
+      "required_safety_checks": true,
+      "thai_file_rendering_verified": true,
+      "timeline_valid": true
+    },
+    "excluded_cases": 0,
+    "reasons": []
+  },
+  "dataset_version": "2.2.0",
+  "deterministic_report": true,
+  "failed_gates": [],
+  "gates": [
+    {
+      "name": "schema_validity",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "prompt_span_accuracy",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "file_open_rate",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "entity_location_accuracy",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "extraction_accuracy",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "exact_duplicate_rate",
+      "passed": true,
+      "requirement": "<= 0.0",
+      "value": 0.0
+    },
+    {
+      "name": "near_duplicate_rate",
+      "passed": true,
+      "requirement": "<= 0.05",
+      "value": 0.0
+    },
+    {
+      "name": "document_duplicate_rate",
+      "passed": true,
+      "requirement": "<= 0.05",
+      "value": 0.0
+    },
+    {
+      "name": "file_type_coverage",
+      "passed": true,
+      "requirement": ">= 4 types",
+      "value": [
+        "docx",
+        "jpeg",
+        "jpg",
+        "md",
+        "pdf",
+        "png"
+      ]
+    },
+    {
+      "name": "archetype_coverage",
+      "passed": true,
+      "requirement": ">= 4",
+      "value": 12
+    },
+    {
+      "name": "persona_coverage",
+      "passed": true,
+      "requirement": ">= 3",
+      "value": 10
+    },
+    {
+      "name": "intent_coverage",
+      "passed": true,
+      "requirement": ">= 4",
+      "value": 13
+    },
+    {
+      "name": "language_coverage",
+      "passed": true,
+      "requirement": ">= 2",
+      "value": [
+        "en",
+        "mixed",
+        "th"
+      ]
+    },
+    {
+      "name": "attachment_language_coverage",
+      "passed": true,
+      "requirement": ">= 2 languages",
+      "value": {
+        "en": 2,
+        "mixed": 3,
+        "th": 19
+      }
+    },
+    {
+      "name": "language_matrix_coverage",
+      "passed": true,
+      "requirement": ">= 4 prompt/attachment pairs",
+      "value": {
+        "en->en": 1,
+        "mixed->en": 1,
+        "mixed->th": 8,
+        "th->mixed": 3,
+        "th->th": 11
+      }
+    },
+    {
+      "name": "mixed_language_script",
+      "passed": true,
+      "requirement": "all mixed attachments contain Thai and English script",
+      "value": 1.0
+    },
+    {
+      "name": "structure_reference_resolution",
+      "passed": true,
+      "requirement": "all structure references resolve",
+      "value": 1.0
+    },
+    {
+      "name": "structure_reference_share",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.25
+    },
+    {
+      "name": "multi_file_share",
+      "passed": true,
+      "requirement": ">= 0.05",
+      "value": 0.5
+    },
+    {
+      "name": "cross_file_link_coverage",
+      "passed": true,
+      "requirement": ">= 1 cases",
+      "value": 8
+    },
+    {
+      "name": "same_archetype_bundle_coverage",
+      "passed": true,
+      "requirement": ">= 1 cases",
+      "value": 5
+    },
+    {
+      "name": "cross_file_consistency",
+      "passed": true,
+      "requirement": ">= 1.0",
+      "value": 1.0
+    },
+    {
+      "name": "consistency_evaluated",
+      "passed": true,
+      "requirement": "0 failed, 0 not_evaluated (not_applicable allowed)",
+      "value": {
+        "not_applicable": 68,
+        "passed": 19
+      }
+    },
+    {
+      "name": "language_share_check",
+      "passed": true,
+      "requirement": "0 attachments below their declared script-share thresholds",
+      "value": 0
+    },
+    {
+      "name": "localization_residual_labels",
+      "passed": true,
+      "requirement": "0 untranslated static labels in Thai documents",
+      "value": 0
+    },
+    {
+      "name": "prompt_form_concentration",
+      "passed": true,
+      "requirement": "<= 0.45",
+      "value": 0.0
+    },
+    {
+      "name": "thai_file_render_rate",
+      "passed": true,
+      "requirement": "every Thai or mixed PDF/image attachment is render-verified",
+      "value": "19/19"
+    },
+    {
+      "name": "raster_text_shaping",
+      "passed": true,
+      "requirement": "every raster attachment records HarfBuzz shaping",
+      "value": "17/17"
+    },
+    {
+      "name": "native_pdf_text_extraction",
+      "passed": true,
+      "requirement": "every native PDF extracts its canonical text back",
+      "value": "4/4"
+    },
+    {
+      "name": "no_replacement_glyphs",
+      "passed": true,
+      "requirement": "0 replacement characters in canonical render text",
+      "value": 0
+    },
+    {
+      "name": "domain_coverage",
+      "passed": true,
+      "requirement": ">= 2",
+      "value": [
+        "payment",
+        "pii",
+        "secrets"
+      ]
+    },
+    {
+      "name": "negative_share",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.1875
+    },
+    {
+      "name": "multi_domain_share",
+      "passed": true,
+      "requirement": ">= 0.08",
+      "value": 0.125
+    },
+    {
+      "name": "attachment_share",
+      "passed": true,
+      "requirement": ">= 0.35",
+      "value": 1.0
+    },
+    {
+      "name": "ocr_case_coverage",
+      "passed": true,
+      "requirement": ">= 1",
+      "value": 13
+    },
+    {
+      "name": "opening_repetition",
+      "passed": true,
+      "requirement": "<= 0.35",
+      "value": 0.125
+    },
+    {
+      "name": "repeated_phrase_rate",
+      "passed": true,
+      "requirement": "<= 0.2",
+      "value": 0.1875
+    },
+    {
+      "name": "archetype_concentration",
+      "passed": true,
+      "requirement": "<= 0.3",
+      "value": 0.1875
+    },
+    {
+      "name": "synthetic_safety",
+      "passed": true,
+      "requirement": "0 safety issues",
+      "value": 0
+    },
+    {
+      "name": "attachment_verification",
+      "passed": true,
+      "requirement": "== 1.0",
+      "value": 1.0
+    }
+  ],
+  "known_limitations": [
+    "Native PDF text is embedded TrueType (Sarabun regular/bold) with a ToUnicode map, so Thai and mixed Thai-English text extracts back exactly. Byte identity is guaranteed only for the pinned ReportLab/Pillow versions on one platform; across versions only extracted text, spans and boxes are claimed identical.",
+    "Raster assets (PNG/JPEG and scanned or hybrid PDF regions) are verified at render-layout level. No OCR engine is run, so OCR accuracy is not claimed, and the canonical pre-render text stays the ground truth.",
+    "Raster cases are not excluded from the benchmark for needing OCR. They are listed in `benchmark_safe_ocr_cases.jsonl`, separate from `benchmark_safe_text_cases.jsonl`, because the gateway under test performs the OCR.",
+    "Raster degradation (noise, blur, small rotation, brightness gradient) changes pixels, so the reported bounding boxes are transformed to the final image and may cover slightly more area than the ink.",
+    "PPTX speaker notes and native PowerPoint tables are not emitted; slide body text and later-slide placement are supported.",
+    "YAML/TOML/INI/ENV verification uses the generator's strict subset parser, not PyYAML or tomllib.",
+    "Archives, password-protected containers, audio, video, executables and recursive archive extraction are out of scope.",
+    "Template-family isolation is enforced for file bundles; a very small dataset consequently has fewer families in validation/test.",
+    "The default policy file is an illustrative test configuration, not legal advice or a compliance certification.",
+    "All entities are synthetic. Coincidental similarity to a real person, host or company is possible but not intended.",
+    "Cross-file consistency is validated on the generated scenario plan and annotations, not by executing a downstream gateway."
+  ],
+  "manifest": {
+    "dataset_id": "pgt2-21-thai-rendering",
+    "generator_version": "0.4.0",
+    "profile": "thai-rendering",
+    "schema_version": "2.1",
+    "seed": 21,
+    "total_cases": 16,
+    "total_files": 24
+  },
+  "metrics": {
+    "action_counts": {
+      "ALLOW": 3,
+      "BLOCK": 4,
+      "LOCAL_ONLY": 3,
+      "REDACT": 5,
+      "TOKENIZE": 1
+    },
+    "ambiguous_ratio": 0.0,
+    "archetype_concentration": 0.1875,
+    "archetype_shares": {
+      "architecture_notes": 0.0625,
+      "incident_report": 0.0625,
+      "meeting_minutes": 0.125,
+      "scanned_invoice": 0.125,
+      "screenshot_chat": 0.1875,
+      "screenshot_code": 0.0625,
+      "screenshot_config": 0.0625,
+      "screenshot_dashboard": 0.1875,
+      "screenshot_email": 0.0625,
+      "screenshot_form": 0.0625,
+      "screenshot_receipt": 0.0625,
+      "support_ticket": 0.125
+    },
+    "attachment_count_distribution": {
+      "1": 8,
+      "2": 8
+    },
+    "attachment_language_shares": {
+      "en": 0.0833,
+      "mixed": 0.125,
+      "th": 0.7917
+    },
+    "attachment_share": 1.0,
+    "bundle_kinds": {
+      "multi_file": 3,
+      "old_new": 2,
+      "same_archetype": 3,
+      "single_file": 8
+    },
+    "consistency_checks": 87,
+    "consistency_passed": 19,
+    "consistency_rate": 1.0,
+    "consistency_status": {
+      "not_applicable": 68,
+      "passed": 19
+    },
+    "cross_file_link_cases": 8,
+    "cross_file_links": 35,
+    "detection_evaluated": false,
+    "detection_note": "No detector or gateway was run; these metrics cover file ingestion and annotation provenance only.",
+    "difficulty_shares": {
+      "2": 0.3125,
+      "3": 0.375,
+      "4": 0.25,
+      "5": 0.0625
+    },
+    "document_duplicate_rate": 0.0,
+    "domain_shares": {
+      "payment": 0.25,
+      "pii": 0.4375,
+      "secrets": 0.25
+    },
+    "duplicates": {
+      "cross_split_examples": [],
+      "cross_split_near_duplicate_pairs": 0,
+      "exact_duplicate_cases": 0,
+      "exact_duplicate_rate": 0.0,
+      "examples": [],
+      "near_duplicate_cases": 0,
+      "near_duplicate_pairs": 0,
+      "near_duplicate_rate": 0.0,
+      "threshold": 0.96
+    },
+    "entity_density_distribution": {
+      "1-3": 5,
+      "4-6": 2,
+      "7+": 9
+    },
+    "entity_location_accuracy": 1.0,
+    "evaluation_requirements": {
+      "direct_text_extraction": 8,
+      "ocr_required": 16
+    },
+    "extraction_accuracy": 1.0,
+    "extraction_failures": 0,
+    "extraction_methods": {
+      "direct_text": 1,
+      "ocr": 13,
+      "office_parser": 2,
+      "pdf_text": 4
+    },
+    "file_open_rate": 1.0,
+    "file_type_counts": {
+      "docx": 2,
+      "jpeg": 1,
+      "jpg": 4,
+      "md": 1,
+      "pdf": 7,
+      "png": 9
+    },
+    "file_type_shares": {
+      "docx": 0.125,
+      "jpeg": 0.0625,
+      "jpg": 0.25,
+      "md": 0.0625,
+      "pdf": 0.375,
+      "png": 0.5
+    },
+    "hybrid_pdf_attachments": 1,
+    "intent_shares": {
+      "analyze": 0.0625,
+      "calculate": 0.0625,
+      "classify": 0.0625,
+      "convert_format": 0.0625,
+      "create_chart": 0.0625,
+      "draft_email": 0.0625,
+      "extract_fields": 0.0625,
+      "find_anomalies": 0.125,
+      "modify_document": 0.0625,
+      "prepare_report": 0.125,
+      "review_document": 0.0625,
+      "summarize": 0.125,
+      "troubleshoot": 0.0625
+    },
+    "language_by_file_type": {
+      "docx": {
+        "declared": {
+          "mixed": 2
+        },
+        "files": 2,
+        "mismatches": 0
+      },
+      "jpeg": {
+        "declared": {
+          "th": 1
+        },
+        "files": 1,
+        "mismatches": 0
+      },
+      "jpg": {
+        "declared": {
+          "en": 1,
+          "th": 3
+        },
+        "files": 4,
+        "mismatches": 0
+      },
+      "md": {
+        "declared": {
+          "th": 1
+        },
+        "files": 1,
+        "mismatches": 0
+      },
+      "pdf": {
+        "declared": {
+          "th": 7
+        },
+        "files": 7,
+        "mismatches": 0
+      },
+      "png": {
+        "declared": {
+          "en": 1,
+          "mixed": 1,
+          "th": 7
+        },
+        "files": 9,
+        "mismatches": 0
+      }
+    },
+    "language_matrix": {
+      "en->en": 1,
+      "mixed->en": 1,
+      "mixed->th": 8,
+      "th->mixed": 3,
+      "th->th": 11
+    },
+    "language_matrix_combinations": 5,
+    "language_mismatches": 0,
+    "language_share_means": {
+      "en": 0.0,
+      "mixed": 0.5044,
+      "th": 0.8626
+    },
+    "language_share_samples": {
+      "en": 1,
+      "mixed": 6,
+      "th": 9
+    },
+    "language_shares": {
+      "en": 0.0625,
+      "mixed": 0.375,
+      "th": 0.5625
+    },
+    "mixed_attachments": 3,
+    "mixed_attachments_verified": 3,
+    "mixed_script_rate": 1.0,
+    "multi_domain_share": 0.125,
+    "multi_file_cases": 8,
+    "multi_file_share": 0.5,
+    "native_pdf_attachments": 4,
+    "native_pdf_attachments_verified": 4,
+    "negative_ratio": 0.1875,
+    "ocr_cases": 13,
+    "openings": {
+      "top": [
+        {
+          "count": 2,
+          "opening": "อันนี้มัน error ตรงไหนอะ."
+        },
+        {
+          "count": 1,
+          "opening": "please this came"
+        },
+        {
+          "count": 1,
+          "opening": "ขอให้ช่วย ดูให้ทีนะ เมื่อคืนแก้แล้ว."
+        },
+        {
+          "count": 1,
+          "opening": "ขอให้ช่วย ยังไม่ได้เลย ช่วยดูที."
+        },
+        {
+          "count": 1,
+          "opening": "ช่วยconvert this to"
+        },
+        {
+          "count": 1,
+          "opening": "ฝากคำนวณยอดรวม อันนี้ หน่อย."
+        },
+        {
+          "count": 1,
+          "opening": "พี่ครับ scanned_invoice.pdf fnd"
+        },
+        {
+          "count": 1,
+          "opening": "พี่ครับ screenshot_form.png ทำกราฟให้ที."
+        },
+        {
+          "count": 1,
+          "opening": "พี่ครับ ไฟล์นี้ วิเคราะห์ให้ที."
+        },
+        {
+          "count": 1,
+          "opening": "รบกวนช่วย สองไฟล์นี้ช่วยทำรายงานหน่อย. เพิ่ง"
+        }
+      ],
+      "top_share": 0.125,
+      "unique": 15
+    },
+    "persona_shares": {
+      "analyst": 0.0625,
+      "devops": 0.0625,
+      "executive_assistant": 0.125,
+      "finance": 0.0625,
+      "healthcare_admin": 0.125,
+      "intern": 0.0625,
+      "manager": 0.1875,
+      "sales": 0.1875,
+      "support": 0.0625,
+      "sysadmin": 0.0625
+    },
+    "prompt_form_top_share": 0.0,
+    "prompt_forms": {
+      "with_attachment": 16
+    },
+    "prompt_length": {
+      "max": 154,
+      "mean": 83.75,
+      "min": 31,
+      "stdev": 32.69
+    },
+    "prompt_only_forms": {},
+    "prompt_span_accuracy": 1.0,
+    "raster_attachments": 17,
+    "raster_attachments_verified": 17,
+    "raster_text_shaping_ok": 17,
+    "repeated_phrases": {
+      "top": [
+        {
+          "count": 3,
+          "phrase": "use this one instead."
+        },
+        {
+          "count": 2,
+          "phrase": "one instead. เพิ่ง export"
+        },
+        {
+          "count": 2,
+          "phrase": "this one instead. เพิ่ง"
+        }
+      ],
+      "top_share": 0.1875
+    },
+    "replacement_glyphs": 0,
+    "reproducible": true,
+    "residual_english_labels": 0,
+    "routed_attachments": 11,
+    "safety": {
+      "issue_count": 0,
+      "issues": [],
+      "passed": true
+    },
+    "same_archetype_bundle_cases": 5,
+    "schema_validity": 1.0,
+    "split_counts": {
+      "test": 1,
+      "train": 13,
+      "validation": 2
+    },
+    "structure_reference_cases": 4,
+    "structure_reference_share": 0.25,
+    "structure_references_resolved": 4,
+    "structure_references_total": 4,
+    "structure_resolution_rate": 1.0,
+    "thai_file_attachments": 19,
+    "thai_file_attachments_verified": 19,
+    "validation_issue_cases": 0,
+    "validation_issues": [],
+    "verification_status": {
+      "verified": 2,
+      "verified_partial": 14
+    }
+  },
+  "passed": true,
+  "profile": "thai-rendering",
+  "recommended_improvements": [
+    "Run the generated files through the actual gateway extractors, then compare their extraction output with ground_truth/entities.jsonl.",
+    "Add organisation-specific archetypes and policy files before using the dataset operationally.",
+    "Use a larger seed/count when a profile must show every file family in every split.",
+    "Review any case marked verified_partial before treating OCR-oriented labels as authoritative."
+  ],
+  "schema_version": "2.1",
+  "seed": 21,
+  "total_cases": 16,
+  "total_files": 24,
+  "verification": {
+    "cases": 16,
+    "dataset_dir": "D:\\Chula\\CEDT\\Capstone_Project_I\\privacy-gateway-testgen\\datasets\\v2-thai-sample",
+    "file_open_rate": 1.0,
+    "files": 24,
+    "issues": [],
+    "manifest_checks": 35,
+    "passed": true,
+    "statuses": {
+      "verified": 7,
+      "verified_layout": 17
+    },
+    "verified_files": 24
+  }
+}

@@ -17,7 +17,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run test suite (v1 + v2 + correctness regressions)
+      - name: Install runtime dependencies (Thai PDF/image rendering)
+        run: python -m pip install --upgrade pip && python -m pip install "Pillow>=10.0,<14" "reportlab>=4.0,<6" "pypdf>=4.0,<8"
+      - name: Check Thai text shaping is available
+        env:
+          PYTHONPATH: src
+        run: python -c "from privacy_gateway_testgen.v2.renderers.fonts import font_path, require_text_shaping; print(font_path('regular'), require_text_shaping())"
+      - name: Run test suite (v1 + v2 + Thai rendering regressions)
         env:
           PYTHONPATH: src
           PYTHONHASHSEED: "0"
@@ -67,6 +73,35 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m privacy_gateway_testgen validate-v2 --dataset datasets/compat/v2.0-sample
+      - name: Generate Thai rendering sample (native/scanned/hybrid PDF, PNG, JPEG)
+        env:
+          PYTHONPATH: src
+        run: >
+          python -m privacy_gateway_testgen generate-v2
+          --config configs/v2/default.json --profile thai-rendering --count 16
+          --out build/v2-thai-dataset
+      - name: Verify and report the Thai rendering sample
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m privacy_gateway_testgen validate-v2 --dataset build/v2-thai-dataset
+          python -m privacy_gateway_testgen verify-v2 --dataset build/v2-thai-dataset
+          python -m privacy_gateway_testgen report-v2 --dataset build/v2-thai-dataset --out reports/v2-thai --check-reproducible
+      - name: Thai PDF and image attachments render and verify
+        env:
+          PYTHONPATH: src
+          PYTHONHASHSEED: "0"
+        run: |
+          python -c "
+          import json
+          cases = [json.loads(l) for l in open('build/v2-thai-dataset/cases.jsonl', encoding='utf-8') if l.strip()]
+          files = [a for c in cases for a in c['attachments'] if a['extension'] in ('pdf', 'png', 'jpg', 'jpeg')]
+          thai = [a for a in files if a['language'] in ('th', 'mixed')]
+          bad = [a['filename'] for a in files if a['verification']['status'] not in ('verified', 'verified_layout')]
+          assert len(thai) >= 4, 'expected Thai PDF/image attachments, got %d' % len(thai)
+          assert not bad, 'unverified Thai renderer output: %s' % bad
+          print('%d PDF/image attachments verified, %d Thai or mixed' % (len(files), len(thai)))
+          "
       - name: Upload evaluation reports
         uses: actions/upload-artifact@v4
         with:
@@ -75,4 +110,7 @@ jobs:
             reports/
             build/v2-dataset/manifest.json
             build/v2-dataset/benchmark_safe_cases.jsonl
+            build/v2-dataset/benchmark_safe_text_cases.jsonl
+            build/v2-dataset/benchmark_safe_ocr_cases.jsonl
             build/v2-dataset/benchmark_excluded_cases.jsonl
+            build/v2-thai-dataset/manifest.json

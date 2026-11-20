@@ -404,24 +404,35 @@ INLINE_LABELS: Dict[str, str] = {
     "service url": "URL บริการ", "database endpoint": "ปลายทางฐานข้อมูล",
     "network": "เครือข่าย", "request id": "รหัสคำขอ", "status": "สถานะ",
 }
+_THAI_LABELS = "|".join(
+    sorted({re.escape(value) for value in INLINE_LABELS.values()}, key=len, reverse=True))
 _INLINE_LABEL_RE = re.compile(
-    r"(?<![A-Za-z])(" + "|".join(
+    r"(?:(?P<thai>" + _THAI_LABELS + r")\s*/\s*)?"
+    r"(?<![A-Za-z])(?P<label>(" + "|".join(
         sorted((re.escape(key) for key in INLINE_LABELS), key=len, reverse=True)
-    ) + r"):",
+    ) + r")):",
     re.IGNORECASE,
 )
 _LABEL_CANONICAL = {key.lower(): key for key in INLINE_LABELS}
 
 
 def localize_labels_inline(text: str, language: str) -> str:
-    """Localize ``Label:`` tokens embedded in a longer static line."""
+    """Localize ``Label:`` tokens embedded in a longer static line.
+
+    Idempotent: a bilingual ``ไทย / English:`` pair produced by an earlier pass
+    is collapsed or kept as one pair, never prefixed again.  Re-localizing the
+    same document previously stacked ``ไทย / ไทย / ...`` in front of a label.
+    """
     if language == "en" or not text:
         return text
 
     def replace(match: "re.Match") -> str:
-        key = _LABEL_CANONICAL.get(match.group(1).lower(), match.group(1).lower())
+        label = match.group("label")
+        key = _LABEL_CANONICAL.get(label.lower(), label.lower())
         thai = INLINE_LABELS[key]
-        return f"{thai} / {match.group(1)}:" if language == "mixed" else f"{thai}:"
+        if language == "th":
+            return f"{thai}:"
+        return f"{thai} / {label}:"
 
     return _INLINE_LABEL_RE.sub(replace, text)
 
@@ -435,8 +446,8 @@ def residual_english_labels(text: str) -> List[str]:
     found = set()
     for line in text.splitlines():
         for match in _INLINE_LABEL_RE.finditer(line):
-            label = match.group(1)
-            if f" / {label}:" in line or f" / {label.lower()}:" in line:
+            label = match.group("label")
+            if match.group("thai"):
                 continue
             found.add(label)
     return sorted(found)
@@ -751,7 +762,10 @@ def format_currency(amount: float, language: str, mode: str = "thb") -> str:
 def language_capability(extension: str) -> Tuple[str, ...]:
     """Content languages a renderer can carry without glyph loss."""
     if extension in ("pdf", "png", "jpg", "jpeg"):
-        return ("en",)
+        # v2.2: the bundled Sarabun font + ReportLab/Pillow carry Thai, English
+        # and mixed content.  A thinner renderer can shrink this tuple again
+        # without touching the routing call sites.
+        return ("th", "en", "mixed")
     if extension == "log":
         # Log bodies are technical English by convention; a Thai log would be
         # an English frame with Thai prose around machine text.

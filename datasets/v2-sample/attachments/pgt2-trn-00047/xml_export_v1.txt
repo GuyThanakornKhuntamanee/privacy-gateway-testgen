@@ -1,6 +1,0 @@
-ข้อมูลลูกค้า
-
-$.customer.name: รัตนา วงศ์ไทย
-$.customer.email: wichai.maneerat@example.org
-$.customer.phone: 084-236-2331
-$.token: at_example_fake_1e410ed39b0cbef9749a

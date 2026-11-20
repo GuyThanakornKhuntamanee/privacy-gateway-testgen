@@ -1,23 +1,19 @@
-ประชุมแพลตฟอร์มรายสัปดาห์
+Platform weekly - meeting minutes
 
-วันที่: 18 มีนาคม 2569  |  Location: internal video call
+Date: 18 March 2026  |  Location: internal video call
 
-ผู้เข้าร่วม
+Attendees
 
-- อารีย์ วิริยะ - maneerat.prasert91@example.net
-- กมลชนก บุญมี - thiraphat.anan@example.org
-- สมชาย ภักดี - kittipong.kittipong@example.org
-บันทึก
+- Wichai Theerawong - anan.somchai80@example.net
+- Siriporn Jaidee - kittipong.somchai81@example.net
+- Maneerat Chaichana - chanida.chanida@example.com
+Notes
 
-ทีมทบทวน checklist การ deploy และแผนย้ายข้อมูลลูกค้า ยังมีงานค้างหนึ่งรายการสำหรับเจ้าของฐานข้อมูล
+The team reviewed the deployment checklist and the customer migration plan. One action remains open for the database owner.
 
-Finance noted a pending transaction: TXN-2026-51349942
+Migration target: db-replica.bangkok-beacon.internal:5432 via https://billing.bangkok-beacon.internal/admin/metrics
 
-ความเสี่ยง
+Action items
 
-The migration window overlaps a finance close. The team will confirm the rollback owner.
-
-รายการที่ต้องทำ
-
-- ผู้รับผิดชอบ: กมลชนก บุญมี - confirm the migration window.
-- ผู้รับผิดชอบ: สมชาย ภักดี - remove the old deployment credential.
+- Owner: Siriporn Jaidee - confirm the migration window.
+- Owner: Maneerat Chaichana - remove the old deployment credential.

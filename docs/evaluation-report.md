@@ -1,10 +1,10 @@
 # Evaluation Report
 
-- Date: 2026-11-20
-- Environment: Windows, Python 3.13, standard library only
+- Date: 2026-11-21
+- Environment: Windows, Python 3.13, declared dependencies `Pillow`/`reportlab`/`pypdf`
 - v1 dataset version: `0.1.0`, seed `7`, 140 cases
-- v2 dataset version: `2.1.1`, seed `21`, profile `benchmark-balanced`, 72 cases
-- Package version: `0.3.1`
+- v2 dataset version: `2.2.0`, seed `21`, profile `benchmark-balanced`, 72 cases
+- Package version: `0.4.0`
 
 ## Commands executed
 

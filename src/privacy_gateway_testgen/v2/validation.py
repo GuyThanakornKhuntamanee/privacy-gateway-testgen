@@ -77,9 +77,6 @@ REQUIRED_ATTACHMENT_FIELDS_21 = (
     "language", "language_mode", "language_mix", "language_capability",
     "language_check", "structure", "renderer_version", "dependency_renderer",
 )
-LATIN_ONLY_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
-
-
 def _check(condition: bool, message: str, issues: List[str]) -> None:
     if not condition:
         issues.append(message)
@@ -148,15 +145,15 @@ def validate_case_v2(case: dict, policy: Optional[dict] = None) -> List[str]:
                    f"{prefix}: invalid language_mode", issues)
             _check(isinstance(attachment["language_mix"], str) and bool(attachment["language_mix"]),
                    f"{prefix}: language_mix must be a non-empty string", issues)
-            _check(isinstance(attachment["language_capability"], list) and bool(attachment["language_capability"]),
+            _check(isinstance(attachment["language_capability"], list)
+                   and bool(attachment["language_capability"]),
                    f"{prefix}: language_capability must be a non-empty array", issues)
-            if attachment["extension"] in LATIN_ONLY_EXTENSIONS:
-                _check(language == "en", f"{prefix}: Latin-only renderer must carry English", issues)
-                _check("en" in attachment["language_capability"],
-                       f"{prefix}: capability must declare English", issues)
-            elif language in ("th", "mixed"):
+            if language in ("th", "mixed"):
                 _check(language in attachment["language_capability"],
                        f"{prefix}: capability does not declare {language}", issues)
+            _check(attachment.get("evaluation_requirement")
+                   in ("direct_text_extraction", "ocr_required"),
+                   f"{prefix}: invalid evaluation_requirement", issues)
             check = attachment.get("language_check", {})
             _check(isinstance(check, dict), f"{prefix}: language_check must be an object", issues)
             if isinstance(check, dict):

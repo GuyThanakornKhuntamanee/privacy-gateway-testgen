@@ -41,8 +41,7 @@ INLINE_ARCHETYPES = {
     "transaction_export", "app_log", "troubleshooting_notes", "architecture_notes",
     "employee_list", "order_export", "customer_complaint", "api_payload",
 }
-LATIN_ONLY_RENDERERS = {"pdf", "png", "jpg", "jpeg"}
-ENGLISH_ONLY_RENDERERS = LATIN_ONLY_RENDERERS | {"log"}
+ENGLISH_ONLY_RENDERERS = {"log"}  # log bodies are technical English by convention
 MACHINE_KEY_RENDERERS = {"json", "xml", "yaml", "yml", "env", "ini", "conf", "toml", "sql"}
 # Prompt-only content sources: not every no-attachment request is a fenced paste.
 PROMPT_ONLY_FORMS = {
@@ -712,6 +711,33 @@ class V2Generator:
             )
         return results
 
+    def _maybe_hybrid(self, renderer: str, doc: Doc, sequence: int) -> None:
+        """Turn one block of a PDF into an embedded screenshot region.
+
+        Real incident reports quote a monitoring or terminal screenshot next to
+        native prose.  The block stays *only* in the image, so its annotations
+        keep a single source type instead of duplicating ground truth.
+        """
+        if renderer != "pdf" or doc.scan or doc.metadata.get("hybrid_block") is not None:
+            return
+        # Every second case, not a random draw: the choice must spread evenly
+        # without consuming the shared RNG that shapes the rest of the dataset.
+        if sequence % 2:
+            return
+        for index, block in enumerate(doc.blocks):
+            if block.kind in ("code", "log"):
+                doc.metadata.update({"hybrid_block": index, "hybrid_span": 1,
+                                     "hybrid_style": "terminal"})
+                return
+            if block.kind == "bullet":
+                span = 0
+                while index + span < len(doc.blocks) and doc.blocks[index + span].kind == "bullet":
+                    span += 1
+                if span >= 2:
+                    doc.metadata.update({"hybrid_block": index, "hybrid_span": span,
+                                         "hybrid_style": "terminal"})
+                    return
+
     def _build_case(self, split: str, sequence: int, target: Target) -> Tuple[dict, Dict[str, bytes]]:
         if target.attachment_count == 0:
             return self._build_prompt_only(split, sequence, target)
@@ -731,7 +757,7 @@ class V2Generator:
         else:
             plan = [(archetype, renderer, "related") for archetype, renderer in bundle]
 
-        latin_only = any(renderer in LATIN_ONLY_RENDERERS for _, renderer, _ in plan)
+        latin_only = any(renderer in ENGLISH_ONLY_RENDERERS for _, renderer, _ in plan)
         requested_languages = list(target.attachment_languages) or [target.language]
         if target.language in ("th", "mixed") or any(
                 item in ("th", "mixed") for item in requested_languages):
@@ -771,7 +797,7 @@ class V2Generator:
             desired = requested_languages[(index - 1) % len(requested_languages)]
             if renderer in ENGLISH_ONLY_RENDERERS:
                 attachment_language = "en"
-                routing = f"{renderer}_english_only" if renderer == "log" else f"{renderer}_latin_only"
+                routing = f"{renderer}_english_only"
             else:
                 attachment_language = desired
                 routing = None
@@ -782,7 +808,7 @@ class V2Generator:
                 density=2, doc_language=attachment_language,
                 image_style="scan", ocr_difficulty=target.ocr_difficulty,
                 scenario=scenario, variant=index, attachment_id=attachment_id,
-                latin_only=renderer in LATIN_ONLY_RENDERERS,
+                latin_only=renderer in ENGLISH_ONLY_RENDERERS,
             )
             if revision_source:
                 doc = candidate
@@ -831,6 +857,7 @@ class V2Generator:
             used_names.add(filename)
             doc.filename = filename
             fingerprints.append(_doc_fingerprint(doc))
+            self._maybe_hybrid(renderer, doc, sequence)
             try:
                 rendered = render(doc, renderer, filename)
             except ValueError as exc:
@@ -861,8 +888,12 @@ class V2Generator:
                 "archetype_label": archetype.label,
                 "archetype_category": archetype.category,
                 "renderer": rendered.renderer,
-                "renderer_version": "2.1",
-                "dependency_renderer": "stdlib",
+                "renderer_version": "2.2",
+                "dependency_renderer": ("reportlab+pillow+pypdf" if renderer == "pdf"
+                                        else ("pillow+pypdf" if renderer in ("png", "jpg", "jpeg")
+                                              else "stdlib")),
+                "render_mode": rendered.meta.get("mode"),
+                "text_shaping": rendered.meta.get("text_shaping"),
                 "synthetic": True,
                 "generated_seed": self.seed,
                 "language": attachment_language,
@@ -875,6 +906,9 @@ class V2Generator:
                 "structure": structure,
                 "revision_changes": revision_changes,
                 "expected_extraction_method": rendered.extraction_method,
+                "evaluation_requirement": ("ocr_required"
+                                           if rendered.extraction_method == "ocr"
+                                           else "direct_text_extraction"),
                 "verification": verification,
                 "path": path,
                 "_data": rendered,
@@ -1342,6 +1376,11 @@ class V2Generator:
             "tags": sorted(tags),
             "generation_method": GENERATION_METHOD,
             "verification_status": verification_status,
+            "evaluation_requirement": (
+                "ocr_required"
+                if any(item["evaluation_requirement"] == "ocr_required" for item in attachments)
+                else "direct_text_extraction"
+            ),
             "verification": {
                 "status": verification_status,
                 "attachments_checked": len(attachments),
@@ -1409,6 +1448,7 @@ def compute_stats(cases: Iterable[dict]) -> dict:
     language_matrix = Counter()
     by_bundle_kind = Counter()
     by_prompt_form = Counter()
+    by_evaluation_requirement = Counter()
     consistency_status = Counter()
     domain_combinations = Counter()
     prompt_lengths = []
@@ -1437,6 +1477,7 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         language_matrix.update(case.get("language_coverage", {}).get("matrices", []))
         by_bundle_kind[case.get("bundle", {}).get("kind", "unknown")] += 1
         by_prompt_form[case.get("prompt_form", "with_attachment")] += 1
+        by_evaluation_requirement[case.get("evaluation_requirement", "direct_text_extraction")] += 1
         if "ocr" in case["tags"]:
             ocr_cases += 1
         if case.get("structure_references"):
@@ -1478,6 +1519,7 @@ def compute_stats(cases: Iterable[dict]) -> dict:
         "language_matrix": dict(sorted(language_matrix.items())),
         "by_bundle_kind": dict(sorted(by_bundle_kind.items())),
         "by_prompt_form": dict(sorted(by_prompt_form.items())),
+        "by_evaluation_requirement": dict(sorted(by_evaluation_requirement.items())),
         "by_persona": dict(sorted(by_persona.items())),
         "by_intent": dict(sorted(by_intent.items())),
         "by_difficulty": dict(sorted(by_difficulty.items())),
@@ -1513,15 +1555,22 @@ def _write_jsonl(path: str, rows: Iterable[dict]) -> None:
 
 
 def benchmark_safe_reasons(case: dict) -> List[str]:
-    """Why a case may not enter the benchmark-safe subset (empty means safe)."""
+    """Why a case may not enter a benchmark-safe subset (empty means safe).
+
+    A raster case is not excluded for needing OCR: the gateway under test does
+    the OCR, the generator only has to be correct about canonical text and
+    layout.  Such cases are separated by ``evaluation_requirement`` instead of
+    being discarded, so text and OCR benchmarks never share one subset.
+    """
     reasons: List[str] = []
-    if case.get("verification_status") != "verified":
-        reasons.append(f"verification_status:{case.get('verification_status')}")
+    status = case.get("verification_status")
+    if status not in ("verified", "verified_partial"):
+        reasons.append(f"verification_status:{status}")
     for check in case.get("consistency_checks", []):
-        status = check.get("status")
-        if status == "failed":
+        check_status = check.get("status")
+        if check_status == "failed":
             reasons.append(f"consistency_failed:{check.get('check')}")
-        elif status == "not_evaluated":
+        elif check_status == "not_evaluated":
             reasons.append(f"consistency_not_evaluated:{check.get('check')}")
     verification = case.get("verification", {})
     if verification.get("language_passed") is not True:
@@ -1531,6 +1580,8 @@ def benchmark_safe_reasons(case: dict) -> List[str]:
     for attachment in case.get("attachments", []):
         if attachment.get("language_check", {}).get("matches_declared_language") is not True:
             reasons.append(f"language_mismatch:{attachment['attachment_id']}")
+        if attachment.get("verification", {}).get("status") not in ("verified", "verified_layout"):
+            reasons.append(f"attachment_unverified:{attachment['attachment_id']}")
     return reasons
 
 
@@ -1546,6 +1597,7 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
             shutil.rmtree(attachments_dir)
         for name in ("cases.jsonl", "all.json", "stats.json", "train.jsonl",
                      "validation.jsonl", "test.jsonl", "benchmark_safe_cases.jsonl",
+                     "benchmark_safe_text_cases.jsonl", "benchmark_safe_ocr_cases.jsonl",
                      "benchmark_excluded_cases.jsonl"):
             path = os.path.join(out_dir, name)
             if os.path.exists(path):
@@ -1587,19 +1639,28 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
                  sorted(entity_rows, key=lambda item: (item["test_id"], item["annotation_id"])))
 
     safe_cases = []
+    safe_text_cases = []
+    safe_ocr_cases = []
     excluded_rows = []
     for case in cases:
         reasons = benchmark_safe_reasons(case)
         if reasons:
             excluded_rows.append({"test_id": case["test_id"], "reasons": reasons})
+            continue
+        safe_cases.append(case)
+        if case.get("evaluation_requirement") == "ocr_required":
+            safe_ocr_cases.append(case)
         else:
-            safe_cases.append(case)
+            safe_text_cases.append(case)
     _write_jsonl(os.path.join(out_dir, "benchmark_safe_cases.jsonl"), safe_cases)
+    _write_jsonl(os.path.join(out_dir, "benchmark_safe_text_cases.jsonl"), safe_text_cases)
+    _write_jsonl(os.path.join(out_dir, "benchmark_safe_ocr_cases.jsonl"), safe_ocr_cases)
     _write_jsonl(os.path.join(out_dir, "benchmark_excluded_cases.jsonl"), excluded_rows)
 
     config_for_hash = {key: value for key, value in config.items() if not key.startswith("_")}
     generated_names = ["cases.jsonl", "train.jsonl", "validation.jsonl", "test.jsonl", "all.json", "stats.json",
                        "ground_truth/entities.jsonl", "benchmark_safe_cases.jsonl",
+                       "benchmark_safe_text_cases.jsonl", "benchmark_safe_ocr_cases.jsonl",
                        "benchmark_excluded_cases.jsonl"]
     file_hashes = {}
     for name in generated_names:
@@ -1633,7 +1694,10 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
         "consistency_status": stats["consistency_status"],
         "consistency_rate": stats["consistency_rate"],
         "benchmark_safe_cases": len(safe_cases),
+        "benchmark_safe_text_cases": len(safe_text_cases),
+        "benchmark_safe_ocr_cases": len(safe_ocr_cases),
         "benchmark_excluded_cases": len(excluded_rows),
+        "evaluation_requirement_distribution": stats["by_evaluation_requirement"],
         "persona_distribution": stats["by_persona"],
         "intent_distribution": stats["by_intent"],
         "difficulty_distribution": stats["by_difficulty"],

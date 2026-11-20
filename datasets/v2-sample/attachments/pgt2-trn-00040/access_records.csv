@@ -1,0 +1,9 @@
+เวลา,ผู้ใช้,IP ต้นทาง,ทรัพยากร,การกระทำ
+2026-03-10T09:10:00Z,prasert.thiraphat25@example.net,10.40.12.25,api-14.mekong-byte.internal,เขียน
+2026-03-11T09:11:00Z,chanida.thiraphat@example.net,10.10.3.17,notify-11.mekong-byte.internal,เข้าสู่ระบบ
+2026-03-12T09:12:00Z,maneerat.naree@example.org,10.10.15.244,payments-07.mekong-byte.internal,ลบ
+2026-03-13T09:13:00Z,kittipong.prasert42@example.net,10.10.16.12,inventory-14.mekong-byte.internal,เข้าสู่ระบบ
+2026-03-14T09:14:00Z,lalita.anan25@example.net,10.40.12.25,api-14.mekong-byte.internal,เข้าสู่ระบบ
+2026-03-15T09:15:00Z,wichai.maneerat@example.org,10.10.3.17,notify-11.mekong-byte.internal,เขียน
+2026-03-16T09:16:00Z,prasert.thiraphat25@example.net,10.10.15.244,payments-07.mekong-byte.internal,เข้าสู่ระบบ
+2026-03-17T09:17:00Z,chanida.thiraphat@example.net,10.10.16.12,inventory-14.mekong-byte.internal,อ่าน

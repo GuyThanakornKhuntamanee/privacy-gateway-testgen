@@ -117,11 +117,15 @@ entities and determine routing. This makes "highest applicable action
 prevails" testable and lets a deployment replace the illustrative default with
 its own policy without changing code.
 
-### Standard library only
+### Declared, justified dependencies
 
-The package has no runtime dependencies, makes no network calls, and uses
-`unittest` for tests. This maximizes portability and makes the artifact easy to
-audit. JSON is the configuration language; YAML is not required.
+The package depends on `Pillow` (raster rendering + Thai shaping), `reportlab`
+(native PDF font embedding) and `pypdf` (independent PDF text extraction), and
+makes no network calls. Everything else is stdlib and tests use `unittest`.
+Each dependency exists because the alternative was a fragile reimplementation of
+FreeType/HarfBuzz or of a Type0 PDF font writer; the rationale is recorded in
+`docs/v2.2-thai-rendering-design.md`. JSON is the configuration language; YAML is
+not required.
 
 ### Separate verification for imported prompts
 
@@ -166,8 +170,10 @@ file-specific provenance rather than searching the finished file.
 | `v2/archetypes.py` | 69 business archetypes across HR, finance, sales, healthcare, IT, management and operations |
 | `v2/renderers/textfmt.py` | text, CSV, JSON, YAML, XML, logs, configs, SQL, Terraform, code |
 | `v2/renderers/ooxml.py` | macro-free DOCX/XLSX/PPTX via `zipfile` + OOXML XML |
-| `v2/renderers/pdf.py` | native PDF pages plus image-only scanned pages |
-| `v2/renderers/images.py` | PNG and baseline JPEG with a bitmap font and OCR difficulty |
+| `v2/renderers/pdf.py` | native Thai/English PDF (embedded Sarabun + ToUnicode), scanned and hybrid pages via ReportLab |
+| `v2/renderers/images.py` | PNG/JPEG screenshots and scans with Pillow + FreeType + libraqm shaping and degradation |
+| `v2/renderers/textlayout.py` | cluster-safe, entity-atomic line breaking and extraction normalization |
+| `v2/renderers/fonts.py` | package-relative bundled font resolution and shaping capability check |
 | `v2/extract.py` | reopen/parse/locate verification |
 | `v2/generate.py` | target sampling, bundles, dedupe, splits and export |
 | `v2/evaluate.py` | measured coverage, language/consistency checks and realism diagnostics |
@@ -178,10 +184,12 @@ file-specific provenance rather than searching the finished file.
 Localization rewrites only static text between placements; entity values and
 their offsets are untouched. Language labels are measured from Thai/Latin shares
 over authored text (numeric characters are neutral), so a Thai name in an English
-template does not make the file Thai. PDF, image and log renderers declare
-English-only capability and raise on non-Latin characters, so a Thai request for
-one of them is rendered as English with `language_routing` — per attachment,
-never case-wide — while a Thai DOCX in the same bundle keeps Thai content.
+template does not make the file Thai. PDF and raster renderers declare
+`th`/`en`/`mixed` capability and embed the bundled Sarabun font, so Thai content
+stays Thai in the file; `log` remains English-only and records
+`language_routing: log_english_only`. A document whose measured shares disagree
+with the request is relabelled (`relabelled_from_*`) per attachment, never
+case-wide.
 
 ### Scenario and consistency boundary
 

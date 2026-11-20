@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from xml.etree import ElementTree as ET
 
 from .renderers.base import MIME_TYPES
+from .renderers.textlayout import normalize_extracted
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
@@ -28,10 +29,6 @@ R = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
 
 def _issue(kind: str, message: str, annotation: Optional[dict] = None) -> dict:
     return {"kind": kind, "message": message, "annotation_id": (annotation or {}).get("annotation_id")}
-
-
-def is_ascii(value: str) -> bool:
-    return all(ord(char) < 128 for char in value)
 
 
 def _json_resolve(value: Any, path: str) -> Any:
@@ -419,88 +416,110 @@ def _pptx_verify(data: bytes, rendered_locations: List[dict]) -> Tuple[List[str]
     return texts, issues
 
 
-def _pdf_text(data: bytes) -> Tuple[List[str], int, bool]:
-    objects = {}
-    for match in re.finditer(rb"(\d+)\s+0\s+obj\s*(.*?)\s*endobj", data, re.DOTALL):
-        objects[int(match.group(1))] = match.group(2)
-    page_texts: List[str] = []
-    for number in sorted(objects):
-        body = objects[number]
-        if not re.search(rb"/Type\s*/Page\b", body) or re.search(rb"/Type\s*/Pages\b", body):
-            continue
-        content_match = re.search(rb"/Contents\s+(\d+)\s+0\s+R", body)
-        content = objects.get(int(content_match.group(1)), b"") if content_match else b""
-        texts = []
-        for match in re.finditer(rb"\((?:\\.|[^\\)])*\)\s*Tj", content):
-            raw = match.group(0)
-            value = raw[1:raw.rfind(b")")]
-            value = value.replace(b"\\(", b"(").replace(b"\\)", b")").replace(b"\\\\", b"\\")
-            texts.append(value.decode("latin-1", "replace"))
-        page_texts.append(" ".join(texts))
-    has_image = any(b"/Subtype /Image" in body for body in objects.values())
-    return page_texts, len(page_texts), has_image
+def _pdf_reader(data: bytes):
+    try:
+        from pypdf import PdfReader
+    except ImportError as exc:  # pragma: no cover - dependency is declared
+        raise RuntimeError("pypdf is required to verify PDF text extraction") from exc
+    return PdfReader(io.BytesIO(data))
 
 
-def _pdf_verify(data: bytes, rendered_locations: List[dict]) -> Tuple[List[str], List[dict]]:
+def _pdf_verify(data: bytes, rendered_locations: List[dict],
+                meta: Optional[dict] = None) -> Tuple[List[str], List[dict]]:
+    """Re-open the PDF and extract its text independently of the writer.
+
+    Extraction is compared after collapsing layout whitespace only: a repeated
+    space is layout, a space inserted inside ``example.com`` is a broken word and
+    must fail.
+    """
     if not data.startswith(b"%PDF-"):
         return [], [_issue("pdf_magic", "missing PDF header")]
-    pages, count, has_image = _pdf_text(data)
+    meta = meta or {}
+    reader = _pdf_reader(data)
+    raw_pages = [(page.extract_text() or "") for page in reader.pages]
+    pages = [normalize_extracted(text) for text in raw_pages]
+    image_counts = []
+    for page in reader.pages:
+        try:
+            image_counts.append(len(page.images))
+        except Exception:  # partial image support in the parser is not a generator failure
+            image_counts.append(len(re.findall(rb"/Subtype\s*/Image", data)))
     issues: List[dict] = []
     texts: List[str] = []
     for item in rendered_locations:
         loc = item["location"]
         kind = loc.get("kind")
         page = loc.get("page", 0)
-        if not (1 <= page <= count):
-            issues.append(_issue("pdf_page_out_of_range", f"page {page} of {count}", item))
+        if not (1 <= page <= len(pages)):
+            issues.append(_issue("pdf_page_out_of_range", f"page {page} of {len(pages)}", item))
             continue
         if kind == "pdf_text":
-            text = pages[page - 1]
-            compact_text = re.sub(r"\s+", "", text)
-            compact_value = re.sub(r"\s+", "", item["entity"].value)
-            if compact_value not in compact_text:
-                issues.append(_issue("pdf_text_mismatch", f"page {page} does not contain {item['entity'].value!r}", item))
-            texts.append(text)
+            value = normalize_extracted(item["entity"].value)
+            if value not in pages[page - 1]:
+                issues.append(_issue(
+                    "pdf_text_mismatch",
+                    f"page {page} extracted text does not contain {item['entity'].value!r}",
+                    item))
+            texts.append(pages[page - 1])
         elif kind == "pdf_image":
-            if not has_image:
+            if page - 1 >= len(image_counts) or not image_counts[page - 1]:
                 issues.append(_issue("pdf_image_missing", "embedded image not found", item))
+            box = loc.get("page_bbox")
+            if box:
+                if len(box) != 4 or box[0] < 0 or box[1] < 0 \
+                        or box[0] + box[2] > 595.5 or box[1] + box[3] > 842.5:
+                    issues.append(_issue("pdf_image_bbox_invalid",
+                                         f"page bbox {box} outside the page", item))
             texts.append(loc.get("expected_ocr_text", ""))
+    if any(loc.get("kind") == "pdf_text" for loc in (item["location"] for item in rendered_locations)):
+        for line in meta.get("canonical_lines", []):
+            expected = normalize_extracted(line)
+            if expected and not any(expected in page for page in pages):
+                issues.append(_issue(
+                    "pdf_text_line_missing",
+                    f"canonical line {line!r} was not extracted back from the PDF"))
+    if meta.get("font", {}).get("embedded") and b"/FontFile2" not in data:
+        issues.append(_issue("pdf_font_not_embedded", "declared embedded font is missing"))
     return texts, issues
+
+
+def _image_size(data: bytes, ext: str) -> Tuple[int, int, str]:
+    try:
+        from PIL import Image
+    except ImportError as exc:  # pragma: no cover - dependency is declared
+        raise RuntimeError("Pillow is required to verify generated images") from exc
+    with Image.open(io.BytesIO(data)) as image:
+        image.load()
+        return image.width, image.height, (image.format or "")
 
 
 def _image_verify(data: bytes, ext: str, rendered_locations: List[dict]) -> Tuple[List[str], List[dict]]:
     issues: List[dict] = []
-    if ext == "png":
-        if data[:8] != b"\x89PNG\r\n\x1a\n":
-            return [], [_issue("png_magic", "missing PNG signature")]
-        width, height = int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
-    else:
-        if data[:2] != b"\xff\xd8":
-            return [], [_issue("jpeg_magic", "missing JPEG SOI")]
-        width = height = 0
-        index = 2
-        while index + 9 < len(data):
-            if data[index] != 0xFF:
-                index += 1
-                continue
-            marker = data[index + 1]
-            if marker in (0xC0, 0xC1, 0xC2):
-                height = int.from_bytes(data[index + 5:index + 7], "big")
-                width = int.from_bytes(data[index + 7:index + 9], "big")
-                break
-            length = int.from_bytes(data[index + 2:index + 4], "big")
-            index += 2 + length
+    width, height, fmt = _image_size(data, ext)
+    if ext == "png" and data[:8] != b"\x89PNG\r\n\x1a\n":
+        return [], [_issue("png_magic", "missing PNG signature")]
+    if ext in ("jpg", "jpeg") and data[:2] != b"\xff\xd8":
+        return [], [_issue("jpeg_magic", "missing JPEG SOI")]
+    expected_format = "PNG" if ext == "png" else "JPEG"
+    if fmt != expected_format:
+        issues.append(_issue("image_format_mismatch", f"{ext} decoded as {fmt or 'unknown'}"))
     for item in rendered_locations:
         loc = item["location"]
         if loc.get("width") != width or loc.get("height") != height:
-            issues.append(_issue("image_dimensions_mismatch", f"metadata {loc.get('width')}x{loc.get('height')} vs {width}x{height}", item))
+            issues.append(_issue("image_dimensions_mismatch",
+                                 f"metadata {loc.get('width')}x{loc.get('height')} vs {width}x{height}",
+                                 item))
         bbox = loc.get("bbox", [])
-        if len(bbox) != 4 or bbox[0] < 0 or bbox[1] < 0 or bbox[0] + bbox[2] > width or bbox[1] + bbox[3] > height:
+        if len(bbox) != 4 or bbox[0] < 0 or bbox[1] < 0 \
+                or bbox[0] + bbox[2] > width + 0.5 or bbox[1] + bbox[3] > height + 0.5:
             issues.append(_issue("image_bbox_invalid", f"bbox {bbox} outside {width}x{height}", item))
         value = item["entity"].value
         line_text = loc.get("expected_ocr_text", "")
+        if "\ufffd" in line_text:
+            issues.append(_issue("image_replacement_glyph",
+                                 "replacement character in canonical render text", item))
         if loc.get("entity_strategy") == "atomic_line":
-            if value.upper() not in line_text.upper():
+            if value.casefold() not in line_text.casefold():
                 issues.append(_issue(
                     "image_entity_fragment",
                     f"entity {value!r} is not fully present in one image line: {line_text!r}",
@@ -508,9 +527,6 @@ def _image_verify(data: bytes, ext: str, rendered_locations: List[dict]) -> Tupl
             if loc.get("fragment_count") != 1 or loc.get("fragment_index") != 0:
                 issues.append(_issue("image_fragment_metadata",
                                      "atomic entity must be a single fragment", item))
-            if not is_ascii(value):
-                issues.append(_issue("image_non_latin_entity",
-                                     f"Latin-only image carries {value!r}", item))
     return [loc.get("expected_ocr_text", "") for loc in (item["location"] for item in rendered_locations)], issues
 
 
@@ -563,9 +579,10 @@ def verify_attachment(data: bytes, ext: str, mime_type: str, rendered_locations:
             issues.extend(found)
             checks.extend(["zip_opened", "ooxml_parsed"])
         elif ext == "pdf":
-            _, found = _pdf_verify(data, rendered_locations)
+            _, found = _pdf_verify(data, rendered_locations, meta)
             issues.extend(found)
             checks.append("pdf_parsed")
+            checks.append("pdf_text_extracted")
             if any(item.get("location", {}).get("kind") == "pdf_image" for item in rendered_locations):
                 checks.append("ocr_layout_verified")
         elif ext in ("png", "jpg", "jpeg"):

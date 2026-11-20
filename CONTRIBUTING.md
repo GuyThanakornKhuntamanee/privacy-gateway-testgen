@@ -2,7 +2,12 @@
 
 ## Setup
 
-Python 3.9+ is required. No third-party packages are needed.
+Python 3.9+ is required. Thai PDF/image rendering needs the declared runtime
+packages (installed automatically by `pip install -e .`):
+
+```bash
+python -m pip install pillow reportlab pypdf
+```
 
 ```bash
 git clone <repository>
@@ -38,8 +43,9 @@ python -m pip install -e .
    value for a field that another attachment is supposed to reference.
 7. **Language is per attachment.** Use `ctx.doc_language` and the localization
    layer; a `mixed` document must contain both Thai and English script. PDF and
-   image renderers are Latin-only and raise on Thai text; route instead of
-   substituting `?`.
+   raster renderers carry Thai, English and mixed content; only `log` is
+   English-only. A renderer that cannot carry a language must raise or record
+   `language_routing` instead of substituting `?`.
 8. **Structure references must resolve.** A prompt may cite a sheet, page,
    section, row, slide or key only when the attachment's `structure` proves it
    exists.
@@ -131,7 +137,9 @@ The default policy is illustrative. Do not present it as a legal requirement.
 
 ## Style
 
-- Python standard library only.
+- Python standard library unless a declared runtime dependency already covers
+  it (`Pillow`, `reportlab`, `pypdf`). No new dependency without a documented
+  justification, license check and tests.
 - Keep functions small and explicit; prefer dataclasses over ad-hoc dicts for
   internal data.
 - Comments should explain *why* a non-obvious decision exists, not restate the

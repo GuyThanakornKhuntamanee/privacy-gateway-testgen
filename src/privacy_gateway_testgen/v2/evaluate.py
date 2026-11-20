@@ -21,9 +21,10 @@ from .validation import prompt_span_accuracy, validate_dataset_v2
 KNOWN_HIGH_CORRECTNESS_ISSUES: List[str] = []
 
 KNOWN_LIMITATIONS = [
-    "PDF content is English/Latin only because the standard-library PDF writer uses built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT and the routing is recorded on the attachment.",
-    "Image text uses a bitmap Latin font. Thai image OCR is not supported; Thai image scenarios are routed to English with an explicit language_routing field.",
-    "Image and scanned-PDF annotations are verified at render-layout level. No third-party OCR engine is run in the test suite, so OCR accuracy is not claimed.",
+    "Native PDF text is embedded TrueType (Sarabun regular/bold) with a ToUnicode map, so Thai and mixed Thai-English text extracts back exactly. Byte identity is guaranteed only for the pinned ReportLab/Pillow versions on one platform; across versions only extracted text, spans and boxes are claimed identical.",
+    "Raster assets (PNG/JPEG and scanned or hybrid PDF regions) are verified at render-layout level. No OCR engine is run, so OCR accuracy is not claimed, and the canonical pre-render text stays the ground truth.",
+    "Raster cases are not excluded from the benchmark for needing OCR. They are listed in `benchmark_safe_ocr_cases.jsonl`, separate from `benchmark_safe_text_cases.jsonl`, because the gateway under test performs the OCR.",
+    "Raster degradation (noise, blur, small rotation, brightness gradient) changes pixels, so the reported bounding boxes are transformed to the final image and may cover slightly more area than the ink.",
     "PPTX speaker notes and native PowerPoint tables are not emitted; slide body text and later-slide placement are supported.",
     "YAML/TOML/INI/ENV verification uses the generator's strict subset parser, not PyYAML or tomllib.",
     "Archives, password-protected containers, audio, video, executables and recursive archive extraction are out of scope.",
@@ -180,6 +181,16 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
     language_mismatches = 0
     residual_labels = 0
     language_by_file_type: dict = {}
+    evaluation_requirements = Counter()
+    raster_total = 0
+    raster_verified = 0
+    raster_shaping_ok = 0
+    native_pdf_total = 0
+    native_pdf_verified = 0
+    thai_file_total = 0
+    thai_file_verified = 0
+    hybrid_attachments = 0
+    replacement_glyphs = 0
     prompt_lengths: List[int] = []
     for case in cases:
         domains.update(case["domains"])
@@ -207,6 +218,28 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
                     mixed_attachments_verified += 1
             if item.get("language_routing"):
                 routed_attachments += 1
+            requirement = item.get("evaluation_requirement", "direct_text_extraction")
+            evaluation_requirements[requirement] += 1
+            extension = item.get("extension")
+            entry = item.get("verification", {})
+            verified = entry.get("status") in ("verified", "verified_layout")
+            mode = item.get("render_mode")
+            if extension in ("png", "jpg", "jpeg") or (extension == "pdf" and mode in ("scanned", "hybrid")):
+                raster_total += 1
+                raster_verified += 1 if verified else 0
+                raster_shaping_ok += 1 if item.get("text_shaping") == "harfbuzz" else 0
+            if extension == "pdf" and mode == "native":
+                native_pdf_total += 1
+                native_pdf_verified += 1 if verified else 0
+            if extension == "pdf" and mode == "hybrid":
+                hybrid_attachments += 1
+            if extension in ("pdf", "png", "jpg", "jpeg") and item.get("language") in ("th", "mixed"):
+                thai_file_total += 1
+                thai_file_verified += 1 if verified else 0
+        for annotation in case["entities"]:
+            text = annotation.get("location", {}).get("expected_ocr_text", "") or ""
+            if "\ufffd" in text or "\ufffd" in annotation.get("exact_entity_value", ""):
+                replacement_glyphs += 1
         if case["attachment_count"] > 1:
             multi_file_cases += 1
         ids = [item["archetype"] for item in case["attachments"]]
@@ -348,6 +381,19 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         gate("prompt_form_concentration",
              prompt_form_top <= gates_config.get("max_prompt_form_share", 0.5),
              round(prompt_form_top, 4), f"<= {gates_config.get('max_prompt_form_share', 0.5)}")
+        gate("thai_file_render_rate",
+             thai_file_total == 0 or thai_file_verified == thai_file_total,
+             f"{thai_file_verified}/{thai_file_total}" if thai_file_total else "no Thai PDF/image attachments",
+             "every Thai or mixed PDF/image attachment is render-verified")
+        gate("raster_text_shaping", raster_total == 0 or raster_shaping_ok == raster_total,
+             f"{raster_shaping_ok}/{raster_total}" if raster_total else "no raster attachments",
+             "every raster attachment records HarfBuzz shaping")
+        gate("native_pdf_text_extraction",
+             native_pdf_total == 0 or native_pdf_verified == native_pdf_total,
+             f"{native_pdf_verified}/{native_pdf_total}" if native_pdf_total else "no native PDFs",
+             "every native PDF extracts its canonical text back")
+        gate("no_replacement_glyphs", replacement_glyphs == 0, replacement_glyphs,
+             "0 replacement characters in canonical render text")
     gate("domain_coverage", len(domains) >= gates_config["min_domain_count"],
          sorted(domains), f">= {gates_config['min_domain_count']}")
     gate("negative_share", negative_ratio >= gates_config["min_negative_ratio"],
@@ -375,6 +421,10 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
         gate("reproducibility", reproducible, reproducible, "same seed + config reproduce bytes")
     passed = all(item["passed"] for item in gates)
     safe_cases = [case for case in cases if not benchmark_safe_reasons(case)]
+    safe_text_cases = [case for case in safe_cases
+                       if case.get("evaluation_requirement") != "ocr_required"]
+    safe_ocr_cases = [case for case in safe_cases
+                      if case.get("evaluation_requirement") == "ocr_required"]
     readiness_reasons: List[str] = []
     if validation_issues:
         readiness_reasons.append(f"schema_validation_issues:{len(validation_issues)}")
@@ -394,10 +444,14 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
             "known_high_issues:" + ",".join(KNOWN_HIGH_CORRECTNESS_ISSUES))
     if not reproducible:
         readiness_reasons.append("dataset_reproducibility_not_verified")
+    if replacement_glyphs:
+        readiness_reasons.append(f"replacement_glyphs:{replacement_glyphs}")
     benchmark_ready = {
         "benchmark_ready": not readiness_reasons,
         "reasons": readiness_reasons,
         "benchmark_safe_cases": len(safe_cases),
+        "benchmark_safe_text_cases": len(safe_text_cases),
+        "benchmark_safe_ocr_cases": len(safe_ocr_cases),
         "excluded_cases": total - len(safe_cases),
         "checks": {
             "no_failed_ground_truth_verification": file_open_rate == 1.0 and not extraction_failures,
@@ -408,6 +462,8 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
                 for case in cases for check in case.get("consistency_checks", [])
                 if check.get("check") == "log_timestamps_ordered"),
             "entity_fragments_valid": extraction_failures == 0,
+            "no_replacement_glyphs": replacement_glyphs == 0,
+            "thai_file_rendering_verified": thai_file_total == 0 or thai_file_verified == thai_file_total,
             "language_metadata_valid": language_mismatches == 0,
             "required_safety_checks": safety["passed"],
             "no_unresolved_schema_errors": not validation_issues,
@@ -442,6 +498,16 @@ def evaluate_v2(dataset: dict, config: dict, policy: dict, reproducible: bool = 
             "mixed_attachments_verified": mixed_attachments_verified,
             "mixed_script_rate": mixed_script_rate,
             "routed_attachments": routed_attachments,
+            "evaluation_requirements": dict(sorted(evaluation_requirements.items())),
+            "raster_attachments": raster_total,
+            "raster_attachments_verified": raster_verified,
+            "raster_text_shaping_ok": raster_shaping_ok,
+            "native_pdf_attachments": native_pdf_total,
+            "native_pdf_attachments_verified": native_pdf_verified,
+            "hybrid_pdf_attachments": hybrid_attachments,
+            "thai_file_attachments": thai_file_total,
+            "thai_file_attachments_verified": thai_file_verified,
+            "replacement_glyphs": replacement_glyphs,
             "bundle_kinds": dict(sorted(bundle_kinds.items())),
             "multi_file_cases": multi_file_cases,
             "multi_file_share": multi_file_share,
@@ -530,7 +596,9 @@ def markdown_report_v2(report: dict) -> str:
         f"- Files: `{report['total_files']}`",
         f"- Overall: **{'PASS' if report['passed'] else 'FAIL'}**",
         f"- Benchmark ready: **{'YES' if report['benchmark_ready']['benchmark_ready'] else 'NO'}**"
-        f" ({report['benchmark_ready']['benchmark_safe_cases']} safe cases,"
+        f" ({report['benchmark_ready']['benchmark_safe_cases']} safe cases:"
+        f" {report['benchmark_ready']['benchmark_safe_text_cases']} text,"
+        f" {report['benchmark_ready']['benchmark_safe_ocr_cases']} OCR-required;"
         f" {report['benchmark_ready']['excluded_cases']} excluded)",
         "",
         "## Benchmark readiness",
@@ -560,7 +628,14 @@ def markdown_report_v2(report: dict) -> str:
         f"- Languages (attachment): `{metrics['attachment_language_shares']}`",
         f"- Prompt/attachment language matrix: `{metrics['language_matrix']}`",
         f"- Mixed attachments verified: `{metrics['mixed_attachments_verified']}/{metrics['mixed_attachments']}`",
-        f"- Routed (Latin-only renderer): `{metrics['routed_attachments']}`",
+        f"- Routed attachments (English-only renderer): `{metrics['routed_attachments']}`",
+        f"- Evaluation requirement: `{metrics['evaluation_requirements']}`",
+        f"- Native PDF text extraction verified: `{metrics['native_pdf_attachments_verified']}/{metrics['native_pdf_attachments']}`",
+        f"- Raster attachments verified (layout): `{metrics['raster_attachments_verified']}/{metrics['raster_attachments']}`",
+        f"- Raster text shaping (HarfBuzz): `{metrics['raster_text_shaping_ok']}/{metrics['raster_attachments']}`",
+        f"- Hybrid PDF attachments: `{metrics['hybrid_pdf_attachments']}`",
+        f"- Thai / mixed PDF and image attachments verified: `{metrics['thai_file_attachments_verified']}/{metrics['thai_file_attachments']}`",
+        f"- Replacement glyphs in canonical render text: `{metrics['replacement_glyphs']}`",
         f"- Personas: `{metrics['persona_shares']}`",
         f"- Intents: `{metrics['intent_shares']}`",
         f"- Difficulties: `{metrics['difficulty_shares']}`",

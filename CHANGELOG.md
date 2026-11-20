@@ -4,6 +4,62 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [0.4.0] - 2026-11-21
+
+### Added
+
+- Native Thai PDF text: the PDF renderer embeds the bundled Sarabun TrueType
+  font (regular + bold) with a ToUnicode map, so Thai, English and mixed content
+  are real PDF text and extract back exactly. Scanned pages and hybrid pages
+  (native prose plus an embedded screenshot region) are supported, and their
+  annotations record `source_type` (`native_text`, `scanned_page`,
+  `embedded_image`).
+- Thai raster rendering: `png`, `jpg` and `jpeg` are drawn with Pillow/FreeType
+  and libraqm shaping, including combining-mark placement, Thai digits and `฿`.
+  Degradation (noise, blur, small rotation, brightness gradient) is seeded from
+  the case, and rotation is applied to the recorded boxes (`bbox_space: final`).
+- `v2/renderers/textlayout.py`: cluster-safe, entity-atomic line breaking shared
+  by the PDF and raster renderers, plus structure-aware extraction
+  normalization.
+- `v2/renderers/fonts.py` and `src/privacy_gateway_testgen/assets/fonts/`:
+  package-relative Sarabun asset, OFL license text and a shaping capability
+  check that raises rather than silently falling back.
+- Attachment metadata: `evaluation_requirement`
+  (`direct_text_extraction` / `ocr_required`), `render_mode` and `text_shaping`.
+- Benchmark subsets are split by modality: `benchmark_safe_text_cases.jsonl` and
+  `benchmark_safe_ocr_cases.jsonl` (raster cases are no longer excluded for
+  needing OCR from the gateway under test).
+- `thai-rendering` profile and `datasets/v2-thai-sample` (16 cases / 24 files:
+  Thai native, scanned and hybrid PDFs, Thai PNG/JPG/JPEG screenshots, mixed
+  script images, cross-file Thai cases).
+- Four measured gates: `thai_file_render_rate`, `raster_text_shaping`,
+  `native_pdf_text_extraction` and `no_replacement_glyphs`.
+- `tests/test_v2_thai_rendering.py` (29 round-trip, determinism and cross-file
+  tests).
+
+### Changed
+
+- Runtime dependencies are declared and pinned: `Pillow`, `reportlab`, `pypdf`
+  (package version 0.4.0, dataset version 2.2.0).
+- PDF text verification uses pypdf instead of a regex over the content stream,
+  and compares collapsed-whitespace text so `exam ple.com` still fails against
+  `example.com`.
+
+### Fixed
+
+- Re-localizing a document no longer stacks translations in front of a label
+  (`อ้างอิง / อ้างอิง / อ้างอิง:`); bilingual `ไทย / English:` labels are collapsed
+  or kept as one pair.
+- Raster layout could drop the last lines of a long document because the canvas
+  height ignored the header block; chrome metrics now drive both size and
+  drawing.
+
+### Removed
+
+- Automatic Latin-only routing for `pdf`, `png`, `jpg` and `jpeg`. `log` remains
+  English-only and the routing mechanism is kept for renderers with a narrower
+  capability.
+
 ## [0.3.1] - 2026-11-20
 
 ### Fixed

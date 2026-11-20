@@ -108,10 +108,11 @@ Language rules:
 - `mixed` must contain real Thai and English script in the same file, not just a
   Thai name in an English template. `attachment.language_check.contains_both`
   must be true.
-- PDF and image renderers are Latin-only. A Thai request is routed to English
-  and records `language_routing`; the renderer raises instead of writing `?`.
-  Do not claim Thai PDF or Thai OCR-image support.
-- A multi-file case may mix attachment languages, for example Thai DOCX plus
+- PDF and image renderers carry Thai, English and mixed content: PDF text is
+  embedded Sarabun TrueType with a ToUnicode map, and raster text is shaped with
+  Pillow + libraqm. Only `log` is English-only; a renderer that cannot carry a
+  language raises or records `language_routing` instead of writing `?`.
+- A multi-file case may mix attachment languages, for example Thai PDF plus
   English XLSX plus English log. The prompt language is independent.
 
 Never claim cross-file consistency without checking `cross_file_links` and

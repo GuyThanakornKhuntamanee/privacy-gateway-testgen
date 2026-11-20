@@ -1,0 +1,14 @@
+Support ticket #71451
+
+ผู้แจ้ง: สมชาย ทองคำ <naree.piyada31@example.com>
+
+ปัญหา: after the latest release the checkout page shows an error. The customer tried twice and is waiting for an update.
+
+รหัสคำขอ: req-54772
+
+Request from 192.0.2.10 to https://www.example.org/help returned 502.
+
+Browser console showed request header: changeme
+
+ขั้นตอนถัดไปที่แนะนำ: confirm the service health dashboard and review the gateway log.
+

@@ -1,0 +1,13 @@
+{
+  "title": "Application log",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "app_log - synthetic"
+    },
+    {
+      "kind": "code",
+      "text": "2026/03/18 09:12:00 +0000 INFO worker request_id=req-16598 user=wichai.thiraphat99@example.net client_ip=192.0.2.10 msg=\"order processed\"\n2026/03/18 09:15:07 +0000 INFO worker request_id=req-50913 user=kittipong.kittipong@example.com client_ip=198.51.100.25 msg=\"order processed\"\n2026/03/18 09:18:14 +0000 INFO worker request_id=req-49895 user=wichai.somchai56@example.org client_ip=192.0.2.10 msg=\"order processed\"\n2026/03/18 09:21:21 +0000 INFO worker request_id=req-50181 user=wichai.lalita@example.org client_ip=192.0.2.10 msg=\"order processed\"\n2026/03/18 09:24:28 +0000 INFO worker request_id=req-82158 user=piyada.chanida@example.net client_ip=192.0.2.10 msg=\"order processed\"\n2026/03/18 09:27:35 +0000 INFO worker request_id=req-18921 user=piyada.wichai57@example.com client_ip=198.51.100.25 msg=\"order processed\"\n2026/03/18 09:30:42 +0000 INFO worker request_id=req-64909 user=wichai.thiraphat99@example.net client_ip=192.0.2.10 msg=\"order processed\"\n2026/03/18 09:33:49 +0000 INFO worker request_id=req-32714 user=kittipong.kittipong@example.com client_ip=192.0.2.10 msg=\"order processed\"\n"
+    }
+  ]
+}

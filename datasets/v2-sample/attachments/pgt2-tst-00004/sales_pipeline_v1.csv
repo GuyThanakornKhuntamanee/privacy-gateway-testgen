@@ -1,0 +1,5 @@
+โอกาสขาย / opportunity,ลูกค้า / customer,อีเมลผู้ติดต่อ / contact_email,จำนวนเงิน / amount,ขั้นตอน / stage,อ้างอิง / reference
+OPP-2000,พิมพ์ชนก รุ่งเรือง,anan.piyada@example.org,"852,324",ผ่านคุณสมบัติ / qualified,TXN-2026-99550317
+OPP-2001,อารีย์ ทองคำ,somchai.prasert65@example.net,"781,561",เสนอราคา / proposal,TXN-2026-18682393
+OPP-2002,ปิยะดา ธีรวงศ์,piyada.maneerat@example.net,"168,755",เจรจา / negotiation,TXN-2026-68602553
+OPP-2003,ศิริพร พูลสวัสดิ์,kittipong.lalita77@example.com,"696,407",เจรจา / negotiation,TXN-2026-24563015

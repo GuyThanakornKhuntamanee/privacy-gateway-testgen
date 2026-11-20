@@ -40,7 +40,8 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "pdf_parsed"
+        "pdf_parsed",
+        "pdf_text_extracted"
       ],
       "issue_count": 0,
       "path": "pgt2-trn-00003/employment_contract_v1.pdf",
@@ -51,7 +52,8 @@
       "attachment_id": "ATT-002",
       "checks": [
         "file_nonempty",
-        "pdf_parsed"
+        "pdf_parsed",
+        "pdf_text_extracted"
       ],
       "issue_count": 0,
       "path": "pgt2-trn-00003/employment_contract_v2.pdf",
@@ -100,9 +102,42 @@
         "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00008/screenshot_chat.jpg",
+      "path": "pgt2-trn-00007/screenshot_config.png",
       "status": "verified_layout",
+      "test_id": "pgt2-trn-00007"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00008/patient_list.csv",
+      "status": "verified",
       "test_id": "pgt2-trn-00008"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00009/xml_export.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00009"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00010/employee_list.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00010"
     },
     {
       "attachment_id": "ATT-002",
@@ -111,21 +146,32 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00008/application_config.md",
+      "path": "pgt2-trn-00010/meeting_minutes.txt",
       "status": "verified",
-      "test_id": "pgt2-trn-00008"
+      "test_id": "pgt2-trn-00010"
     },
     {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
+        "json_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00010/meeting_minutes.docx",
+      "path": "pgt2-trn-00011/app_log.json",
       "status": "verified",
-      "test_id": "pgt2-trn-00010"
+      "test_id": "pgt2-trn-00011"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00012/source_code.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00012"
     },
     {
       "attachment_id": "ATT-001",
@@ -134,19 +180,7 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00012/employee_list.txt",
-      "status": "verified",
-      "test_id": "pgt2-trn-00012"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00014/employee_list.xlsx",
+      "path": "pgt2-trn-00014/support_ticket.txt",
       "status": "verified",
       "test_id": "pgt2-trn-00014"
     },
@@ -157,7 +191,7 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00015/source_code.go",
+      "path": "pgt2-trn-00015/app_log.log",
       "status": "verified",
       "test_id": "pgt2-trn-00015"
     },
@@ -165,56 +199,50 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "text_decoded"
+        "pdf_parsed",
+        "pdf_text_extracted",
+        "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00016/terraform_config.tf",
-      "status": "verified",
+      "path": "pgt2-trn-00016/meeting_minutes.pdf",
+      "status": "verified_layout",
       "test_id": "pgt2-trn-00016"
     },
     {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "config_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00017/database_config.conf",
+      "path": "pgt2-trn-00018/architecture_notes.docx",
       "status": "verified",
-      "test_id": "pgt2-trn-00017"
+      "test_id": "pgt2-trn-00018"
     },
     {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "text_decoded"
+        "pdf_parsed",
+        "pdf_text_extracted"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00018/internal_memo_v1.txt",
+      "path": "pgt2-trn-00019/architecture_deck_v1.pdf",
       "status": "verified",
-      "test_id": "pgt2-trn-00018"
+      "test_id": "pgt2-trn-00019"
     },
     {
       "attachment_id": "ATT-002",
       "checks": [
         "file_nonempty",
-        "text_decoded"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00018/internal_memo_v2.txt",
+      "path": "pgt2-trn-00019/architecture_deck.pptx",
       "status": "verified",
-      "test_id": "pgt2-trn-00018"
-    },
-    {
-      "attachment_id": "ATT-003",
-      "checks": [
-        "file_nonempty",
-        "config_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00018/application_environment_config.ini",
-      "status": "verified",
-      "test_id": "pgt2-trn-00018"
+      "test_id": "pgt2-trn-00019"
     },
     {
       "attachment_id": "ATT-001",
@@ -223,7 +251,7 @@
         "config_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00020/application_environment_config.env",
+      "path": "pgt2-trn-00020/application_config.env",
       "status": "verified",
       "test_id": "pgt2-trn-00020"
     },
@@ -234,7 +262,7 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00021/source_code_go.go",
+      "path": "pgt2-trn-00021/source_code_js.md",
       "status": "verified",
       "test_id": "pgt2-trn-00021"
     },
@@ -245,20 +273,9 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00024/meeting_minutes_v1.txt",
+      "path": "pgt2-trn-00022/auth_log.log",
       "status": "verified",
-      "test_id": "pgt2-trn-00024"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00024/meeting_minutes_v2.txt",
-      "status": "verified",
-      "test_id": "pgt2-trn-00024"
+      "test_id": "pgt2-trn-00022"
     },
     {
       "attachment_id": "ATT-001",
@@ -267,20 +284,44 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00025/api_gateway_log.log",
+      "path": "pgt2-trn-00023/source_code_java.java",
       "status": "verified",
+      "test_id": "pgt2-trn-00023"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00024/app_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00024"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00025/screenshot_email.jpeg",
+      "status": "verified_layout",
       "test_id": "pgt2-trn-00025"
     },
     {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "csv_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00028/access_records.csv",
+      "path": "pgt2-trn-00026/incident_review_deck.pptx",
       "status": "verified",
-      "test_id": "pgt2-trn-00028"
+      "test_id": "pgt2-trn-00026"
     },
     {
       "attachment_id": "ATT-001",
@@ -289,9 +330,22 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00029/meeting_minutes.md",
+      "path": "pgt2-trn-00027/support_ticket.txt",
       "status": "verified",
-      "test_id": "pgt2-trn-00029"
+      "test_id": "pgt2-trn-00027"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00028/meeting_minutes.pdf",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00028"
     },
     {
       "attachment_id": "ATT-001",
@@ -305,58 +359,35 @@
       "test_id": "pgt2-trn-00030"
     },
     {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00030/employee_list.txt",
-      "status": "verified",
-      "test_id": "pgt2-trn-00030"
-    },
-    {
-      "attachment_id": "ATT-003",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00030/incident_report.txt",
-      "status": "verified",
-      "test_id": "pgt2-trn-00030"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "image_decoded",
-        "ocr_layout_verified"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00031/screenshot_dashboard.jpeg",
-      "status": "verified_layout",
-      "test_id": "pgt2-trn-00031"
-    },
-    {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00034/meeting_minutes.txt",
+      "path": "pgt2-trn-00032/sql_export.sql",
       "status": "verified",
-      "test_id": "pgt2-trn-00034"
+      "test_id": "pgt2-trn-00032"
     },
     {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "pdf_parsed"
+        "yaml_subset_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00035/payroll.pdf",
+      "path": "pgt2-trn-00033/docker_compose.yml",
+      "status": "verified",
+      "test_id": "pgt2-trn-00033"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "yaml_subset_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00035/service_account_config.yaml",
       "status": "verified",
       "test_id": "pgt2-trn-00035"
     },
@@ -364,12 +395,24 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00037/access_records.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00037"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00036/server_inventory.txt",
+      "path": "pgt2-trn-00039/app_log.log",
       "status": "verified",
-      "test_id": "pgt2-trn-00036"
+      "test_id": "pgt2-trn-00039"
     },
     {
       "attachment_id": "ATT-001",
@@ -378,98 +421,7 @@
         "csv_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00037/access_records_v1.csv",
-      "status": "verified",
-      "test_id": "pgt2-trn-00037"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "csv_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00037/access_records_v2.csv",
-      "status": "verified",
-      "test_id": "pgt2-trn-00037"
-    },
-    {
-      "attachment_id": "ATT-003",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00037/management_deck.pdf",
-      "status": "verified",
-      "test_id": "pgt2-trn-00037"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00038/xml_export.txt",
-      "status": "verified",
-      "test_id": "pgt2-trn-00038"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00039/invoice.xlsx",
-      "status": "verified",
-      "test_id": "pgt2-trn-00039"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00039/transaction_export.xlsx",
-      "status": "verified",
-      "test_id": "pgt2-trn-00039"
-    },
-    {
-      "attachment_id": "ATT-003",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00039/purchase_order.docx",
-      "status": "verified",
-      "test_id": "pgt2-trn-00039"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00040/incident_report.pdf",
-      "status": "verified",
-      "test_id": "pgt2-trn-00040"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00040/app_log.txt",
+      "path": "pgt2-trn-00040/access_records.csv",
       "status": "verified",
       "test_id": "pgt2-trn-00040"
     },
@@ -477,10 +429,11 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "pdf_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00041/incident_report.pdf",
+      "path": "pgt2-trn-00041/management_deck.pptx",
       "status": "verified",
       "test_id": "pgt2-trn-00041"
     },
@@ -491,21 +444,9 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00042/app_log.log",
+      "path": "pgt2-trn-00042/deployment_log.log",
       "status": "verified",
       "test_id": "pgt2-trn-00042"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00043/sales_report_deck.pptx",
-      "status": "verified",
-      "test_id": "pgt2-trn-00043"
     },
     {
       "attachment_id": "ATT-001",
@@ -514,21 +455,20 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00044/meeting_minutes.md",
+      "path": "pgt2-trn-00043/deployment_log.txt",
       "status": "verified",
-      "test_id": "pgt2-trn-00044"
+      "test_id": "pgt2-trn-00043"
     },
     {
-      "attachment_id": "ATT-001",
+      "attachment_id": "ATT-002",
       "checks": [
         "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
+        "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00045/incident_review_deck.pptx",
+      "path": "pgt2-trn-00043/source_code_js.ts",
       "status": "verified",
-      "test_id": "pgt2-trn-00045"
+      "test_id": "pgt2-trn-00043"
     },
     {
       "attachment_id": "ATT-001",
@@ -537,8 +477,20 @@
         "json_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00046/auth_log.json",
+      "path": "pgt2-trn-00044/api_payload.json",
       "status": "verified",
+      "test_id": "pgt2-trn-00044"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00046/app_log.png",
+      "status": "verified_layout",
       "test_id": "pgt2-trn-00046"
     },
     {
@@ -548,30 +500,7 @@
         "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00047/xml_export_v1.txt",
-      "status": "verified",
-      "test_id": "pgt2-trn-00047"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "xml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00047/xml_export.xml",
-      "status": "verified",
-      "test_id": "pgt2-trn-00047"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00048/incident_review_deck.pptx",
+      "path": "pgt2-trn-00048/terraform_config.tf",
       "status": "verified",
       "test_id": "pgt2-trn-00048"
     },
@@ -582,18 +511,7 @@
         "csv_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00049/transaction_export.csv",
-      "status": "verified",
-      "test_id": "pgt2-trn-00049"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00050/support_ticket.md",
+      "path": "pgt2-trn-00050/expense_report.csv",
       "status": "verified",
       "test_id": "pgt2-trn-00050"
     },
@@ -601,10 +519,11 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "json_parsed"
+        "pdf_parsed",
+        "pdf_text_extracted"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00051/api_payload.json",
+      "path": "pgt2-trn-00051/architecture_notes.pdf",
       "status": "verified",
       "test_id": "pgt2-trn-00051"
     },
@@ -612,10 +531,23 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "xml_parsed"
+        "pdf_parsed",
+        "pdf_text_extracted"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00052/api_payload.xml",
+      "path": "pgt2-trn-00052/employment_contract.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00052"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00052/customer_contract.pdf",
       "status": "verified",
       "test_id": "pgt2-trn-00052"
     },
@@ -623,10 +555,10 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "text_decoded"
+        "csv_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00053/auth_log.log",
+      "path": "pgt2-trn-00053/purchase_order.csv",
       "status": "verified",
       "test_id": "pgt2-trn-00053"
     },
@@ -634,10 +566,11 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "text_decoded"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00054/source_code_js.js",
+      "path": "pgt2-trn-00054/management_deck.pptx",
       "status": "verified",
       "test_id": "pgt2-trn-00054"
     },
@@ -645,24 +578,13 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "json_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00055/transaction_export.json",
+      "path": "pgt2-trn-00055/incident_report.docx",
       "status": "verified",
       "test_id": "pgt2-trn-00055"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "image_decoded",
-        "ocr_layout_verified"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00056/screenshot_receipt_v1.png",
-      "status": "verified_layout",
-      "test_id": "pgt2-trn-00056"
     },
     {
       "attachment_id": "ATT-002",
@@ -672,18 +594,31 @@
         "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00056/screenshot_receipt.jpeg",
+      "path": "pgt2-trn-00055/app_log.png",
       "status": "verified_layout",
-      "test_id": "pgt2-trn-00056"
+      "test_id": "pgt2-trn-00055"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00055/deployment_log.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00055"
     },
     {
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "json_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00057/support_ticket.json",
+      "path": "pgt2-trn-00057/incident_review_deck.pptx",
       "status": "verified",
       "test_id": "pgt2-trn-00057"
     },
@@ -691,11 +626,21 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
+        "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00001/employment_contract.docx",
+      "path": "pgt2-trn-00058/api_gateway_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00058"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00001/internal_memo.md",
       "status": "verified",
       "test_id": "pgt2-val-00001"
     },
@@ -703,10 +648,11 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "json_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00002/kubernetes_manifest_v1.json",
+      "path": "pgt2-val-00002/payroll.xlsx",
       "status": "verified",
       "test_id": "pgt2-val-00002"
     },
@@ -714,21 +660,11 @@
       "attachment_id": "ATT-002",
       "checks": [
         "file_nonempty",
-        "text_decoded"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00002/kubernetes_manifest.md",
-      "status": "verified",
-      "test_id": "pgt2-val-00002"
-    },
-    {
-      "attachment_id": "ATT-003",
-      "checks": [
-        "file_nonempty",
-        "csv_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-val-00002/order_export.csv",
+      "path": "pgt2-val-00002/employment_contract.docx",
       "status": "verified",
       "test_id": "pgt2-val-00002"
     },
@@ -736,10 +672,11 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "csv_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00003/vendor_list.csv",
+      "path": "pgt2-val-00003/payroll.xlsx",
       "status": "verified",
       "test_id": "pgt2-val-00003"
     },
@@ -747,10 +684,22 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "csv_parsed"
+        "text_decoded"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00004/bank_statement.csv",
+      "path": "pgt2-val-00004/access_records_v1.log",
+      "status": "verified",
+      "test_id": "pgt2-val-00004"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00004/access_records.xlsx",
       "status": "verified",
       "test_id": "pgt2-val-00004"
     },
@@ -758,137 +707,12 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
+        "yaml_subset_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00005/employee_list.docx",
+      "path": "pgt2-val-00005/application_config.yaml",
       "status": "verified",
       "test_id": "pgt2-val-00005"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-val-00006/employment_contract.docx",
-      "status": "verified",
-      "test_id": "pgt2-val-00006"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "xml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-val-00006/customer_export.xml",
-      "status": "verified",
-      "test_id": "pgt2-val-00006"
-    },
-    {
-      "attachment_id": "ATT-003",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-val-00006/employee_list.docx",
-      "status": "verified",
-      "test_id": "pgt2-val-00006"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "text_decoded"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-val-00007/access_records.log",
-      "status": "verified",
-      "test_id": "pgt2-val-00007"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00001/nda.pdf",
-      "status": "verified",
-      "test_id": "pgt2-tst-00001"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "csv_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00002/employee_list.csv",
-      "status": "verified",
-      "test_id": "pgt2-tst-00002"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00003/transaction_export.xlsx",
-      "status": "verified",
-      "test_id": "pgt2-tst-00003"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00003/cv.pdf",
-      "status": "verified",
-      "test_id": "pgt2-tst-00003"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00004/patient_list_v1.pdf",
-      "status": "verified",
-      "test_id": "pgt2-tst-00004"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00004/patient_list_v2.pdf",
-      "status": "verified",
-      "test_id": "pgt2-tst-00004"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "pdf_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-tst-00005/nda.pdf",
-      "status": "verified",
-      "test_id": "pgt2-tst-00005"
     },
     {
       "attachment_id": "ATT-001",
@@ -897,20 +721,33 @@
         "config_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-tst-00006/database_config.env",
+      "path": "pgt2-val-00006/application_environment_config.toml",
       "status": "verified",
-      "test_id": "pgt2-tst-00006"
+      "test_id": "pgt2-val-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00007/employee_list.docx",
+      "status": "verified",
+      "test_id": "pgt2-val-00007"
     },
     {
       "attachment_id": "ATT-002",
       "checks": [
         "file_nonempty",
-        "yaml_subset_parsed"
+        "zip_opened",
+        "ooxml_parsed"
       ],
       "issue_count": 0,
-      "path": "pgt2-tst-00006/docker_compose.yaml",
+      "path": "pgt2-val-00007/payroll.xlsx",
       "status": "verified",
-      "test_id": "pgt2-tst-00006"
+      "test_id": "pgt2-val-00007"
     },
     {
       "attachment_id": "ATT-003",
@@ -920,18 +757,120 @@
         "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-tst-00006/screenshot_chat.png",
+      "path": "pgt2-val-00007/api_gateway_log.png",
       "status": "verified_layout",
+      "test_id": "pgt2-val-00007"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "yaml_subset_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00001/docker_compose.yaml",
+      "status": "verified",
+      "test_id": "pgt2-tst-00001"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00002/support_ticket.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00002"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00003/api_gateway_log_v1.txt",
+      "status": "verified",
+      "test_id": "pgt2-tst-00003"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00003/api_gateway_log.log",
+      "status": "verified",
+      "test_id": "pgt2-tst-00003"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00003/auth_log.txt",
+      "status": "verified",
+      "test_id": "pgt2-tst-00003"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00004/sales_pipeline_v1.csv",
+      "status": "verified",
+      "test_id": "pgt2-tst-00004"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00004/sales_pipeline.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00004"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00006/support_ticket.docx",
+      "status": "verified",
       "test_id": "pgt2-tst-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00007/customer_complaint.txt",
+      "status": "verified",
+      "test_id": "pgt2-tst-00007"
     }
   ],
-  "files": 82,
+  "files": 75,
   "issues": [],
-  "manifest_checks": 91,
+  "manifest_checks": 86,
   "passed": true,
   "statuses": {
-    "verified": 77,
-    "verified_layout": 5
+    "verified": 66,
+    "verified_layout": 9
   },
-  "verified_files": 82
+  "verified_files": 75
 }

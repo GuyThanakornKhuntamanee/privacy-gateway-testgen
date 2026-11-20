@@ -8,7 +8,7 @@ checkout; evidence is a test module, a generated report, or a document.
 |---|---|---|---|
 | AC-01 | Public-ready repository with README, MIT license, security policy, contribution guide and release checklist | PASS | `README.md`, `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, `RELEASE_CHECKLIST.md` |
 | AC-02 | Agent Skill with valid frontmatter and a workflow usable by OpenCode / Agent Skills clients | PASS | `SKILL.md`; commands exercised by `tests/test_cli.py` |
-| AC-03 | No Claude-only, proprietary or paid-API dependency; standard library runtime | PASS | `pyproject.toml` has no dependencies; CI uses stdlib `unittest` |
+| AC-03 | No Claude-only, proprietary or paid-API dependency; declared runtime dependencies only | PASS | `pyproject.toml` pins `Pillow`/`reportlab`/`pypdf` (no paid API, no runtime network); stdlib `unittest` |
 | AC-04 | Configurable PII categories including Thai national ID, names, phones, email, address, postal code, DOB, personal IP, GPS, vehicle, bank, financial, health, patient ID, passport | PASS | `entities/pii.py`; `tests/test_entities.py` |
 | AC-05 | Configurable payment categories with test-only card data and no PCI claim | PASS | `entities/payment.py`; `tests/test_entities.py`, `tests/test_security.py` |
 | AC-06 | Configurable secrets/credentials, all non-functional | PASS | `entities/secrets.py`; security tests reject live markers |
@@ -63,7 +63,7 @@ checkout; evidence is a test module, a generated report, or a document.
 | AC-54 | No placeholder people in realistic documents | PASS | organisation identity marked non-target; regression test |
 | AC-55 | Reports are byte-identical across `PYTHONHASHSEED` | PASS | sorted n-grams, no timestamps; subprocess test and CI |
 | AC-56 | Compound static labels are localized | PASS | inline label localization; residual-label gate |
-| AC-57 | Latin-only routing is attachment-scoped and identity-linked | PASS | per-attachment `latin_only`, canonical value; tests |
+| AC-57 | Latin-only routing is attachment-scoped and identity-linked (v2.1 state; superseded by AC-68..72) | PASS | per-attachment routing preserved; no `*_latin_only` remains |
 | AC-58 | Thai addresses are internally coherent | PASS | curated geographic table; test |
 | AC-59 | Thai imperfection stays readable | PASS | particle/spacing only; test |
 | AC-60 | Prompt composition has no duplicated or incompatible phrases | PASS | intent cores, context compatibility, quality check; tests |
@@ -73,7 +73,12 @@ checkout; evidence is a test module, a generated report, or a document.
 | AC-64 | Old/new revisions contain meaningful before/after values | PASS | `_revise_doc`; test |
 | AC-65 | Consistency checks distinguish N/A from passed | PASS | structured `status`; report and test |
 | AC-66 | `benchmark_ready` is computed from dataset evidence | PASS | `report-v2 --check-reproducible`; safe subset files |
-| AC-67 | CI exercises v1 and all v2 gates | PASS | `.github/workflows/ci.yml` |
+| AC-67 | CI exercises v1 and all v2 gates | PASS | `.github/workflows/ci.yml` runs install + v1/v2/Thai-sample gates |
+| AC-68 | Native PDF carries real extractable Thai text | PASS | embedded Sarabun + ToUnicode; `tests/test_v2_thai_rendering.py` |
+| AC-69 | Thai/mixed PNG, JPG and JPEG render with correct shaping | PASS | Pillow + libraqm; Thai rendering tests |
+| AC-70 | Scanned and hybrid PDF keep source-type provenance | PASS | `pdf_image` + `source_type`; tests |
+| AC-71 | Raster ground truth requires no OCR and is split by modality | PASS | `evaluation_requirement`, `benchmark_safe_text_cases.jsonl` / `benchmark_safe_ocr_cases.jsonl`; tests |
+| AC-72 | Thai rendering adds no replacement glyphs or broken wrapping | PASS | missing-glyph check, cluster-safe wrapping, `no_replacement_glyphs` gate |
 
 ## Partial or not executed
 

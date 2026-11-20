@@ -1,7 +1,9 @@
 {
   "benchmark_ready": {
     "benchmark_ready": true,
-    "benchmark_safe_cases": 68,
+    "benchmark_safe_cases": 72,
+    "benchmark_safe_ocr_cases": 6,
+    "benchmark_safe_text_cases": 66,
     "checks": {
       "deterministic_dataset_output": true,
       "deterministic_report_output": true,
@@ -10,14 +12,16 @@
       "linked_financial_data_consistent": true,
       "no_failed_ground_truth_verification": true,
       "no_known_high_correctness_issue": true,
+      "no_replacement_glyphs": true,
       "no_unresolved_schema_errors": true,
       "required_safety_checks": true,
+      "thai_file_rendering_verified": true,
       "timeline_valid": true
     },
-    "excluded_cases": 4,
+    "excluded_cases": 0,
     "reasons": []
   },
-  "dataset_version": "2.1.1",
+  "dataset_version": "2.2.0",
   "deterministic_report": true,
   "failed_gates": [],
   "gates": [
@@ -74,46 +78,44 @@
       "passed": true,
       "requirement": ">= 8 types",
       "value": [
-        "conf",
         "csv",
         "docx",
         "env",
-        "go",
-        "ini",
+        "java",
         "jpeg",
-        "jpg",
-        "js",
         "json",
         "log",
         "md",
         "pdf",
         "png",
         "pptx",
+        "sql",
         "tf",
         "toml",
+        "ts",
         "txt",
         "xlsx",
-        "xml",
-        "yaml"
+        "yaml",
+        "yml"
       ]
     },
     {
       "name": "archetype_coverage",
       "passed": true,
       "requirement": ">= 8",
-      "value": 39
+      "value": 37
     },
     {
       "name": "persona_coverage",
       "passed": true,
       "requirement": ">= 6",
-      "value": 15
+      "value": 16
     },
     {
       "name": "intent_coverage",
       "passed": true,
       "requirement": ">= 8",
-      "value": 17
+      "value": 19
     },
     {
       "name": "language_coverage",
@@ -130,9 +132,9 @@
       "passed": true,
       "requirement": ">= 2 languages",
       "value": {
-        "en": 48,
-        "mixed": 4,
-        "th": 30
+        "en": 40,
+        "mixed": 7,
+        "th": 28
       }
     },
     {
@@ -140,17 +142,18 @@
       "passed": true,
       "requirement": ">= 4 prompt/attachment pairs",
       "value": {
-        "en->en": 12,
+        "en->en": 9,
         "en->mixed": 1,
-        "en->prompt_only": 6,
+        "en->prompt_only": 5,
         "en->th": 9,
-        "mixed->en": 20,
+        "mixed->en": 15,
+        "mixed->mixed": 2,
         "mixed->prompt_only": 6,
-        "mixed->th": 4,
+        "mixed->th": 7,
         "th->en": 16,
-        "th->mixed": 3,
+        "th->mixed": 4,
         "th->prompt_only": 3,
-        "th->th": 17
+        "th->th": 12
       }
     },
     {
@@ -169,25 +172,25 @@
       "name": "structure_reference_share",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.3889
+      "value": 0.3194
     },
     {
       "name": "multi_file_share",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.2361
+      "value": 0.1806
     },
     {
       "name": "cross_file_link_coverage",
       "passed": true,
       "requirement": ">= 1 cases",
-      "value": 17
+      "value": 13
     },
     {
       "name": "same_archetype_bundle_coverage",
       "passed": true,
       "requirement": ">= 1 cases",
-      "value": 8
+      "value": 5
     },
     {
       "name": "cross_file_consistency",
@@ -200,8 +203,8 @@
       "passed": true,
       "requirement": "0 failed, 0 not_evaluated (not_applicable allowed)",
       "value": {
-        "not_applicable": 264,
-        "passed": 78
+        "not_applicable": 282,
+        "passed": 66
       }
     },
     {
@@ -220,7 +223,31 @@
       "name": "prompt_form_concentration",
       "passed": true,
       "requirement": "<= 0.45",
-      "value": 0.2667
+      "value": 0.2857
+    },
+    {
+      "name": "thai_file_render_rate",
+      "passed": true,
+      "requirement": "every Thai or mixed PDF/image attachment is render-verified",
+      "value": "6/6"
+    },
+    {
+      "name": "raster_text_shaping",
+      "passed": true,
+      "requirement": "every raster attachment records HarfBuzz shaping",
+      "value": "9/9"
+    },
+    {
+      "name": "native_pdf_text_extraction",
+      "passed": true,
+      "requirement": "every native PDF extracts its canonical text back",
+      "value": "6/6"
+    },
+    {
+      "name": "no_replacement_glyphs",
+      "passed": true,
+      "requirement": "0 replacement characters in canonical render text",
+      "value": 0
     },
     {
       "name": "domain_coverage",
@@ -237,25 +264,25 @@
       "name": "negative_share",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.1944
+      "value": 0.2917
     },
     {
       "name": "multi_domain_share",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.2222
+      "value": 0.1944
     },
     {
       "name": "attachment_share",
       "passed": true,
       "requirement": ">= 0.35",
-      "value": 0.7917
+      "value": 0.8056
     },
     {
       "name": "ocr_case_coverage",
       "passed": true,
       "requirement": ">= 1",
-      "value": 4
+      "value": 6
     },
     {
       "name": "opening_repetition",
@@ -267,13 +294,13 @@
       "name": "repeated_phrase_rate",
       "passed": true,
       "requirement": "<= 0.2",
-      "value": 0.0833
+      "value": 0.0694
     },
     {
       "name": "archetype_concentration",
       "passed": true,
       "requirement": "<= 0.3",
-      "value": 0.0833
+      "value": 0.0972
     },
     {
       "name": "synthetic_safety",
@@ -289,9 +316,10 @@
     }
   ],
   "known_limitations": [
-    "PDF content is English/Latin only because the standard-library PDF writer uses built-in WinAnsi fonts. Thai PDF content is routed to DOCX/XLSX/TXT and the routing is recorded on the attachment.",
-    "Image text uses a bitmap Latin font. Thai image OCR is not supported; Thai image scenarios are routed to English with an explicit language_routing field.",
-    "Image and scanned-PDF annotations are verified at render-layout level. No third-party OCR engine is run in the test suite, so OCR accuracy is not claimed.",
+    "Native PDF text is embedded TrueType (Sarabun regular/bold) with a ToUnicode map, so Thai and mixed Thai-English text extracts back exactly. Byte identity is guaranteed only for the pinned ReportLab/Pillow versions on one platform; across versions only extracted text, spans and boxes are claimed identical.",
+    "Raster assets (PNG/JPEG and scanned or hybrid PDF regions) are verified at render-layout level. No OCR engine is run, so OCR accuracy is not claimed, and the canonical pre-render text stays the ground truth.",
+    "Raster cases are not excluded from the benchmark for needing OCR. They are listed in `benchmark_safe_ocr_cases.jsonl`, separate from `benchmark_safe_text_cases.jsonl`, because the gateway under test performs the OCR.",
+    "Raster degradation (noise, blur, small rotation, brightness gradient) changes pixels, so the reported bounding boxes are transformed to the final image and may cover slightly more area than the ink.",
     "PPTX speaker notes and native PowerPoint tables are not emitted; slide body text and later-slide placement are supported.",
     "YAML/TOML/INI/ENV verification uses the generator's strict subset parser, not PyYAML or tomllib.",
     "Archives, password-protected containers, audio, video, executables and recursive archive extraction are out of scope.",
@@ -302,108 +330,106 @@
   ],
   "manifest": {
     "dataset_id": "pgt2-21-benchmark-balanced",
-    "generator_version": "0.3.1",
+    "generator_version": "0.4.0",
     "profile": "benchmark-balanced",
     "schema_version": "2.1",
     "seed": 21,
     "total_cases": 72,
-    "total_files": 82
+    "total_files": 75
   },
   "metrics": {
     "action_counts": {
-      "ALLOW": 14,
-      "BLOCK": 21,
-      "LOCAL_ONLY": 19,
+      "ALLOW": 21,
+      "BLOCK": 20,
+      "LOCAL_ONLY": 17,
       "MASK": 2,
       "REDACT": 8,
-      "TOKENIZE": 8
+      "TOKENIZE": 4
     },
-    "ambiguous_ratio": 0.0694,
-    "archetype_concentration": 0.0833,
+    "ambiguous_ratio": 0.0278,
+    "archetype_concentration": 0.0972,
     "archetype_shares": {
       "access_records": 0.0417,
-      "api_gateway_log": 0.0139,
-      "api_payload": 0.0278,
-      "app_log": 0.0417,
-      "application_config": 0.0278,
-      "application_environment_config": 0.0278,
+      "api_gateway_log": 0.0417,
+      "api_payload": 0.0139,
+      "app_log": 0.0972,
+      "application_config": 0.0417,
+      "application_environment_config": 0.0139,
+      "architecture_deck": 0.0139,
+      "architecture_notes": 0.0278,
       "auth_log": 0.0417,
-      "bank_statement": 0.0139,
-      "customer_export": 0.0139,
-      "cv": 0.0139,
-      "database_config": 0.0417,
-      "docker_compose": 0.0278,
-      "employee_list": 0.0833,
+      "customer_complaint": 0.0139,
+      "customer_contract": 0.0139,
+      "database_config": 0.0139,
+      "deployment_log": 0.0417,
+      "docker_compose": 0.0417,
+      "employee_list": 0.0278,
       "employment_contract": 0.0417,
-      "incident_report": 0.0417,
+      "expense_report": 0.0139,
+      "incident_report": 0.0139,
       "incident_review_deck": 0.0278,
       "internal_memo": 0.0139,
-      "invoice": 0.0278,
-      "kubernetes_manifest": 0.0139,
-      "management_deck": 0.0139,
-      "meeting_minutes": 0.0833,
-      "nda": 0.0278,
-      "order_export": 0.0139,
+      "invoice": 0.0139,
+      "management_deck": 0.0278,
+      "meeting_minutes": 0.0556,
       "patient_list": 0.0139,
-      "payroll": 0.0139,
+      "payroll": 0.0417,
       "purchase_order": 0.0139,
-      "sales_report_deck": 0.0139,
-      "screenshot_chat": 0.0278,
-      "screenshot_dashboard": 0.0139,
-      "screenshot_receipt": 0.0139,
-      "server_inventory": 0.0139,
+      "sales_pipeline": 0.0139,
+      "screenshot_config": 0.0139,
+      "screenshot_email": 0.0139,
+      "service_account_config": 0.0139,
       "source_code": 0.0139,
-      "source_code_go": 0.0139,
-      "source_code_js": 0.0139,
-      "support_ticket": 0.0278,
+      "source_code_java": 0.0139,
+      "source_code_js": 0.0278,
+      "sql_export": 0.0139,
+      "support_ticket": 0.0556,
       "terraform_config": 0.0139,
-      "transaction_export": 0.0556,
-      "vendor_list": 0.0139,
-      "xml_export": 0.0278
+      "xml_export": 0.0139
     },
     "attachment_count_distribution": {
-      "0": 15,
-      "1": 40,
+      "0": 14,
+      "1": 45,
       "2": 9,
-      "3": 8
+      "3": 4
     },
     "attachment_language_shares": {
-      "en": 0.5854,
-      "mixed": 0.0488,
-      "th": 0.3659
+      "en": 0.5333,
+      "mixed": 0.0933,
+      "th": 0.3733
     },
-    "attachment_share": 0.7917,
+    "attachment_share": 0.8056,
     "bundle_kinds": {
-      "multi_file": 9,
-      "old_new": 5,
-      "prompt_only": 15,
-      "same_archetype": 3,
-      "single_file": 40
+      "multi_file": 8,
+      "old_new": 1,
+      "prompt_only": 14,
+      "same_archetype": 4,
+      "single_file": 45
     },
-    "consistency_checks": 342,
-    "consistency_passed": 78,
+    "consistency_checks": 348,
+    "consistency_passed": 66,
     "consistency_rate": 1.0,
     "consistency_status": {
-      "not_applicable": 264,
-      "passed": 78
+      "not_applicable": 282,
+      "passed": 66
     },
-    "cross_file_link_cases": 17,
-    "cross_file_links": 77,
+    "cross_file_link_cases": 13,
+    "cross_file_links": 61,
     "detection_evaluated": false,
     "detection_note": "No detector or gateway was run; these metrics cover file ingestion and annotation provenance only.",
     "difficulty_shares": {
-      "1": 0.0139,
+      "1": 0.1667,
       "2": 0.1528,
-      "3": 0.3333,
-      "4": 0.2917,
-      "5": 0.2083
+      "3": 0.3056,
+      "4": 0.2361,
+      "5": 0.1389
     },
     "document_duplicate_rate": 0.0,
     "domain_shares": {
       "infrastructure": 0.25,
-      "payment": 0.1944,
-      "pii": 0.2917,
-      "secrets": 0.2917
+      "payment": 0.1111,
+      "pii": 0.2639,
+      "secrets": 0.2778
     },
     "duplicates": {
       "cross_split_examples": [],
@@ -417,100 +443,97 @@
       "threshold": 0.96
     },
     "entity_density_distribution": {
-      "1-3": 16,
-      "4-6": 10,
-      "7+": 46
+      "0": 2,
+      "1-3": 28,
+      "4-6": 13,
+      "7+": 29
     },
     "entity_location_accuracy": 1.0,
+    "evaluation_requirements": {
+      "direct_text_extraction": 68,
+      "ocr_required": 7
+    },
     "extraction_accuracy": 1.0,
     "extraction_failures": 0,
     "extraction_methods": {
-      "direct_text": 29,
-      "ocr": 4,
-      "office_parser": 11,
-      "pdf_text": 9,
-      "structured_parser": 16
+      "direct_text": 26,
+      "ocr": 6,
+      "office_parser": 16,
+      "pdf_text": 6,
+      "structured_parser": 12
     },
     "file_open_rate": 1.0,
     "file_type_counts": {
-      "conf": 1,
-      "csv": 8,
+      "csv": 5,
       "docx": 7,
-      "env": 2,
-      "go": 2,
-      "ini": 1,
-      "jpeg": 2,
-      "jpg": 1,
-      "js": 1,
-      "json": 6,
-      "log": 6,
-      "md": 5,
-      "pdf": 11,
-      "png": 2,
-      "pptx": 3,
+      "env": 1,
+      "java": 1,
+      "jpeg": 1,
+      "json": 3,
+      "log": 10,
+      "md": 2,
+      "pdf": 8,
+      "png": 6,
+      "pptx": 5,
+      "sql": 1,
       "tf": 1,
-      "toml": 1,
-      "txt": 14,
-      "xlsx": 4,
-      "xml": 3,
-      "yaml": 1
+      "toml": 2,
+      "ts": 1,
+      "txt": 11,
+      "xlsx": 6,
+      "yaml": 3,
+      "yml": 1
     },
     "file_type_shares": {
-      "conf": 0.0139,
-      "csv": 0.0972,
-      "docx": 0.0833,
-      "env": 0.0278,
-      "go": 0.0278,
-      "ini": 0.0139,
-      "jpeg": 0.0278,
-      "jpg": 0.0139,
-      "js": 0.0139,
-      "json": 0.0833,
-      "log": 0.0833,
-      "md": 0.0694,
-      "pdf": 0.125,
-      "png": 0.0278,
-      "pptx": 0.0417,
+      "csv": 0.0694,
+      "docx": 0.0972,
+      "env": 0.0139,
+      "java": 0.0139,
+      "jpeg": 0.0139,
+      "json": 0.0417,
+      "log": 0.1389,
+      "md": 0.0278,
+      "pdf": 0.0833,
+      "png": 0.0694,
+      "pptx": 0.0694,
+      "sql": 0.0139,
       "tf": 0.0139,
-      "toml": 0.0139,
-      "txt": 0.1389,
-      "xlsx": 0.0417,
-      "xml": 0.0417,
-      "yaml": 0.0139
+      "toml": 0.0278,
+      "ts": 0.0139,
+      "txt": 0.125,
+      "xlsx": 0.0833,
+      "yaml": 0.0417,
+      "yml": 0.0139
     },
+    "hybrid_pdf_attachments": 2,
     "intent_shares": {
-      "answer_questions": 0.0417,
-      "calculate": 0.0833,
+      "analyze": 0.0417,
+      "answer_questions": 0.0139,
+      "calculate": 0.0556,
+      "check_code": 0.0556,
       "classify": 0.0278,
-      "compare": 0.0972,
-      "draft_email": 0.0139,
-      "explain_error": 0.0139,
-      "extract_fields": 0.0833,
-      "find_anomalies": 0.0417,
-      "find_missing": 0.125,
-      "inspect_config": 0.0694,
-      "modify_document": 0.0556,
+      "compare": 0.0833,
+      "create_chart": 0.0139,
+      "explain_error": 0.0417,
+      "extract_fields": 0.0694,
+      "find_anomalies": 0.125,
+      "find_missing": 0.0139,
+      "inspect_config": 0.0833,
+      "modify_document": 0.0278,
       "prepare_report": 0.0694,
-      "review_document": 0.0694,
+      "review_document": 0.0139,
       "rewrite": 0.0139,
-      "summarize": 0.1111,
-      "translate": 0.0139,
-      "troubleshoot": 0.0694
+      "summarize": 0.125,
+      "translate": 0.0417,
+      "troubleshoot": 0.0833
     },
     "language_by_file_type": {
-      "conf": {
-        "declared": {
-          "en": 1
-        },
-        "files": 1,
-        "mismatches": 0
-      },
       "csv": {
         "declared": {
-          "en": 4,
+          "en": 1,
           "th": 4
         },
-        "files": 8,
+        "files": 5,
         "mismatches": 0
       },
       "docx": {
@@ -523,41 +546,19 @@
       },
       "env": {
         "declared": {
-          "en": 2
-        },
-        "files": 2,
-        "mismatches": 0
-      },
-      "go": {
-        "declared": {
-          "en": 1,
-          "th": 1
-        },
-        "files": 2,
-        "mismatches": 0
-      },
-      "ini": {
-        "declared": {
           "th": 1
         },
         "files": 1,
         "mismatches": 0
       },
-      "jpeg": {
-        "declared": {
-          "en": 2
-        },
-        "files": 2,
-        "mismatches": 0
-      },
-      "jpg": {
+      "java": {
         "declared": {
           "en": 1
         },
         "files": 1,
         "mismatches": 0
       },
-      "js": {
+      "jpeg": {
         "declared": {
           "en": 1
         },
@@ -566,48 +567,57 @@
       },
       "json": {
         "declared": {
-          "en": 4,
-          "mixed": 1,
+          "en": 1,
+          "th": 2
+        },
+        "files": 3,
+        "mismatches": 0
+      },
+      "log": {
+        "declared": {
+          "en": 10
+        },
+        "files": 10,
+        "mismatches": 0
+      },
+      "md": {
+        "declared": {
+          "en": 1,
+          "th": 1
+        },
+        "files": 2,
+        "mismatches": 0
+      },
+      "pdf": {
+        "declared": {
+          "en": 3,
+          "mixed": 2,
+          "th": 3
+        },
+        "files": 8,
+        "mismatches": 0
+      },
+      "png": {
+        "declared": {
+          "en": 5,
           "th": 1
         },
         "files": 6,
         "mismatches": 0
       },
-      "log": {
+      "pptx": {
         "declared": {
-          "en": 6
-        },
-        "files": 6,
-        "mismatches": 0
-      },
-      "md": {
-        "declared": {
-          "mixed": 2,
-          "th": 3
+          "en": 2,
+          "mixed": 3
         },
         "files": 5,
         "mismatches": 0
       },
-      "pdf": {
+      "sql": {
         "declared": {
-          "en": 11
+          "en": 1
         },
-        "files": 11,
-        "mismatches": 0
-      },
-      "png": {
-        "declared": {
-          "en": 2
-        },
-        "files": 2,
-        "mismatches": 0
-      },
-      "pptx": {
-        "declared": {
-          "en": 2,
-          "mixed": 1
-        },
-        "files": 3,
+        "files": 1,
         "mismatches": 0
       },
       "tf": {
@@ -619,28 +629,36 @@
       },
       "toml": {
         "declared": {
-          "th": 1
+          "th": 2
+        },
+        "files": 2,
+        "mismatches": 0
+      },
+      "ts": {
+        "declared": {
+          "mixed": 1
         },
         "files": 1,
         "mismatches": 0
       },
       "txt": {
         "declared": {
-          "en": 2,
-          "th": 12
+          "en": 5,
+          "mixed": 1,
+          "th": 5
         },
-        "files": 14,
+        "files": 11,
         "mismatches": 0
       },
       "xlsx": {
         "declared": {
-          "en": 3,
-          "th": 1
+          "en": 4,
+          "th": 2
         },
-        "files": 4,
+        "files": 6,
         "mismatches": 0
       },
-      "xml": {
+      "yaml": {
         "declared": {
           "en": 1,
           "th": 2
@@ -648,57 +666,64 @@
         "files": 3,
         "mismatches": 0
       },
-      "yaml": {
+      "yml": {
         "declared": {
-          "en": 1
+          "th": 1
         },
         "files": 1,
         "mismatches": 0
       }
     },
     "language_matrix": {
-      "en->en": 12,
+      "en->en": 9,
       "en->mixed": 1,
-      "en->prompt_only": 6,
+      "en->prompt_only": 5,
       "en->th": 9,
-      "mixed->en": 20,
+      "mixed->en": 15,
+      "mixed->mixed": 2,
       "mixed->prompt_only": 6,
-      "mixed->th": 4,
+      "mixed->th": 7,
       "th->en": 16,
-      "th->mixed": 3,
+      "th->mixed": 4,
       "th->prompt_only": 3,
-      "th->th": 17
+      "th->th": 12
     },
-    "language_matrix_combinations": 11,
+    "language_matrix_combinations": 12,
     "language_mismatches": 0,
     "language_share_means": {
-      "en": 0.0049,
-      "mixed": 0.54,
-      "th": 0.8075
+      "en": 0.0392,
+      "mixed": 0.4688,
+      "th": 0.7892
     },
     "language_share_samples": {
-      "en": 21,
-      "mixed": 24,
-      "th": 27
+      "en": 17,
+      "mixed": 25,
+      "th": 30
     },
     "language_shares": {
-      "en": 0.2917,
-      "mixed": 0.3333,
-      "th": 0.375
+      "en": 0.2361,
+      "mixed": 0.3472,
+      "th": 0.4167
     },
-    "mixed_attachments": 4,
-    "mixed_attachments_verified": 4,
+    "mixed_attachments": 7,
+    "mixed_attachments_verified": 7,
     "mixed_script_rate": 1.0,
-    "multi_domain_share": 0.2222,
-    "multi_file_cases": 17,
-    "multi_file_share": 0.2361,
-    "negative_ratio": 0.1944,
-    "ocr_cases": 4,
+    "multi_domain_share": 0.1944,
+    "multi_file_cases": 13,
+    "multi_file_share": 0.1806,
+    "native_pdf_attachments": 6,
+    "native_pdf_attachments_verified": 6,
+    "negative_ratio": 0.2917,
+    "ocr_cases": 6,
     "openings": {
       "top": [
         {
           "count": 2,
-          "opening": "customer says attached"
+          "opening": "could you help"
+        },
+        {
+          "count": 2,
+          "opening": "could you take"
         },
         {
           "count": 2,
@@ -706,23 +731,23 @@
         },
         {
           "count": 1,
-          "opening": "api_payload.xml attached. compare"
+          "opening": "app_log.log ช่วยสรุปหน่อย. หัวหน้าขอภายในวันนี้;"
         },
         {
           "count": 1,
-          "opening": "attached access_records.log, ceck"
+          "opening": "application_config.env เตรียมสรุปสำหรับหัวหน้า please"
         },
         {
           "count": 1,
-          "opening": "could you help"
+          "opening": "compare these two"
         },
         {
           "count": 1,
-          "opening": "could you take"
+          "opening": "comprae sales_pipeline_v1.csv, sales_pipeline.xlsx"
         },
         {
           "count": 1,
-          "opening": "employee_list.docx attached. reconcile"
+          "opening": "could you check"
         },
         {
           "count": 1,
@@ -730,134 +755,133 @@
         },
         {
           "count": 1,
-          "opening": "heelp ดู ไฟล์นี้"
-        },
-        {
-          "count": 1,
-          "opening": "hello, attached support_ticket.json,"
+          "opening": "help me out,"
         }
       ],
       "top_share": 0.0278,
-      "unique": 70
+      "unique": 69
     },
     "persona_shares": {
-      "accountant": 0.0417,
-      "analyst": 0.0833,
-      "compliance": 0.0278,
-      "developer": 0.0556,
-      "devops": 0.0417,
-      "executive_assistant": 0.0972,
-      "finance": 0.0417,
-      "healthcare_admin": 0.0694,
-      "hr": 0.1944,
-      "intern": 0.0139,
-      "manager": 0.0972,
-      "sales": 0.0972,
-      "security_engineer": 0.0417,
-      "support": 0.0833,
-      "sysadmin": 0.0139
+      "accountant": 0.0139,
+      "analyst": 0.0556,
+      "compliance": 0.0417,
+      "developer": 0.0833,
+      "devops": 0.0278,
+      "executive_assistant": 0.0556,
+      "finance": 0.0833,
+      "healthcare_admin": 0.0278,
+      "hr": 0.0833,
+      "intern": 0.0694,
+      "manager": 0.0694,
+      "operations": 0.125,
+      "sales": 0.0833,
+      "security_engineer": 0.0278,
+      "support": 0.0694,
+      "sysadmin": 0.0833
     },
-    "prompt_form_top_share": 0.2667,
+    "prompt_form_top_share": 0.2857,
     "prompt_forms": {
-      "copied_chat": 1,
+      "copied_chat": 3,
       "copied_ticket": 1,
       "log_fragment": 1,
-      "pasted_email": 2,
+      "pasted_email": 4,
       "pasted_file": 1,
-      "pasted_table": 2,
-      "raw_notes": 1,
-      "report_excerpt": 2,
-      "short_no_paste": 4,
-      "with_attachment": 57
+      "pasted_table": 1,
+      "short_no_paste": 3,
+      "with_attachment": 58
     },
     "prompt_length": {
-      "max": 1033,
-      "mean": 184.35,
-      "min": 34,
-      "stdev": 233.42
+      "max": 851,
+      "mean": 154.62,
+      "min": 24,
+      "stdev": 181.03
     },
     "prompt_only_forms": {
-      "copied_chat": 1,
+      "copied_chat": 3,
       "copied_ticket": 1,
       "log_fragment": 1,
-      "pasted_email": 2,
+      "pasted_email": 4,
       "pasted_file": 1,
-      "pasted_table": 2,
-      "raw_notes": 1,
-      "report_excerpt": 2,
-      "short_no_paste": 4
+      "pasted_table": 1,
+      "short_no_paste": 3
     },
     "prompt_span_accuracy": 1.0,
+    "raster_attachments": 9,
+    "raster_attachments_verified": 9,
+    "raster_text_shaping_ok": 9,
     "repeated_phrases": {
       "top": [
         {
-          "count": 6,
-          "phrase": "boss wants it by"
+          "count": 5,
+          "phrase": "after the latest release"
         },
         {
-          "count": 4,
-          "phrase": "wants it by 5."
+          "count": 5,
+          "phrase": "an error. the customer"
         },
         {
-          "count": 4,
-          "phrase": "| อีเมล | เบอร์โทร"
+          "count": 5,
+          "phrase": "and is waiting for"
         },
         {
-          "count": 4,
-          "phrase": "อีเมล | เบอร์โทร |"
+          "count": 5,
+          "phrase": "and review the gateway"
         },
         {
-          "count": 3,
-          "phrase": "- confirm the migration"
+          "count": 5,
+          "phrase": "checkout page shows an"
         },
         {
-          "count": 3,
-          "phrase": "- remove the old"
+          "count": 5,
+          "phrase": "confirm the service health"
         },
         {
-          "count": 3,
-          "phrase": "confirm the migration window."
+          "count": 5,
+          "phrase": "customer tried twice and"
         },
         {
-          "count": 3,
-          "phrase": "figure out why it"
+          "count": 5,
+          "phrase": "dashboard and review the"
         },
         {
-          "count": 3,
-          "phrase": "location: internal video call"
+          "count": 5,
+          "phrase": "error. the customer tried"
         },
         {
-          "count": 3,
-          "phrase": "not sure it's the"
+          "count": 5,
+          "phrase": "health dashboard and review"
         }
       ],
-      "top_share": 0.0833
+      "top_share": 0.0694
     },
+    "replacement_glyphs": 0,
     "reproducible": true,
     "residual_english_labels": 0,
-    "routed_attachments": 42,
+    "routed_attachments": 40,
     "safety": {
       "issue_count": 0,
       "issues": [],
       "passed": true
     },
-    "same_archetype_bundle_cases": 8,
+    "same_archetype_bundle_cases": 5,
     "schema_validity": 1.0,
     "split_counts": {
       "test": 7,
       "train": 58,
       "validation": 7
     },
-    "structure_reference_cases": 28,
-    "structure_reference_share": 0.3889,
-    "structure_references_resolved": 30,
-    "structure_references_total": 30,
+    "structure_reference_cases": 23,
+    "structure_reference_share": 0.3194,
+    "structure_references_resolved": 24,
+    "structure_references_total": 24,
     "structure_resolution_rate": 1.0,
+    "thai_file_attachments": 6,
+    "thai_file_attachments_verified": 6,
     "validation_issue_cases": 0,
     "validation_issues": [],
     "verification_status": {
-      "verified": 68,
-      "verified_partial": 4
+      "verified": 64,
+      "verified_partial": 8
     }
   },
   "passed": true,
@@ -871,19 +895,19 @@
   "schema_version": "2.1",
   "seed": 21,
   "total_cases": 72,
-  "total_files": 82,
+  "total_files": 75,
   "verification": {
     "cases": 72,
     "dataset_dir": "D:\\Chula\\CEDT\\Capstone_Project_I\\privacy-gateway-testgen\\datasets\\v2-sample",
     "file_open_rate": 1.0,
-    "files": 82,
+    "files": 75,
     "issues": [],
-    "manifest_checks": 91,
+    "manifest_checks": 86,
     "passed": true,
     "statuses": {
-      "verified": 77,
-      "verified_layout": 5
+      "verified": 66,
+      "verified_layout": 9
     },
-    "verified_files": 82
+    "verified_files": 75
   }
 }

@@ -1,0 +1,239 @@
+{
+  "attachment_count_distribution": {
+    "1": 8,
+    "2": 8
+  },
+  "attachment_extension_distribution": {
+    "docx": 2,
+    "jpeg": 1,
+    "jpg": 4,
+    "md": 1,
+    "pdf": 7,
+    "png": 9
+  },
+  "attachment_language_distribution": {
+    "en": 2,
+    "mixed": 3,
+    "th": 19
+  },
+  "attachments_sha256": {
+    "pgt2-trn-00001/screenshot_chat.jpg": "0b6c0e122c2eda775ea237b5be6429adedcd95ac3bb670d2ef106e0275439f3c",
+    "pgt2-trn-00002/scanned_invoice.pdf": "4d419dd64e4a2835261ffd3d47882ced8410b25b508b093c5782518664f9e743",
+    "pgt2-trn-00003/screenshot_code.jpg": "60ef681179af704f890b08c7d9cb538e59526ad5f556bf8f5573bf04d5ebe920",
+    "pgt2-trn-00004/architecture_notes.pdf": "6f3e06f6bd97a22c56187e7be3981276f5db568e940d2cd8ac648e74b8dda890",
+    "pgt2-trn-00004/screenshot_chat.png": "cbf76ff330fbc630da3898ba81d0f1d80a244a2e69bfa79d49125b487f5f0f45",
+    "pgt2-trn-00005/screenshot_dashboard.png": "b5eef57be66501130984adaf67a0367192319cd2e13bfe3b3490db2bc6829132",
+    "pgt2-trn-00005/support_ticket.docx": "9dcbffd391fb7dc1c1c54d0d0b1b560e2616954bcac5a43a80bd8d59fcc34e0f",
+    "pgt2-trn-00006/screenshot_dashboard.png": "b694120a57d8aa4b516905ab1e371836f2c55bd6601e5ad1774b2d57eb348587",
+    "pgt2-trn-00007/screenshot_dashboard.jpg": "44547886e1c32b022531510867d4a793511102d30d3eea03b95f9e4f4f362647",
+    "pgt2-trn-00008/scanned_invoice.pdf": "c9592da33777c764262737082aa9ec4c32e4a40b1875a07982e8028ada6632d1",
+    "pgt2-trn-00009/screenshot_chat.jpg": "70f6e2f0db1b723e170aba4c130bb1390eab901b556112f540eafb19fd9bc4db",
+    "pgt2-trn-00009/screenshot_chat_v1.png": "82b873efe538333dc22cbf2f92222e8e46c2f707adcb577dacb19138a996c617",
+    "pgt2-trn-00010/meeting_minutes.md": "911d4eecc8873e331de8d920886b114aafed06fd3ef6a6378790dc333b47bc31",
+    "pgt2-trn-00010/meeting_minutes_v1.pdf": "b36d6b71b2c9e856a86afb980c5866ac61ae7e9a6ce70e11119985012561af34",
+    "pgt2-trn-00011/meeting_minutes_v1.pdf": "f56263bd6c9932eb3112f4494fd2eeef1b4e41ffc1b05286437bae2f73462868",
+    "pgt2-trn-00011/meeting_minutes_v2.pdf": "21c8eb551d2aa14826b1f842cbff3ca5aa97e2590880f70f2d49fbd89f2f7e23",
+    "pgt2-trn-00012/screenshot_receipt_v1.png": "e1c8d762a292de5f37fe68560ea371bad5dd7e1808af4d095c9341a0191e97ed",
+    "pgt2-trn-00012/screenshot_receipt_v2.png": "6b53c7bf67525b145122e7099ab86790bf421bdf43916ee27690ea4f5f9228b6",
+    "pgt2-trn-00013/screenshot_email.png": "c0452ebd1156243b0ababdaaceeffa72a366008e74c77ab5583bd0f794fe8729",
+    "pgt2-trn-00013/support_ticket.docx": "a669683f24ee89c8d86c764a96019c7bb7e08f5c5dd0f873e8110e091f8f2dd4",
+    "pgt2-tst-00001/incident_report.pdf": "b0f3971e26ca9568d35c26cf7a86574e5516449a0c7dc0b01a858b6a87a355e6",
+    "pgt2-val-00001/screenshot_form.png": "154283398e68260799d294272c5cc955c29105f24ae1202bb4009a9fcee2e102",
+    "pgt2-val-00002/screenshot_config.jpeg": "a90965075bf01356e0cdcd6e95215e2803679e252eb6f9e83cba51adf0cf254b",
+    "pgt2-val-00002/screenshot_config_v1.png": "6f623944955aed7a41ed25c1b5dcca33d735f00c6ad09276e67628a1240d691c"
+  },
+  "benchmark_excluded_cases": 0,
+  "benchmark_safe_cases": 16,
+  "benchmark_safe_ocr_cases": 13,
+  "benchmark_safe_text_cases": 3,
+  "bundle_distribution": {
+    "multi_file": 3,
+    "old_new": 2,
+    "same_archetype": 3,
+    "single_file": 8
+  },
+  "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
+  "config_sha256": "1167af6863cee6ae7eff2ff422115c68d3205f841681abb1681e6656088e7ccc",
+  "consistency_checks": 87,
+  "consistency_passed": 19,
+  "consistency_rate": 1.0,
+  "consistency_status": {
+    "not_applicable": 68,
+    "passed": 19
+  },
+  "cross_file_link_cases": 8,
+  "dataset_id": "pgt2-21-thai-rendering",
+  "dataset_version": "2.2.0",
+  "difficulty_distribution": {
+    "2": 5,
+    "3": 6,
+    "4": 4,
+    "5": 1
+  },
+  "domain_combinations": {
+    "none": 3,
+    "payment": 4,
+    "pii": 5,
+    "pii+secrets": 2,
+    "secrets": 2
+  },
+  "domain_distribution": {
+    "payment": 4,
+    "pii": 7,
+    "secrets": 4
+  },
+  "evaluation_requirement_distribution": {
+    "direct_text_extraction": 3,
+    "ocr_required": 13
+  },
+  "families": {
+    "test": [
+      "employee_list:txt",
+      "incident_report:pdf",
+      "incident_report:txt",
+      "invoice:pdf",
+      "meeting_minutes:txt",
+      "screenshot_receipt:jpg"
+    ],
+    "train": [
+      "architecture_notes:docx",
+      "architecture_notes:md",
+      "architecture_notes:pdf",
+      "architecture_notes:txt",
+      "employee_list:csv",
+      "employee_list:pdf",
+      "incident_report:docx",
+      "incident_report:md",
+      "invoice:docx",
+      "invoice:xlsx",
+      "meeting_minutes:docx",
+      "meeting_minutes:md",
+      "meeting_minutes:pdf",
+      "scanned_invoice:pdf",
+      "scanned_medical_report:pdf",
+      "screenshot_chat:jpeg",
+      "screenshot_chat:jpg",
+      "screenshot_chat:png",
+      "screenshot_code:jpeg",
+      "screenshot_code:jpg",
+      "screenshot_code:png",
+      "screenshot_config:jpeg",
+      "screenshot_dashboard:jpeg",
+      "screenshot_dashboard:jpg",
+      "screenshot_dashboard:png",
+      "screenshot_email:jpeg",
+      "screenshot_email:jpg",
+      "screenshot_email:png",
+      "screenshot_form:jpeg",
+      "screenshot_form:jpg",
+      "screenshot_id:jpeg",
+      "screenshot_id:jpg",
+      "screenshot_id:png",
+      "screenshot_receipt:jpeg",
+      "screenshot_receipt:png",
+      "screenshot_terminal:jpeg",
+      "screenshot_terminal:jpg",
+      "screenshot_terminal:png",
+      "support_ticket:docx",
+      "support_ticket:json",
+      "support_ticket:md",
+      "transaction_export:csv",
+      "transaction_export:json",
+      "transaction_export:xml"
+    ],
+    "validation": [
+      "employee_list:docx",
+      "employee_list:xlsx",
+      "screenshot_config:jpg",
+      "screenshot_config:png",
+      "screenshot_form:png",
+      "support_ticket:txt",
+      "transaction_export:xlsx"
+    ]
+  },
+  "file_type_distribution": {
+    "docx": 2,
+    "jpeg": 1,
+    "jpg": 4,
+    "md": 1,
+    "pdf": 6,
+    "png": 8
+  },
+  "files": {
+    "all.json": "e335b89789e943aa5754c33a5f15e8ae4c9b1989ae43d2abe61da0052a28fdfa",
+    "benchmark_excluded_cases.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "benchmark_safe_cases.jsonl": "6f5292feb52687f66755095848db9b8fe0062c175299655f4afe91648b7da163",
+    "benchmark_safe_ocr_cases.jsonl": "711ccc54a88f641a92cf9cdd11a77ff7581d3b0ac2f6bc7c91950dfaf8bd8cdf",
+    "benchmark_safe_text_cases.jsonl": "08a6743a50dfb11c92ba6a217bc090f0a832cb7ae4e205d18d564cdc3fc16f62",
+    "cases.jsonl": "6f5292feb52687f66755095848db9b8fe0062c175299655f4afe91648b7da163",
+    "ground_truth/entities.jsonl": "f9ab50551d745af87f56b08a86e99e9f32402ef11c1ef2d69a422ade13ed18f1",
+    "stats.json": "d21237162720e51e2fb7f06e05dc435f1108680d64dd8484814f9170ed479c34",
+    "test.jsonl": "0febcc0306029edcc1633671d9fb58a2a11ab76cf62ebbff1935dbf27df65817",
+    "train.jsonl": "8f39fc15654e6c084827ef747ea04235216c9994c8a009a839bf29ec7c207342",
+    "validation.jsonl": "1b15986ed588535a168756162956d93bc508e656c4a6a551fcd591bba8c641ab"
+  },
+  "generated_at": "2026-01-01T00:00:00Z",
+  "generator_version": "0.4.0",
+  "intent_distribution": {
+    "analyze": 1,
+    "calculate": 1,
+    "classify": 1,
+    "convert_format": 1,
+    "create_chart": 1,
+    "draft_email": 1,
+    "extract_fields": 1,
+    "find_anomalies": 2,
+    "modify_document": 1,
+    "prepare_report": 2,
+    "review_document": 1,
+    "summarize": 2,
+    "troubleshoot": 1
+  },
+  "language_distribution": {
+    "en": 1,
+    "mixed": 6,
+    "th": 9
+  },
+  "language_matrix": {
+    "en->en": 1,
+    "mixed->en": 1,
+    "mixed->th": 8,
+    "th->mixed": 3,
+    "th->th": 11
+  },
+  "near_duplicate_threshold": 0.96,
+  "notes": "Synthetic only. Attachment hashes and case JSON are deterministic for this seed and config.",
+  "persona_distribution": {
+    "analyst": 1,
+    "devops": 1,
+    "executive_assistant": 2,
+    "finance": 1,
+    "healthcare_admin": 2,
+    "intern": 1,
+    "manager": 3,
+    "sales": 3,
+    "support": 1,
+    "sysadmin": 1
+  },
+  "policy_sha256": "542691e4c21940c5dc274c220595ee39b3365439f2f345af42a37f97c57ee1f7",
+  "positive_negative_ratio": {
+    "negative": 3,
+    "positive": 13
+  },
+  "profile": "thai-rendering",
+  "reproducible": true,
+  "schema_version": "2.1",
+  "seed": 21,
+  "split_counts": {
+    "test": 1,
+    "train": 13,
+    "validation": 2
+  },
+  "structure_reference_cases": 4,
+  "total_cases": 16,
+  "total_files": 24,
+  "verification_status": {
+    "verified": 2,
+    "verified_partial": 14
+  }
+}

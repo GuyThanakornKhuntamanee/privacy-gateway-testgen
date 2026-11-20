@@ -4,7 +4,7 @@ Deterministic synthetic test prompts and **exact ground-truth** datasets for
 privacy-aware data gateways, PII detection, DLP, privacy filters, masking /
 tokenization / redaction, and AI sovereignty routing.
 
-This is an Agent Skill plus a dependency-free Python package. It generates
+This is an Agent Skill plus a Python package. It generates
 short, medium and long prompts in Thai, English and mixed language across four
 domains — PII, payment data, secrets/credentials, and infrastructure — with
 multi-domain, contextual, adversarial and negative cases. Every sensitive value
@@ -31,10 +31,14 @@ or LLM-authored prompts go through a separate `verify` stage and stay marked
 
 ## Quick start
 
-Requires Python 3.9+. No third-party packages, no network, no paid API.
+Requires Python 3.9+. Three runtime packages (`Pillow`, `reportlab`, `pypdf`)
+render Thai PDF/image attachments and verify them; there is no network access and
+no paid API at generation time.
 
 ```bash
 # from the repository root
+python -m pip install pillow reportlab pypdf   # or: pip install -e .
+
 PYTHONPATH=src python -m privacy_gateway_testgen generate \
   --config configs/default.json --out datasets/sample
 
@@ -151,8 +155,11 @@ Real, parseable files are emitted for: `txt`, `csv`, `json`, `yaml`, `yml`,
 `java`, `go`, `docx`, `xlsx`, `pptx`, `pdf`, `png`, `jpg` and `jpeg`.
 
 - DOCX/XLSX/PPTX are macro-free OOXML ZIP packages.
-- PDF supports native text, multi-page tables and scanned image-only pages.
-- Images are synthetic screenshots/scans with configurable OCR difficulty.
+- PDF supports native Thai/English text with an embedded Sarabun font and a
+  ToUnicode map, multi-page tables, scanned image-only pages and hybrid pages
+  (native prose plus an embedded screenshot region).
+- Images are synthetic screenshots/scans with configurable OCR difficulty and a
+  real Thai-capable font (Pillow + FreeType + libraqm shaping).
 - Spreadsheets support multiple sheets, hidden sheets, Thai/English headers and
   empty/mixed-type cells.
 - Ground truth uses `xlsx_cell`, `docx_paragraph`, `docx_table_cell`,
@@ -184,12 +191,16 @@ business content. The tested format/language matrix is in
 - **Thai formatting**: Buddhist-era or Gregorian dates (`thai_date_mode`),
   THB currency (`currency_mode`) and Thai labels. English documents stay
   English.
-- **PDF and images are Latin-only** (built-in WinAnsi / bitmap fonts). Thai
-  requests for those renderers are routed to English and record
-  `language_routing: pdf_latin_only` or `<ext>_latin_only`. Routing is
-  per attachment: a Thai DOCX in the same case keeps Thai content. The renderers
-  raise on non-Latin text instead of writing `?`. Logs are technical English and
-  are routed as `log_english_only`.
+- **PDF and images carry Thai, English and mixed content.** The PDF writer embeds
+  the bundled Sarabun TrueType font with a ToUnicode map, so Thai text is real
+  PDF text and extracts back exactly; raster renderers use Pillow with libraqm
+  shaping, so combining marks are placed correctly. `language_capability` for
+  `pdf`, `png`, `jpg` and `jpeg` is `["th", "en", "mixed"]`. Only `log` stays
+  English-only (`log_english_only`), and the routing mechanism is kept for any
+  future renderer with a narrower capability.
+- **Script-aware wrapping.** Thai clusters (base + combining marks) and entity
+  values are never split across lines; the image canvas widens instead, and PDF
+  lines keep entities atomic.
 
 Prompt/attachment language combinations are measured in
 `reports/v2/evaluation.json` under `language_matrix` (for example
@@ -242,6 +253,8 @@ datasets/v2-sample/
 ├── all.json
 ├── stats.json
 ├── benchmark_safe_cases.jsonl
+├── benchmark_safe_text_cases.jsonl
+├── benchmark_safe_ocr_cases.jsonl
 ├── benchmark_excluded_cases.jsonl
 ├── train.jsonl validation.jsonl test.jsonl
 ├── ground_truth/entities.jsonl
@@ -257,28 +270,37 @@ reproduces the case JSON and attachment bytes.
 ### v2 measured sample
 
 The committed `datasets/v2-sample` uses the `benchmark-balanced` profile at seed
-21: 72 cases, 82 attachment files, 21 file types and 3 attachment languages.
+21: 72 cases, 75 attachment files, 19 file types and 3 attachment languages.
 `reports/v2/evaluation.json` records measured values: schema validity 1.0,
 prompt span accuracy 1.0, file open rate 1.0, extraction accuracy 1.0, entity
 location accuracy 1.0, exact/near/document duplicate rate 0.0, negative share
-0.1944, multi-domain share 0.2222 and attachment share 0.7917. Of 72 cases, 68
-are fully verified and 4 are `verified_partial` (image/scanned cases whose
+0.2917, multi-domain share 0.1944 and attachment share 0.8056. Of 72 cases, 64
+are fully verified and 8 are `verified_partial` (image/scanned cases whose
 annotations are render-layout verified, not OCR-verified).
 
-Language is measured, not assumed: prompt languages are Thai 27, English 21,
-mixed 24; attachment languages are Thai 30, English 48, mixed 4; 11 distinct
-prompt→attachment language pairs appear. Mean Thai script share is 0.8075 for
-Thai prompts, 0.54 for mixed prompts and 0.0049 for English prompts, with 0
-attachments below their declared threshold and 0 residual English labels in
-Thai documents. 28 cases carry a structure reference (all 30 references
-resolve), 17 cases have cross-file links (77 links), 17 cases are multi-file,
-8 contain a same-archetype pair and 5 are old/new revisions. The sample includes
-an invoice + transaction-export + purchase-order bundle whose linked amount
-(193,519 THB), currency and transaction reference all agree. 15 cases are
-prompt-only and use 9 distinct content forms.
+Language is measured, not assumed: prompt languages are Thai 30, English 17,
+mixed 25; attachment languages are Thai 28, English 40, mixed 7. Six attachments
+are Thai/mixed PDF or images, all render-verified; 6 native PDFs all extract
+their canonical text back, and 2 are hybrid pages. 6 cases need OCR from the
+gateway (`evaluation_requirement: ocr_required`) and 66 are direct text cases.
 
-Consistency reporting is structured: of 342 checks in the sample, 78 are
-`passed`, 264 are `not_applicable` (for example a structure-resolution check in
+`datasets/v2-thai-sample` is a focused 16-case sample from the new
+`thai-rendering` profile (24 files: Thai native, scanned and hybrid PDFs; Thai
+PNG/JPG/JPEG screenshots; mixed Thai-English images; cross-file Thai cases). It
+exists so the Thai rendering path can be inspected without reading tests.
+
+Language is measured, not assumed: prompt languages are Thai 30, English 17,
+mixed 25; attachment languages are Thai 28, English 40, mixed 7; 12 distinct
+prompt→attachment language pairs appear. Mean Thai script share is 0.7892 for
+Thai prompts, 0.4688 for mixed prompts and 0.0392 for English prompts, with 0
+attachments below their declared threshold and 0 residual English labels in
+Thai documents. 23 cases carry a structure reference (all 24 references
+resolve), 13 cases have cross-file links (61 links), 13 cases are multi-file
+and 5 contain a same-archetype pair. 15 cases are prompt-only and use 7 distinct
+content forms.
+
+Consistency reporting is structured: of 348 checks in the sample, 66 are
+`passed`, 282 are `not_applicable` (for example a structure-resolution check in
 a case whose prompt cites no structure) and 0 are `failed` or `not_evaluated`.
 `not_applicable` is never counted as a pass.
 
@@ -287,11 +309,18 @@ a case whose prompt cites no structure) and 0 are `failed` or `not_evaluated`.
 `report-v2` computes `benchmark_ready` from dataset-level evidence, not from
 unit tests: verified ground truth, no failed or unevaluated consistency check,
 no known high correctness issue, valid timeline and entity ground truth,
-measured language metadata, safety checks, no schema errors and a reproducibility
-check. It also writes `benchmark_safe_cases.jsonl` and
+measured language metadata, no replacement glyphs, render-verified Thai
+PDF/image attachments, safety checks, no schema errors and a reproducibility
+check. It also writes `benchmark_safe_cases.jsonl`,
+`benchmark_safe_text_cases.jsonl`, `benchmark_safe_ocr_cases.jsonl` and
 `benchmark_excluded_cases.jsonl` into the dataset; excluded cases list their
-reasons. The committed sample reports `benchmark_ready: true` with 68 safe cases
-and 4 exclusions (layout-only OCR cases).
+reasons.
+
+The split is by modality, not by quality: a raster case whose layout and
+canonical text are verified is a trustworthy testcase — the gateway under test
+performs the OCR — but it does not belong in the same subset as a
+text-extraction case. The committed sample reports `benchmark_ready: true` with
+72 safe cases: 66 `direct_text_extraction` and 6 `ocr_required`, 0 excluded.
 
 `benchmark_ready` is only `true` when the report was generated with
 `--check-reproducible`, so the reproducibility claim is measured rather than
@@ -301,15 +330,17 @@ assumed.
 
 These are deliberate and documented rather than hidden:
 
-- PDF content is English/Latin because the standard-library PDF writer uses
-  built-in WinAnsi fonts. Thai PDF requests are routed to English DOCX/XLSX/TXT
-  and record `language_routing`; the PDF renderer raises rather than replacing
-  Thai glyphs with `?`.
-- Images use a bitmap Latin font. Thai image scenarios are routed to English
-  and record `language_routing`; image/scanned-PDF OCR is verified at layout
-  level, not with a third-party OCR engine.
-- Rotated OCR images keep pre-render bounding boxes (`bbox_space:
-  pre_render`).
+- Native PDF text is embedded Sarabun TrueType with a ToUnicode map, so Thai and
+  mixed text extracts back exactly. Byte-identical PDF bytes are guaranteed for
+  one pinned ReportLab version on one platform; across versions only the content
+  (text, spans, boxes, case JSON) is reproducible.
+- Raster assets (PNG/JPEG, scanned PDF pages and hybrid PDF image regions) are
+  verified at layout level. No OCR engine runs in the test suite, so OCR
+  accuracy is not claimed; canonical pre-render text stays the ground truth and
+  these cases are marked `verified_partial` at case level.
+- Raster degradation (noise, blur, small rotation, brightness gradient) changes
+  pixels. Bounding boxes are transformed to the final image
+  (`bbox_space: final`), so a box can cover slightly more area than the ink.
 - PPTX speaker notes and native PowerPoint tables are not emitted yet. No XLSX
   formulas are emitted; cells contain values, and multi-sheet workbooks can mark
   a sheet hidden.
@@ -317,8 +348,8 @@ These are deliberate and documented rather than hidden:
 - Archives, password-protected files, audio, video and executables are out of
   scope.
 - `report-v2` reports what it measured; a `verified_partial` case must not be
-  treated as OCR accuracy evidence and is excluded from the benchmark-safe
-  subset.
+  treated as OCR accuracy evidence, and it belongs to the OCR-required subset
+  rather than the text subset.
 - Cross-file consistency is checked against generated annotations and the
   scenario plan; no downstream gateway is executed.
 - `verification.json` records the absolute dataset path, so reports are

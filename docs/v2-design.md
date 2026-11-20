@@ -110,12 +110,13 @@ configurable in `language_thresholds`). A file that does not satisfy its
 requested language is relabelled (`language_routing: relabelled_from_*`) or
 rejected; it is never silently accepted.
 
-PDF, image and log renderers are English-only. Routing is per attachment: a Thai
-DOCX in the same case keeps Thai content while the PDF next to it is rendered in
-Latin with `language_routing`. A Latin-only rendering of a Thai identity
-(`ลลิตา พูลสวัสดิ์` -> `Lalita Poolsawat`) keeps the canonical value, so both
-representations link to the same identity. The renderers raise on non-Latin
-characters instead of writing `?`.
+PDF and raster renderers carry Thai, English and mixed content (v2.2): native PDF
+text is embedded Sarabun TrueType with a ToUnicode map, and raster text is shaped
+with Pillow + libraqm. Only `log` is English-only, and the routing mechanism stays
+per attachment. Rendering a Thai identity in its Thai form
+(`ลลิตา พูลสวัสดิ์`) or its Latin form (`Lalita Poolsawat`) keeps one canonical
+value, so both representations link to the same identity. A renderer that cannot
+carry a language raises instead of writing `?`.
 
 ### Scenario plan and cross-file links (2.1)
 
@@ -216,12 +217,18 @@ are realistic by design; their collision risk is documented in `SECURITY.md`.
 
 ## Renderer dependencies
 
-The package stays standard-library only:
+Declared dependencies, introduced in v2.2 for Thai PDF/image rendering:
+
+- `Pillow` (FreeType glyphs, libraqm shaping, PNG/JPEG encoders, degradation);
+- `reportlab` (PDF canvas, TrueType embedding, ToUnicode maps);
+- `pypdf` (independent PDF text extraction during verification).
+
+Bundled asset: Sarabun Regular/Bold (SIL OFL 1.1) inside the package. No system
+font is discovered and no renderer falls back to another face.
+
+Everything else stays stdlib:
 
 - DOCX/XLSX/PPTX: `zipfile` + OOXML XML written directly;
-- PDF: a small PDF 1.4 writer (Helvetica/WinAnsi, native text and image XObjects);
-- PNG: `zlib` + CRC, with a bitmap font for OCR-oriented screenshots;
-- JPEG: baseline grayscale encoder (no third-party imaging library);
 - YAML/TOML/INI/ENV: purpose-built emitters for the generator's own subset.
 
 No renderer invokes a shell, macro, network request or external binary.
@@ -277,18 +284,18 @@ the same case JSON and attachment bytes.
     company host or macro exists in generated output.
 12. The evaluation report contains only measured values and names limitations.
 
-## Known limitations (2.1)
+## Known limitations (2.2)
 
-- The PDF renderer uses built-in WinAnsi fonts, so PDF attachment content is
-  English/Latin; Thai PDF content is routed to DOCX/XLSX/TXT and marked with
-  `language_routing`. The renderer raises on non-Latin text rather than
-  substituting `?`.
-- Images use a bundled bitmap font and are Latin-script only; Thai image
-  scenarios are routed to English with explicit metadata.
+- Native PDF text is embedded Sarabun TrueType with a ToUnicode map, so Thai and
+  mixed text extract back exactly. Byte-identical PDF bytes hold for one pinned
+  ReportLab version on one platform; across versions only content (text, spans,
+  boxes, case JSON) is reproducible.
 - Image/scanned-PDF OCR is not performed with a third-party OCR engine in the
-  test suite; image annotations are layout-verified and marked accordingly. At
-  OCR difficulty 3–4 a rotation is applied after layout, so bounding boxes are
-  in pre-render coordinates (`bbox_space: pre_render`).
+  test suite; image annotations are layout-verified and marked accordingly.
+  Rotation at OCR difficulty 3-4 is applied after layout and the bounding boxes
+  are transformed with it (`bbox_space: final`).
+- Raster cases are trustworthy testcases but require OCR from the gateway under
+  test; they are listed in the separate OCR-required benchmark subset.
 - PPTX speaker notes and real PowerPoint tables are not emitted yet; slide body
   text and later-slide placement are supported.
 - YAML/TOML/INI/ENV round-trip uses the generator's strict subset parser, not

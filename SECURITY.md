@@ -56,10 +56,12 @@ Image OCR annotations are **pre-render ground truth**. The test suite does not
 run an OCR engine; image and scanned-PDF cases are marked `verified_layout` and
 must not be presented as OCR accuracy evidence.
 
-PDF and image renderers are Latin-only. A Thai request for those renderers is
-routed to English and recorded as `language_routing`; the renderers raise on
-non-Latin text instead of writing `?`. Thai content belongs in DOCX, XLSX, PPTX
-or text formats. No Thai PDF or Thai OCR-image capability is claimed.
+PDF and image renderers carry Thai, English and mixed content: the PDF writer
+embeds the bundled Sarabun font with a ToUnicode map, and raster text is shaped
+with Pillow + libraqm. A missing font asset or shaping support raises instead of
+writing `?`. Only `log` is English-only. Thai text still belongs to the gateway
+under test's OCR when it arrives as a raster asset; the generator does not run
+OCR.
 
 Cross-file links and arithmetic checks describe the generated scenario only.
 They do not certify that a downstream gateway performs the same correlation.
@@ -130,9 +132,12 @@ and report it.
 
 ## Dependency and supply-chain posture
 
-- Runtime dependencies: none (Python standard library only).
+- Runtime dependencies: `Pillow`, `reportlab`, `pypdf` (declared in
+  `pyproject.toml`, installed by the user or CI; no runtime network access).
+- Bundled asset: Sarabun Regular/Bold (SIL OFL 1.1) with its license text under
+  `src/privacy_gateway_testgen/assets/fonts/`.
 - Tests: Python standard library `unittest`.
-- No package installs are performed by the generator.
+- The generator performs no package installs and no outbound requests.
 - The CI workflow uses GitHub-hosted runners and `actions/setup-python`; pinning
   action SHAs is recommended for hardened deployments.
 

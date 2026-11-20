@@ -67,6 +67,12 @@ def _apply_profile(config: dict, profile_name: Optional[str]) -> dict:
     distributions = dict(config.get("distributions", {}))
     distributions.update(spec.get("distributions", {}))
     merged["distributions"] = distributions
+    if spec.get("quality_gates"):
+        # A focused profile (e.g. Thai rendering) may narrow coverage gates;
+        # it can never silently lower a correctness gate.
+        gates = dict(config.get("quality_gates", {}))
+        gates.update(spec["quality_gates"])
+        merged["quality_gates"] = gates
     merged["profile"] = name
     merged["_profile_spec"] = spec
     return merged

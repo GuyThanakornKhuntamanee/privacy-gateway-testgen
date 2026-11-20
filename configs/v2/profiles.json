@@ -130,5 +130,30 @@
     "archetype_filter": {
       "categories": ["HR", "Finance", "Sales", "Management", "Operations", "Healthcare", "IT", "CRM"]
     }
+  },
+  "thai-rendering": {
+    "description": "Thai-first PDF, scanned PDF and screenshot coverage for the v2.2 Thai rendering path.",
+    "distributions": {
+      "language": {"th": 0.60, "en": 0.10, "mixed": 0.30},
+      "attachment_language": {"th": 0.60, "en": 0.10, "mixed": 0.30},
+      "file_type": {"pdf": 0.45, "png": 0.30, "jpg": 0.20, "jpeg": 0.05},
+      "attachment_probability": 1.0,
+      "attachment_count": {"1": 0.70, "2": 0.30, "3": 0.0},
+      "ocr_difficulty": {"1": 0.25, "2": 0.35, "3": 0.25, "4": 0.15},
+      "negative_ratio": 0.10,
+      "multi_domain_ratio": 0.25,
+      "typo_rate": 0.18
+    },
+    "archetype_filter": {
+      "id_prefix": ["screenshot_", "scanned_", "invoice", "incident_report", "employee_list",
+                    "meeting_minutes", "support_ticket", "transaction_export", "architecture_notes"]
+    },
+    "quality_gates": {
+      "min_file_type_count": 4,
+      "min_archetype_count": 4,
+      "min_persona_count": 3,
+      "min_intent_count": 4,
+      "min_domain_count": 2
+    }
   }
 }

@@ -1,0 +1,11 @@
+# synthetic example - not real data
+app:
+  name: orders-api
+  environment: production
+  port: 8080
+logging:
+  level: info
+  destination: stdout
+database:
+  engine: postgresql
+  port: 5432

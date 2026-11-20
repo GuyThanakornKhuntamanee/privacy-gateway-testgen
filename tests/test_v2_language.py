@@ -15,7 +15,8 @@ from privacy_gateway_testgen.v2.docmodel import DocBuilder, cell
 from privacy_gateway_testgen.v2.extract import verify_attachment
 from privacy_gateway_testgen.v2.generate import V2Generator
 from privacy_gateway_testgen.v2.localization import (
-    document_text, format_currency, format_date, label, localize_doc, script_counts,
+    document_text, format_currency, format_date, label, localize_doc,
+    localize_labels_inline, script_counts,
 )
 from privacy_gateway_testgen.v2.org import make_org
 from privacy_gateway_testgen.v2.renderers import render
@@ -81,14 +82,36 @@ class LocalizationTests(unittest.TestCase):
         text = document_text(doc)
         self.assertEqual(script_counts(text)["thai_characters"], 0)
 
-    def test_pdf_and_image_refuse_thai_instead_of_replacing_glyphs(self):
+    def test_relocalizing_labels_never_stacks_translations(self):
+        text = "Bill to: Acme | Date: 18 Mar 2026 | VAT 7%: 33,534.00"
+        mixed = localize_labels_inline(text, "mixed")
+        self.assertEqual(localize_labels_inline(mixed, "mixed"), mixed)
+        thai = localize_labels_inline(mixed, "th")
+        self.assertEqual(thai.count("เรียกเก็บเงินจาก"), 1)
+        self.assertEqual(thai.count("วันที่"), 1)
+        self.assertNotIn("วันที่ / วันที่", thai)
+        self.assertEqual(localize_labels_inline(thai, "th"), thai)
+
+    def test_pdf_and_image_render_thai_without_replacement_glyphs(self):
+        from privacy_gateway_testgen.v2.extract import verify_attachment as verify
+
         builder = DocBuilder("memo", "รายงานภาษาไทย", "memo.pdf", "th")
-        builder.para("ทดสอบ ", Entity("pii", "thai_name", "สมชาย ใจดี"))
+        builder.para("ทดสอบ ", Entity("pii", "thai_name", "สมชาย ใจดี"),
+                     " เนื้อ เบื้องต้น กำลังตรวจสอบ")
         doc = builder.build()
-        with self.assertRaises(ValueError):
-            render(doc, "pdf", "memo.pdf")
-        with self.assertRaises(ValueError):
-            render(doc, "png", "memo.png")
+        for extension in ("pdf", "png", "jpg"):
+            rendered = render(doc, extension, f"memo.{extension}")
+            verified = verify(rendered.data, extension, rendered.mime_type,
+                              rendered.entity_locations, rendered.meta)
+            self.assertEqual(verified["issues"], [], extension)
+            self.assertIn(verified["status"], ("verified", "verified_layout"))
+            for item in rendered.entity_locations:
+                location = item["location"]
+                if location.get("kind") not in ("image_ocr", "pdf_image"):
+                    continue
+                text = location.get("expected_ocr_text", "")
+                self.assertNotIn("\ufffd", text)
+                self.assertIn("สมชาย ใจดี", text)
 
 
 class PerAttachmentLanguageTests(unittest.TestCase):
@@ -112,13 +135,19 @@ class PerAttachmentLanguageTests(unittest.TestCase):
             if item["language"] == "th":
                 self.assertTrue(item["language_check"]["contains_thai"])
 
-    def test_pdf_and_image_are_routed_to_english(self):
+    def test_pdf_and_image_declare_thai_capability(self):
+        seen = 0
         for case in self.dataset["cases"]:
             for attachment in case["attachments"]:
-                if attachment["extension"] in ("pdf", "png", "jpg", "jpeg"):
-                    self.assertEqual(attachment["language"], "en")
-                    self.assertTrue(attachment["language_routing"])
-                    self.assertEqual(attachment["language_capability"], ["en"])
+                if attachment["extension"] not in ("pdf", "png", "jpg", "jpeg"):
+                    continue
+                seen += 1
+                self.assertFalse(str(attachment["language_routing"] or "").endswith("_latin_only"))
+                self.assertEqual(attachment["language_capability"], ["th", "en", "mixed"])
+                self.assertIn(attachment["language"], attachment["language_capability"])
+                self.assertIn(attachment["evaluation_requirement"],
+                              ("direct_text_extraction", "ocr_required"))
+        self.assertGreater(seen, 0)
 
     def test_language_matrix_is_measured(self):
         matrix = self.dataset["stats"]["language_matrix"]

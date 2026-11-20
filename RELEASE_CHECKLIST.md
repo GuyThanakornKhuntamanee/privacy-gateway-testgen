@@ -20,7 +20,8 @@ Run every item before publishing a tag. Do not publish if any gate fails.
 
 - [ ] `PYTHONPATH=src python -m unittest discover -s tests -t . -v` — all pass.
 - [ ] No skipped tests for functionality that is claimed to work.
-- [ ] No third-party runtime imports.
+- [ ] No undeclared third-party runtime imports (`Pillow`, `reportlab`, `pypdf`
+      are the declared ones).
 - [ ] `python -m compileall src` succeeds.
 - [ ] Each v2 renderer family reopens and verifies (`tests/test_v2_renderers.py`).
 

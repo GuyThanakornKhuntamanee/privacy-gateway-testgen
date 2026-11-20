@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import copy
+import io
 import random
 import unittest
+
+from pypdf import PdfReader
 
 from tests.support import ROOT
 from privacy_gateway_testgen.entities import EntityPool
@@ -20,6 +23,10 @@ from privacy_gateway_testgen.v2.validation import validate_dataset_v2, validate_
 
 CONFIG = str(ROOT / "configs" / "v2" / "default.json")
 POLICY = str(ROOT / "configs" / "policy.default.json")
+
+
+def pdf_text(data: bytes) -> str:
+    return "\n".join(page.extract_text() or "" for page in PdfReader(io.BytesIO(data)).pages)
 
 
 def context(domains=("pii", "payment", "secrets", "infrastructure"), latin_only: bool = False):
@@ -57,7 +64,7 @@ class ScenarioConsistencyTests(unittest.TestCase):
             self.assertTrue(check["passed"], check)
         rendered = render(doc, "pdf", "invoice.pdf")
         self.assertIn(scenario.shared("infrastructure", "internal_url", "url").value,
-                      rendered.data.decode("latin-1"))
+                      pdf_text(rendered.data))
 
     def test_payroll_and_statement_arithmetic(self):
         ctx, scenario = context()
@@ -79,7 +86,7 @@ class ScenarioConsistencyTests(unittest.TestCase):
         self.assertIn(api_key, str(env.record))
         rendered_invoice = render(invoice, "pdf", "invoice.pdf")
         rendered_env = render(env, "env", "prod.env")
-        self.assertIn(api_key.encode(), rendered_invoice.data)
+        self.assertIn(api_key, pdf_text(rendered_invoice.data))
         self.assertIn(api_key.encode(), rendered_env.data)
 
 
