@@ -92,7 +92,7 @@ jobs:
           PYTHONPATH: src
           PYTHONHASHSEED: "0"
         run: |
-          python -c "
+          python - <<'PY'
           import json
           cases = [json.loads(l) for l in open('build/v2-thai-dataset/cases.jsonl', encoding='utf-8') if l.strip()]
           files = [a for c in cases for a in c['attachments'] if a['extension'] in ('pdf', 'png', 'jpg', 'jpeg')]
@@ -101,7 +101,7 @@ jobs:
           assert len(thai) >= 4, 'expected Thai PDF/image attachments, got %d' % len(thai)
           assert not bad, 'unverified Thai renderer output: %s' % bad
           print('%d PDF/image attachments verified, %d Thai or mixed' % (len(files), len(thai)))
-          "
+          PY
       - name: Upload evaluation reports
         uses: actions/upload-artifact@v4
         with:
