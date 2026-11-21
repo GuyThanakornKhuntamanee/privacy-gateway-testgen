@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customerExport>
+  <exported_at>2026-03-18T09:12:44Z</exported_at>
+  <payment>
+    <card>4242428291028366</card>
+    <amount>12,400.00</amount>
+    <reference>TXN-2026-44846704</reference>
+  </payment>
+  <_language_note>เอกสารนี้ใช้ภายในองค์กรเท่านั้น</_language_note>
+</customerExport>

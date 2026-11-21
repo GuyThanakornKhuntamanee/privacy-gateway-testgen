@@ -1,0 +1,30 @@
+{
+  "title": "ตั๋วสนับสนุน",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "Support ticket #75758"
+    },
+    {
+      "kind": "paragraph",
+      "text": "ผู้แจ้ง / Requester: ณัฐพล อินทรีย์ <anan.piyada1@example.net>"
+    },
+    {
+      "kind": "paragraph",
+      "text": "เบอร์โทร / Phone: 065-704-9055  บัญชี: CUS-908"
+    },
+    {
+      "kind": "paragraph",
+      "text": "ปัญหา: after the latest release the checkout page shows an error. The customer tried twice and is waiting for an update."
+    },
+    {
+      "kind": "paragraph",
+      "text": "รหัสคำขอ: req-17177"
+    },
+    {
+      "kind": "paragraph",
+      "text": "ขั้นตอนถัดไปที่แนะนำ: confirm the service health dashboard and review the gateway log."
+    }
+  ],
+  "_language_note": "เอกสารนี้ใช้ภายในองค์กรเท่านั้น"
+}

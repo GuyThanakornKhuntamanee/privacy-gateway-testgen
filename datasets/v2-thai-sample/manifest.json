@@ -1,0 +1,240 @@
+{
+  "attachment_count_distribution": {
+    "1": 11,
+    "2": 5
+  },
+  "attachment_extension_distribution": {
+    "docx": 1,
+    "jpg": 7,
+    "md": 1,
+    "pdf": 7,
+    "png": 5
+  },
+  "attachment_language_distribution": {
+    "en": 1,
+    "mixed": 1,
+    "th": 19
+  },
+  "attachments_sha256": {
+    "pgt2-trn-00001/screenshot_chat.jpg": "234aedf1ef65498e2b76ab22dc2ca6856aa245ff1de781a0ed50abd3e353a845",
+    "pgt2-trn-00002/scanned_invoice.pdf": "642de0ae3642ce7cfaeae0ff7deafdd5a99f9dad64e0b69bee712776e2e89372",
+    "pgt2-trn-00003/screenshot_code.jpg": "741b96719b1bd39c1d0cc20b0c647c832971f9c8201a3d01e95ab62d7f379f4e",
+    "pgt2-trn-00004/architecture_notes.pdf": "695ca8fd473457534938bba63fd5b4f3de6939bf40918f3e597ab1b58c9754f6",
+    "pgt2-trn-00004/screenshot_chat.png": "7a40a44390c37681ed0eaaa3ef75edff0e74b581ea436a9e2226a7fe3909208c",
+    "pgt2-trn-00005/screenshot_dashboard.png": "77ef55c90a13d779b35dacb64daeb250df2bcd77eef3e0807fb8049ad3bbb7bf",
+    "pgt2-trn-00005/support_ticket.docx": "521bef44f02f9014397ba2dbf470debc00491eab73e4eb02fce8f646497904fc",
+    "pgt2-trn-00006/screenshot_dashboard.png": "20cf411adfa8d750b48372ef8df83be68f78a853d2264bf70e5e1db757b58c25",
+    "pgt2-trn-00007/screenshot_dashboard.jpg": "126ae58d47f91a77e6ae8a645663a78bac7a4776f6c34d8ad5a798ba0c06b070",
+    "pgt2-trn-00008/scanned_invoice.pdf": "3b782d4a8a6074bf2a1e1fc9e426aa380e08fa92e063ffc80afe0884b8a53ad7",
+    "pgt2-trn-00009/screenshot_chat.jpg": "10c4d6245ba8de9fccd0fc225198bdf0b08affbbc07c8c715f4e9c0c2bf985d3",
+    "pgt2-trn-00009/screenshot_chat_v1.png": "da6c64ac350bc62f910928ba9bb46eebba460238bb110278d9cba58cb0fd248d",
+    "pgt2-trn-00010/meeting_minutes.md": "911d4eecc8873e331de8d920886b114aafed06fd3ef6a6378790dc333b47bc31",
+    "pgt2-trn-00010/meeting_minutes_v1.pdf": "3bcac11fa6114e1a3f2e7af944d2d39d2ff89524dfc4f650a55f7baf21b0d00e",
+    "pgt2-trn-00011/meeting_minutes_v1.pdf": "aa5ce169b4035d96d0bbe86747047f49552f7662d348a4a7c6145c007c6bbf64",
+    "pgt2-trn-00011/meeting_minutes_v2.pdf": "b95aa0ee2f5c4b4a8eed3db0eb4f7e1fefb799a1508d029e15980f1b567391d4",
+    "pgt2-trn-00012/architecture_notes.pdf": "70cf19bc51bff6a2e82893aafafc5d31dad01749d6f9e0d3b3aa5edd99e1bff5",
+    "pgt2-trn-00013/screenshot_chat.jpg": "79ddb48fcf1d05fb8685b1bc55929719f1621ee02724736b446d33b51af1dd2d",
+    "pgt2-tst-00001/screenshot_receipt.jpg": "7a0ef3bcc4a99e3d13334ae3206bf91504429fa93bfc16c5dd8fdb612239db82",
+    "pgt2-val-00001/screenshot_config.png": "fb607a1f0dba912cdfb696b7f0001351b2f2873e8fd8526ab7dcd3e72d2d706e",
+    "pgt2-val-00002/screenshot_config.jpg": "23700917c6f78fff934df0e4049b995e47e8bc7641ea64d8fc8be6830c42f867"
+  },
+  "benchmark_excluded_cases": 0,
+  "benchmark_safe_cases": 16,
+  "benchmark_safe_ocr_cases": 13,
+  "benchmark_safe_text_cases": 3,
+  "bundle_distribution": {
+    "multi_file": 2,
+    "old_new": 1,
+    "same_archetype": 2,
+    "single_file": 11
+  },
+  "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
+  "config_sha256": "48ac0dfd15c03e6226921bc33f97dd2fcf8c0adfbecf4aca07d3c5d398f881c8",
+  "consistency_checks": 86,
+  "consistency_passed": 16,
+  "consistency_rate": 1.0,
+  "consistency_status": {
+    "not_applicable": 70,
+    "passed": 16
+  },
+  "cross_file_link_cases": 5,
+  "dataset_id": "pgt2-21-thai-rendering",
+  "dataset_version": "2.2.0",
+  "difficulty_distribution": {
+    "1": 1,
+    "2": 2,
+    "3": 7,
+    "4": 4,
+    "5": 2
+  },
+  "disclosure": "metadata",
+  "domain_combinations": {
+    "infrastructure": 1,
+    "infrastructure+secrets": 1,
+    "none": 2,
+    "payment": 4,
+    "pii": 4,
+    "pii+secrets": 2,
+    "secrets": 2
+  },
+  "domain_distribution": {
+    "infrastructure": 2,
+    "payment": 4,
+    "pii": 6,
+    "secrets": 5
+  },
+  "evaluation_requirement_distribution": {
+    "direct_text_extraction": 3,
+    "ocr_required": 13
+  },
+  "families": {
+    "test": [
+      "employee_list:txt",
+      "incident_report:pdf",
+      "incident_report:txt",
+      "invoice:pdf",
+      "meeting_minutes:txt",
+      "screenshot_receipt:jpg"
+    ],
+    "train": [
+      "architecture_notes:docx",
+      "architecture_notes:md",
+      "architecture_notes:pdf",
+      "architecture_notes:txt",
+      "employee_list:csv",
+      "employee_list:pdf",
+      "incident_report:docx",
+      "incident_report:md",
+      "invoice:docx",
+      "invoice:xlsx",
+      "meeting_minutes:docx",
+      "meeting_minutes:md",
+      "meeting_minutes:pdf",
+      "scanned_invoice:pdf",
+      "scanned_medical_report:pdf",
+      "screenshot_chat:jpeg",
+      "screenshot_chat:jpg",
+      "screenshot_chat:png",
+      "screenshot_code:jpeg",
+      "screenshot_code:jpg",
+      "screenshot_code:png",
+      "screenshot_config:jpeg",
+      "screenshot_dashboard:jpeg",
+      "screenshot_dashboard:jpg",
+      "screenshot_dashboard:png",
+      "screenshot_email:jpeg",
+      "screenshot_email:jpg",
+      "screenshot_email:png",
+      "screenshot_form:jpeg",
+      "screenshot_form:jpg",
+      "screenshot_id:jpeg",
+      "screenshot_id:jpg",
+      "screenshot_id:png",
+      "screenshot_receipt:jpeg",
+      "screenshot_receipt:png",
+      "screenshot_terminal:jpeg",
+      "screenshot_terminal:jpg",
+      "screenshot_terminal:png",
+      "support_ticket:docx",
+      "support_ticket:json",
+      "support_ticket:md",
+      "transaction_export:csv",
+      "transaction_export:json",
+      "transaction_export:xml"
+    ],
+    "validation": [
+      "employee_list:docx",
+      "employee_list:xlsx",
+      "screenshot_config:jpg",
+      "screenshot_config:png",
+      "screenshot_form:png",
+      "support_ticket:txt",
+      "transaction_export:xlsx"
+    ]
+  },
+  "file_type_distribution": {
+    "docx": 1,
+    "jpg": 7,
+    "md": 1,
+    "pdf": 6,
+    "png": 5
+  },
+  "files": {
+    "NOTICE.md": "4ab85ebedc21ed01f5b60d3e6281c88174a3ea01df1f564806aee572d728478c",
+    "all.json": "e8f0bfe190e01b1af1d339571158fdd928718ada460aa6ca10979971133ddafe",
+    "benchmark_excluded_cases.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "benchmark_safe_cases.jsonl": "f8610a5e65b5b5628341f220aea8456d5375b700d83f9d23d1c1e678cad17c3e",
+    "benchmark_safe_ocr_cases.jsonl": "7b9ef38d55424eb0a5bf349ec7bfbbd25639682170896b667dbea7e819e1d7e2",
+    "benchmark_safe_text_cases.jsonl": "6eafa1afce696407a78a17a63828a0becee60b94ffe02f42e688b1b48a27e1ab",
+    "cases.jsonl": "f8610a5e65b5b5628341f220aea8456d5375b700d83f9d23d1c1e678cad17c3e",
+    "ground_truth/entities.jsonl": "534e5b4d9ed23d7cd4b9b3d74b161c20fd36f59a199fb63c7e1c3e015d5bcba1",
+    "stats.json": "b0739100cc768aa66d06712bcb11e8a8be412e5a4b2fc7c62bbab819c82f45c3",
+    "test.jsonl": "473fdb40250af95d9e2c7599d413485506c1e3b61844a6a6b93fac8ad0602be3",
+    "train.jsonl": "25b5e4acdef2f8a10360be30be943d15bed73b960444b72b0a5eb49d58022e9f",
+    "validation.jsonl": "1770433fe93071bc36a49b75566845c43bbc3787002f177d40837ed29df18187"
+  },
+  "generated_at": "2026-01-01T00:00:00Z",
+  "generator_version": "0.4.0",
+  "intent_distribution": {
+    "analyze": 2,
+    "calculate": 1,
+    "classify": 1,
+    "draft_email": 1,
+    "extract_fields": 1,
+    "find_anomalies": 2,
+    "prepare_report": 2,
+    "review_document": 1,
+    "summarize": 4,
+    "troubleshoot": 1
+  },
+  "language_distribution": {
+    "en": 2,
+    "mixed": 4,
+    "th": 10
+  },
+  "language_matrix": {
+    "en->en": 1,
+    "en->th": 1,
+    "mixed->th": 5,
+    "th->mixed": 1,
+    "th->th": 13
+  },
+  "near_duplicate_threshold": 0.96,
+  "notes": "Synthetic only (see NOTICE.md). Attachment hashes and case JSON are deterministic for this seed and config.",
+  "persona_distribution": {
+    "analyst": 2,
+    "devops": 1,
+    "executive_assistant": 1,
+    "finance": 1,
+    "healthcare_admin": 2,
+    "hr": 1,
+    "intern": 1,
+    "manager": 2,
+    "operations": 1,
+    "sales": 2,
+    "support": 2
+  },
+  "policy_sha256": "542691e4c21940c5dc274c220595ee39b3365439f2f345af42a37f97c57ee1f7",
+  "positive_negative_ratio": {
+    "negative": 2,
+    "positive": 14
+  },
+  "profile": "thai-rendering",
+  "reproducible": true,
+  "schema_version": "2.1",
+  "seed": 21,
+  "split_counts": {
+    "test": 1,
+    "train": 13,
+    "validation": 2
+  },
+  "structure_reference_cases": 5,
+  "synthetic": true,
+  "synthetic_notice": "NOTICE.md",
+  "total_cases": 16,
+  "total_files": 21,
+  "verification_status": {
+    "verified": 2,
+    "verified_partial": 14
+  }
+}

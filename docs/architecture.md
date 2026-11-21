@@ -117,11 +117,15 @@ entities and determine routing. This makes "highest applicable action
 prevails" testable and lets a deployment replace the illustrative default with
 its own policy without changing code.
 
-### Standard library only
+### Declared, justified dependencies
 
-The package has no runtime dependencies, makes no network calls, and uses
-`unittest` for tests. This maximizes portability and makes the artifact easy to
-audit. JSON is the configuration language; YAML is not required.
+The package depends on `Pillow` (raster rendering + Thai shaping), `reportlab`
+(native PDF font embedding) and `pypdf` (independent PDF text extraction), and
+makes no network calls. Everything else is stdlib and tests use `unittest`.
+Each dependency exists because the alternative was a fragile reimplementation of
+FreeType/HarfBuzz or of a Type0 PDF font writer; the rationale is recorded in
+`docs/v2.2-thai-rendering-design.md`. JSON is the configuration language; YAML is
+not required.
 
 ### Separate verification for imported prompts
 
@@ -130,6 +134,116 @@ prompts do not get that guarantee. `annotations.py` verifies offsets, can
 repair a unique occurrence, refuses to guess when a value is ambiguous, and
 reports semantic verification separately. This avoids silently treating
 generated labels as authoritative ground truth.
+
+## v2 file-aware architecture
+
+Schema `2.1` is additive. v1 prompts, exports and gates remain unchanged; v2
+adds a new package at `src/privacy_gateway_testgen/v2/`.
+
+```
+profile + seed
+  -> target sampling (persona, intent, prompt language, domains, attachments)
+  -> ScenarioPlan (shared people, hosts, database endpoints, IDs, transactions)
+  -> per-attachment language (th/en/mixed) and per-attachment English-only routing
+  -> document archetype (business meaning)
+  -> renderer (txt/csv/json/yaml/xml/log/md/env/ini/conf/toml/sql/tf/code
+               docx/xlsx/pptx/pdf/png/jpg)
+  -> span-first document composition + localization
+  -> real file bytes
+  -> reopen, parse, locate and verify
+  -> cross-file links + structured consistency checks
+  -> case + attachment metadata + file-aware ground truth
+  -> benchmark-safe subset + benchmark_ready in the report
+```
+
+The same rule as v1 applies: entities are created first and inserted through a
+builder that records their position. A renderer maps that logical position to
+file-specific provenance rather than searching the finished file.
+
+| Module | Responsibility |
+|---|---|
+| `v2/docmodel.py` | blocks, cells, placements, document/slide model |
+| `v2/org.py` | one coherent fictional organisation per case |
+| `v2/scenario.py` | one scenario plan: shared identities, IDs, hosts, timestamps |
+| `v2/localization.py` | Thai/English/mixed labels, Thai formatting, script checks |
+| `v2/realism.py` | personas, intents, natural prompt forms, structure references |
+| `v2/archetypes.py` | 69 business archetypes across HR, finance, sales, healthcare, IT, management and operations |
+| `v2/renderers/textfmt.py` | text, CSV, JSON, YAML, XML, logs, configs, SQL, Terraform, code |
+| `v2/renderers/ooxml.py` | macro-free DOCX/XLSX/PPTX via `zipfile` + OOXML XML |
+| `v2/renderers/pdf.py` | native Thai/English PDF (embedded Sarabun + ToUnicode), scanned and hybrid pages via ReportLab |
+| `v2/renderers/images.py` | PNG/JPEG screenshots and scans with Pillow + FreeType + libraqm shaping and degradation |
+| `v2/renderers/textlayout.py` | cluster-safe, entity-atomic line breaking and extraction normalization |
+| `v2/renderers/fonts.py` | package-relative bundled font resolution and shaping capability check |
+| `v2/extract.py` | reopen/parse/locate verification |
+| `v2/generate.py` | target sampling, bundles, dedupe, splits and export |
+| `v2/evaluate.py` | measured coverage, language/consistency checks and realism diagnostics |
+| `v2/verify.py` | re-verify an exported dataset from disk |
+
+### Language boundary
+
+Localization rewrites only static text between placements; entity values and
+their offsets are untouched. Language labels are measured from Thai/Latin shares
+over authored text (numeric characters are neutral), so a Thai name in an English
+template does not make the file Thai. PDF and raster renderers declare
+`th`/`en`/`mixed` capability and embed the bundled Sarabun font, so Thai content
+stays Thai in the file; `log` remains English-only and records
+`language_routing: log_english_only`. A document whose measured shares disagree
+with the request is relabelled (`relabelled_from_*`) per attachment, never
+case-wide.
+
+### Scenario and consistency boundary
+
+`ScenarioPlan.shared()` caches a value per role, so the database endpoint in
+`prod.env`, the incident report and the deployment log are the same `Entity`.
+Financial facts (line items, subtotal, VAT, total, currency, transaction
+reference, payment schedule) are plan-level, so an invoice and its transaction
+export agree by construction. After rendering, `generate.py` derives
+`cross_file_links` from canonical identities and records structured
+`consistency_checks` (`passed` / `failed` / `not_applicable` /
+`not_evaluated`, with `evaluated_items`). Log timestamps are parsed from the
+rendered lines, not asserted. `validate-v2` re-checks all of it, plus
+structure-reference resolution and bundle relationship evidence, on the exported
+dataset.
+
+### v2 trust boundary
+
+A renderer returning bytes is not proof that a case is correct. Every attachment
+is reopened with the same class of parser an evaluation harness would use:
+
+- text formats are decoded and the recorded character span is re-sliced;
+- CSV is parsed with `csv`;
+- JSON is parsed with `json` and the JSON path is resolved;
+- XML is parsed with ElementTree and the element path is resolved;
+- DOCX/XLSX/PPTX are opened as ZIP packages and the paragraph/cell/shape/slide
+  locations are resolved;
+- PDF content streams are parsed and the page/text location is checked;
+- PNG/JPEG headers and dimensions are checked and image bounding boxes are
+  bounds-checked.
+
+Image OCR is **not** performed by the test suite. Image and scanned-PDF cases
+are marked `verified_layout` / `verified_partial`; the expected OCR line is
+pre-render ground truth, not an OCR result. An entity is never split across image
+lines: the layout moves it or widens the canvas, and the verifier rejects a
+fragment annotation.
+
+### Determinism and safety in v2
+
+- ZIP members use a fixed 1980-01-01 timestamp; Office/PDF metadata uses
+  `2026-01-01T00:00:00Z`; no wall-clock time enters the manifest.
+- Office packages are macro-free and contain no executables or external
+  relationships except safe `example` hyperlinks.
+- PDFs contain no JavaScript, launch actions, embedded files or remote content.
+- Spreadsheets contain values, not formulas; no external links.
+- Images are synthetic screenshots and clearly marked; no real identity
+  documents or biometric data are generated.
+- `v2/evaluate.py` reports measured gates, not aspirational claims.
+
+## What v2 does not do
+
+Archives (including recursive extraction), password-protected archives, audio,
+video, speech recognition, executables and multimedia classification remain out
+of scope. The renderer registry and `Doc` model are the extension points for a
+future version.
 
 ## Extension points
 

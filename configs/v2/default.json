@@ -1,0 +1,100 @@
+{
+  "schema_version": "2.1",
+  "dataset_version": "2.2.0",
+  "seed": 21,
+  "total_samples": 72,
+  "profile": "real-world-enterprise",
+  "profiles_file": "profiles.json",
+  "policy_file": "../policy.default.json",
+  "splits": {
+    "train": 0.8,
+    "validation": 0.1,
+    "test": 0.1
+  },
+  "dataset_epoch": "2026-01-01T00:00:00Z",
+  "disclosure": "metadata",
+  "near_duplicate_threshold": 0.96,
+  "localization": {
+    "thai_date_mode": "be",
+    "currency_mode": "thb",
+    "mixed_language_intensity": 0.5
+  },
+  "language_thresholds": {
+    "th": {"min_thai_share": 0.3},
+    "en": {"min_latin_share": 0.8},
+    "mixed": {"min_thai_share": 0.1, "min_latin_share": 0.1}
+  },
+  "realism": {
+    "structure_reference_probability": 0.5,
+    "same_archetype_bundle_probability": 0.30,
+    "old_new_bundle_probability": 0.6
+  },
+  "distributions": {
+    "attachment_probability": 0.82,
+    "attachment_count": {"1": 0.70, "2": 0.23, "3": 0.07},
+    "file_type": {
+      "txt": 0.10, "csv": 0.10, "json": 0.07, "pdf": 0.09, "png": 0.07,
+      "jpg": 0.05, "jpeg": 0.02, "docx": 0.11, "xlsx": 0.12, "pptx": 0.04,
+      "yaml": 0.05, "yml": 0.01, "xml": 0.03, "log": 0.05, "md": 0.04,
+      "env": 0.02, "ini": 0.01, "conf": 0.01, "toml": 0.01, "sql": 0.01,
+      "tf": 0.01, "py": 0.02, "js": 0.01, "ts": 0.005, "java": 0.005, "go": 0.005
+    },
+    "language": {"th": 0.45, "en": 0.25, "mixed": 0.30},
+    "attachment_language": {"th": 0.34, "en": 0.33, "mixed": 0.33},
+    "persona": {
+      "developer": 0.08, "sysadmin": 0.06, "devops": 0.05, "hr": 0.08,
+      "finance": 0.08, "accountant": 0.06, "support": 0.08, "sales": 0.07,
+      "manager": 0.07, "executive_assistant": 0.05, "healthcare_admin": 0.05,
+      "analyst": 0.07, "intern": 0.05, "compliance": 0.05, "security_engineer": 0.05,
+      "operations": 0.07
+    },
+    "intent": {
+      "summarize": 0.13, "compare": 0.07, "translate": 0.04, "rewrite": 0.05,
+      "analyze": 0.07, "troubleshoot": 0.10, "extract_fields": 0.08,
+      "calculate": 0.06, "classify": 0.04, "prepare_report": 0.06,
+      "find_anomalies": 0.07, "explain_error": 0.05, "convert_format": 0.03,
+      "draft_email": 0.04, "review_document": 0.05, "modify_document": 0.02,
+      "find_missing": 0.05, "create_chart": 0.02, "answer_questions": 0.04,
+      "inspect_config": 0.05, "check_code": 0.04, "generate_docs": 0.02
+    },
+    "formality": {"formal": 0.20, "neutral": 0.55, "casual": 0.25},
+    "length": {"short": 0.30, "medium": 0.45, "long": 0.25},
+    "difficulty": {"1": 0.08, "2": 0.18, "3": 0.28, "4": 0.28, "5": 0.18},
+    "domain": {"pii": 0.30, "payment": 0.25, "secrets": 0.25, "infrastructure": 0.20},
+    "entity_density": {"1": 0.25, "2": 0.30, "3": 0.25, "4": 0.20},
+    "ocr_difficulty": {"1": 0.25, "2": 0.40, "3": 0.25, "4": 0.10},
+    "negative_ratio": 0.18,
+    "ambiguous_ratio": 0.10,
+    "multi_domain_ratio": 0.28,
+    "typo_rate": 0.18
+  },
+  "quality_gates": {
+    "schema_validity": 1.0,
+    "file_open_rate": 1.0,
+    "entity_location_accuracy": 1.0,
+    "max_exact_duplicate_rate": 0.0,
+    "max_near_duplicate_rate": 0.05,
+    "min_file_type_count": 8,
+    "min_archetype_count": 8,
+    "min_persona_count": 6,
+    "min_intent_count": 8,
+    "min_language_count": 2,
+    "min_domain_count": 3,
+    "min_negative_ratio": 0.08,
+    "min_multi_domain_share": 0.08,
+    "min_attachment_share": 0.35,
+    "min_ocr_cases": 1,
+    "min_attachment_language_count": 2,
+    "min_language_matrix_combinations": 4,
+    "min_structure_reference_share": 0.05,
+    "min_multi_file_share": 0.05,
+    "min_cross_file_link_cases": 1,
+    "min_same_archetype_bundle_cases": 1,
+    "min_consistency_rate": 1.0,
+    "max_top_opening_share": 0.35,
+    "max_top_phrase_share": 0.20,
+    "max_prompt_form_share": 0.45,
+    "max_archetype_share": 0.30,
+    "require_verification": true
+  }
+}

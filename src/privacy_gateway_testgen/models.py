@@ -40,6 +40,7 @@ class Entity:
     valid: bool = True
     detection_expected: bool = True
     note: str = ""
+    canonical_value: str = ""
 
 
 @dataclass

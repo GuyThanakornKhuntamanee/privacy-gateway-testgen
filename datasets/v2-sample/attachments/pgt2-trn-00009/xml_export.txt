@@ -1,0 +1,5 @@
+ข้อมูลลูกค้า
+
+$.customer.name: จุฑามาศ ศรีสุข
+$.customer.email: chanida.chanida@example.net
+$.customer.phone: 085-222-6340

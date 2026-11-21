@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "feat/**", "fix/**"]
   pull_request:
 
 jobs:
@@ -17,18 +17,187 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run test suite
+      - name: Install runtime dependencies (Thai PDF/image rendering)
+        run: python -m pip install --upgrade pip && python -m pip install -e .
+      - name: Check Thai text shaping is available
         env:
           PYTHONPATH: src
+        run: python -c "from privacy_gateway_testgen.v2.renderers.fonts import font_path, require_text_shaping; print(font_path('regular'), require_text_shaping())"
+      - name: Run test suite (v1 + v2 + Thai rendering regressions)
+        env:
+          PYTHONPATH: src
+          PYTHONHASHSEED: "0"
         run: python -m unittest discover -s tests -t . -v
-      - name: Run quality gates
+      - name: Run v1 quality gates and regenerate the v1 sample
         env:
           PYTHONPATH: src
         run: >
           python -m privacy_gateway_testgen evaluate
-          --config configs/default.json --out reports
-      - name: Upload evaluation report
+          --config configs/default.json --out reports --dataset-out datasets/sample
+      - name: Generate representative v2 dataset
+        env:
+          PYTHONPATH: src
+        run: >
+          python -m privacy_gateway_testgen generate-v2
+          --config configs/v2/default.json --profile benchmark-balanced
+          --out build/v2-dataset
+      - name: Validate v2 dataset (schema + file verification)
+        env:
+          PYTHONPATH: src
+        run: python -m privacy_gateway_testgen validate-v2 --dataset build/v2-dataset
+      - name: Verify v2 dataset (reopen every attachment)
+        env:
+          PYTHONPATH: src
+        run: python -m privacy_gateway_testgen verify-v2 --dataset build/v2-dataset
+      - name: Report v2 dataset with reproducibility check
+        env:
+          PYTHONPATH: src
+        run: >
+          python -m privacy_gateway_testgen report-v2
+          --dataset build/v2-dataset --out reports/v2 --check-reproducible
+      - name: Check v1 sample and report regeneration drift
+        run: git diff --exit-code -- datasets/sample reports/evaluation.json reports/evaluation.md
+      - name: Reports are byte-identical under a different PYTHONHASHSEED
+        env:
+          PYTHONPATH: src
+          PYTHONHASHSEED: "424242"
+        run: >
+          python -m privacy_gateway_testgen report-v2
+          --dataset build/v2-dataset --out build/reports-hashseed --check-reproducible
+      - name: Compare hash-seeded reports
+        run: |
+          cmp build/reports-hashseed/evaluation.json reports/v2/evaluation.json
+          cmp build/reports-hashseed/evaluation.md reports/v2/evaluation.md
+          cmp build/reports-hashseed/verification.json reports/v2/verification.json
+      - name: Regenerate the committed v2 samples and reports
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m privacy_gateway_testgen generate-v2 --config configs/v2/default.json --profile benchmark-balanced --out datasets/v2-sample
+          python -m privacy_gateway_testgen generate-v2 --config configs/v2/default.json --profile thai-rendering --count 16 --out datasets/v2-thai-sample
+          python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2 --check-reproducible
+          python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-thai-sample --out reports/v2-thai --check-reproducible
+      - name: Check v2 samples and reports logical drift
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          import sys
+
+          def committed(path):
+              out = subprocess.run(["git", "show", "HEAD:" + path], capture_output=True, text=True, check=True, encoding="utf-8")
+              return [json.loads(line) for line in out.stdout.splitlines() if line.strip()]
+
+          def strip(cases):
+              for case in cases:
+                  case.pop("document_fingerprint", None)
+                  for attachment in case.get("attachments", []):
+                      attachment.pop("sha256", None)
+                      attachment.pop("size_bytes", None)
+              return cases
+
+          failures = []
+          for path in ("datasets/v2-sample/cases.jsonl", "datasets/v2-thai-sample/cases.jsonl"):
+              old = strip(committed(path))
+              new = strip([json.loads(line) for line in open(path, encoding="utf-8") if line.strip()])
+
+              def walk(a, b, prefix=""):
+                  if type(a) is not type(b):
+                      return [prefix + f": type {type(a).__name__} != {type(b).__name__}"]
+                  if isinstance(a, dict):
+                      out = []
+                      for key in sorted(set(a) | set(b)):
+                          if key not in a or key not in b:
+                              out.append(prefix + "/" + key + ": missing on one side")
+                          else:
+                              out.extend(walk(a[key], b[key], prefix + "/" + key))
+                          if len(out) > 3:
+                              break
+                      return out
+                  if isinstance(a, list):
+                      if len(a) != len(b):
+                          return [prefix + f": length {len(a)} != {len(b)}"]
+                      out = []
+                      for index, (left, right) in enumerate(zip(a, b)):
+                          out.extend(walk(left, right, prefix + f"[{index}]"))
+                          if len(out) > 3:
+                              break
+                      return out
+                  return [] if a == b else [prefix + f": {a!r} != {b!r}"]
+
+              if old != new:
+                  failures.append(path)
+                  for index, (left, right) in enumerate(zip(old, new)):
+                      difference = walk(left, right, f"case[{index}]")
+                      if difference:
+                          print("DIFF", path, *difference[:3])
+                          break
+                  if len(old) != len(new):
+                      print("DIFF", path, f"case count {len(old)} != {len(new)}")
+
+          for path in ("stats.json", "NOTICE.md"):
+              for dataset in ("datasets/v2-sample", "datasets/v2-thai-sample"):
+                  target = dataset + "/" + path
+                  out = subprocess.run(["git", "show", "HEAD:" + target], capture_output=True, text=True, check=True, encoding="utf-8")
+                  if out.stdout != open(target, encoding="utf-8").read():
+                      failures.append(target)
+
+          for report in ("reports/v2/evaluation.md", "reports/v2-thai/evaluation.md"):
+              out = subprocess.run(["git", "show", "HEAD:" + report], capture_output=True, text=True, check=True)
+              if out.stdout != open(report, encoding="utf-8").read():
+                  failures.append(report)
+
+          if failures:
+              print("logical drift in:", failures)
+              sys.exit(1)
+          print("v2 samples and reports match the committed content "
+                "(attachment bytes are compared within a platform only)")
+          PY
+          git checkout -- datasets reports
+      - name: Schema 2.0 compatibility fixture
+        env:
+          PYTHONPATH: src
+        run: python -m privacy_gateway_testgen validate-v2 --dataset datasets/compat/v2.0-sample
+      - name: Generate Thai rendering sample (native/scanned/hybrid PDF, PNG, JPEG)
+        env:
+          PYTHONPATH: src
+        run: >
+          python -m privacy_gateway_testgen generate-v2
+          --config configs/v2/default.json --profile thai-rendering --count 16
+          --out build/v2-thai-dataset
+      - name: Verify and report the Thai rendering sample
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m privacy_gateway_testgen validate-v2 --dataset build/v2-thai-dataset
+          python -m privacy_gateway_testgen verify-v2 --dataset build/v2-thai-dataset
+          python -m privacy_gateway_testgen report-v2 --dataset build/v2-thai-dataset --out reports/v2-thai --check-reproducible
+      - name: Thai PDF and image attachments render and verify
+        env:
+          PYTHONPATH: src
+          PYTHONHASHSEED: "0"
+        run: |
+          python - <<'PY'
+          import json
+          cases = [json.loads(l) for l in open('build/v2-thai-dataset/cases.jsonl', encoding='utf-8') if l.strip()]
+          files = [a for c in cases for a in c['attachments'] if a['extension'] in ('pdf', 'png', 'jpg', 'jpeg')]
+          thai = [a for a in files if a['language'] in ('th', 'mixed')]
+          bad = [a['filename'] for a in files if a['verification']['status'] not in ('verified', 'verified_layout')]
+          assert len(thai) >= 4, 'expected Thai PDF/image attachments, got %d' % len(thai)
+          assert not bad, 'unverified Thai renderer output: %s' % bad
+          print('%d PDF/image attachments verified, %d Thai or mixed' % (len(files), len(thai)))
+          PY
+      - name: Upload evaluation reports
         uses: actions/upload-artifact@v4
         with:
           name: evaluation-${{ matrix.python-version }}
-          path: reports/
+          path: |
+            reports/
+            build/v2-dataset/manifest.json
+            build/v2-dataset/benchmark_safe_cases.jsonl
+            build/v2-dataset/benchmark_safe_text_cases.jsonl
+            build/v2-dataset/benchmark_safe_ocr_cases.jsonl
+            build/v2-dataset/benchmark_excluded_cases.jsonl
+            build/v2-thai-dataset/manifest.json

@@ -1,0 +1,177 @@
+{
+  "ambiguous_cases": 2,
+  "by_action": {
+    "ALLOW": 2,
+    "BLOCK": 5,
+    "LOCAL_ONLY": 4,
+    "REDACT": 3,
+    "TOKENIZE": 2
+  },
+  "by_archetype": {
+    "architecture_notes": 2,
+    "meeting_minutes": 2,
+    "scanned_invoice": 2,
+    "screenshot_chat": 4,
+    "screenshot_code": 1,
+    "screenshot_config": 2,
+    "screenshot_dashboard": 3,
+    "screenshot_receipt": 1,
+    "support_ticket": 1
+  },
+  "by_attachment_count": {
+    "1": 11,
+    "2": 5
+  },
+  "by_attachment_extension": {
+    "docx": 1,
+    "jpg": 7,
+    "md": 1,
+    "pdf": 7,
+    "png": 5
+  },
+  "by_attachment_language": {
+    "en": 1,
+    "mixed": 1,
+    "th": 19
+  },
+  "by_bundle_kind": {
+    "multi_file": 2,
+    "old_new": 1,
+    "same_archetype": 2,
+    "single_file": 11
+  },
+  "by_category": {
+    "ambiguous": 2,
+    "multi_domain": 3,
+    "negative": 2,
+    "single_domain": 9
+  },
+  "by_difficulty": {
+    "1": 1,
+    "2": 2,
+    "3": 7,
+    "4": 4,
+    "5": 2
+  },
+  "by_domain": {
+    "infrastructure": 2,
+    "payment": 4,
+    "pii": 6,
+    "secrets": 5
+  },
+  "by_entity_type": {
+    "api_key": 5,
+    "card_expiry_date": 1,
+    "database_endpoint": 2,
+    "email_address": 6,
+    "internal_hostname": 2,
+    "internal_url": 2,
+    "jwt_token": 1,
+    "kubernetes_manifest": 1,
+    "password": 1,
+    "payment_authorization_code": 1,
+    "payment_card_number": 1,
+    "payment_transaction_reference": 3,
+    "thai_address": 2,
+    "thai_name": 6
+  },
+  "by_evaluation_requirement": {
+    "direct_text_extraction": 3,
+    "ocr_required": 13
+  },
+  "by_extraction_method": {
+    "direct_text": 1,
+    "ocr": 13,
+    "office_parser": 1,
+    "pdf_text": 4
+  },
+  "by_file_type": {
+    "docx": 1,
+    "jpg": 7,
+    "md": 1,
+    "pdf": 6,
+    "png": 5
+  },
+  "by_intent": {
+    "analyze": 2,
+    "calculate": 1,
+    "classify": 1,
+    "draft_email": 1,
+    "extract_fields": 1,
+    "find_anomalies": 2,
+    "prepare_report": 2,
+    "review_document": 1,
+    "summarize": 4,
+    "troubleshoot": 1
+  },
+  "by_language": {
+    "en": 2,
+    "mixed": 4,
+    "th": 10
+  },
+  "by_persona": {
+    "analyst": 2,
+    "devops": 1,
+    "executive_assistant": 1,
+    "finance": 1,
+    "healthcare_admin": 2,
+    "hr": 1,
+    "intern": 1,
+    "manager": 2,
+    "operations": 1,
+    "sales": 2,
+    "support": 2
+  },
+  "by_polarity": {
+    "negative": 2,
+    "positive": 14
+  },
+  "by_prompt_form": {
+    "with_attachment": 16
+  },
+  "by_split": {
+    "test": 1,
+    "train": 13,
+    "validation": 2
+  },
+  "consistency_checks": 86,
+  "consistency_passed": 16,
+  "consistency_rate": 1.0,
+  "consistency_status": {
+    "not_applicable": 70,
+    "passed": 16
+  },
+  "cross_file_link_cases": 5,
+  "domain_combinations": {
+    "infrastructure": 1,
+    "infrastructure+secrets": 1,
+    "none": 2,
+    "payment": 4,
+    "pii": 4,
+    "pii+secrets": 2,
+    "secrets": 2
+  },
+  "language_matrix": {
+    "en->en": 1,
+    "en->th": 1,
+    "mixed->th": 5,
+    "th->mixed": 1,
+    "th->th": 13
+  },
+  "mean_entities_per_case": 9.062,
+  "mean_files_per_case": 1.312,
+  "multi_domain_cases": 3,
+  "multi_file_cases": 5,
+  "negative_cases": 2,
+  "ocr_cases": 13,
+  "positive_cases": 14,
+  "prompt_length": {
+    "max": 366,
+    "mean": 90.438,
+    "min": 29
+  },
+  "same_archetype_bundle_cases": 3,
+  "structure_reference_cases": 5,
+  "total_cases": 16,
+  "total_files": 21
+}

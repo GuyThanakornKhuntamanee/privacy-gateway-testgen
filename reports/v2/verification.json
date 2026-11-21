@@ -1,0 +1,894 @@
+{
+  "cases": 72,
+  "dataset_dir": "v2-sample",
+  "file_open_rate": 1.0,
+  "file_results": [
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00001/app_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00001"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "config_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00002/database_config.toml",
+      "status": "verified",
+      "test_id": "pgt2-trn-00002"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00002/docker_compose.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00002"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00003/employment_contract_v1.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00003"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00003/employment_contract_v2.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00003"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00003/auth_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00003"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00006/application_config.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00006"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00006/invoice.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00007/screenshot_config.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00007"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00008/patient_list.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00008"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00009/xml_export.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00009"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00010/employee_list.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00010"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00010/meeting_minutes.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00010"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00011/app_log.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00011"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00012/source_code.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00012"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00013/risk_report.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00013"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00015/purchase_order.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00015"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "config_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00016/database_config.ini",
+      "status": "verified",
+      "test_id": "pgt2-trn-00016"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00017/auth_log.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00017"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00019/xml_export_v1.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00019"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00019/xml_export_v2.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00019"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00020/cv.md",
+      "status": "verified",
+      "test_id": "pgt2-trn-00020"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00022/api_gateway_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00022"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00023/invoice.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00023"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00024/meeting_minutes.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00024"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00024/employee_list.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00024"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "xml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00025/xml_export.xml",
+      "status": "verified",
+      "test_id": "pgt2-trn-00025"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00026/employee_list.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00026"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00027/bank_statement_v1.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00027"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00027/bank_statement.csv",
+      "status": "verified",
+      "test_id": "pgt2-trn-00027"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "config_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00029/application_config_v1.env",
+      "status": "verified",
+      "test_id": "pgt2-trn-00029"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "yaml_subset_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00029/application_config.yml",
+      "status": "verified",
+      "test_id": "pgt2-trn-00029"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00030/sql_export.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00030"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00030/cv.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00030"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00030/scanned_medical_report.pdf",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00030"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00031/sales_pipeline.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00031"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00033/screenshot_dashboard.jpg",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00033"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00034/employee_list.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00034"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00034/meeting_minutes.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00034"
+    },
+    {
+      "attachment_id": "ATT-003",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00034/payroll.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00034"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00035/strategy_report.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00035"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00036/supplier_agreement.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00036"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00037/sales_report_deck.pptx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00037"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00039/cv_v1.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00039"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00039/cv.md",
+      "status": "verified",
+      "test_id": "pgt2-trn-00039"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00041/architecture_deck.pdf",
+      "status": "verified",
+      "test_id": "pgt2-trn-00041"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00042/scanned_invoice.pdf",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00042"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00043/incident_report.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00043"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00046/deployment_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00046"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00047/transaction_export.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00047"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00048/internal_memo.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00048"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00049/auth_log_v1.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00049"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00049/auth_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00049"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00050/meeting_minutes.pdf",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00050"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00051/meeting_minutes.txt",
+      "status": "verified",
+      "test_id": "pgt2-trn-00051"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00052/screenshot_receipt_v1.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00052"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00052/screenshot_receipt_v2.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-trn-00052"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "json_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00054/support_ticket.json",
+      "status": "verified",
+      "test_id": "pgt2-trn-00054"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00055/deployment_log.log",
+      "status": "verified",
+      "test_id": "pgt2-trn-00055"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00056/meeting_minutes.md",
+      "status": "verified",
+      "test_id": "pgt2-trn-00056"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00057/invoice.xlsx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00057"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00058/strategy_report.docx",
+      "status": "verified",
+      "test_id": "pgt2-trn-00058"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00001/access_records.log",
+      "status": "verified",
+      "test_id": "pgt2-val-00001"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00003/incident_review_deck.pdf",
+      "status": "verified",
+      "test_id": "pgt2-val-00003"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00004/employment_contract_v1.docx",
+      "status": "verified",
+      "test_id": "pgt2-val-00004"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "pdf_parsed",
+        "pdf_text_extracted"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00004/employment_contract.pdf",
+      "status": "verified",
+      "test_id": "pgt2-val-00004"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "text_decoded"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00005/access_records.log",
+      "status": "verified",
+      "test_id": "pgt2-val-00005"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00006/api_gateway_log.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-val-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-val-00007/api_gateway_log.png",
+      "status": "verified_layout",
+      "test_id": "pgt2-val-00007"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00001/strategy_report.pptx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00001"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00002/support_ticket.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00002"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00004/support_ticket.docx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00004"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "yaml_subset_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00005/docker_compose_v1.yaml",
+      "status": "verified",
+      "test_id": "pgt2-tst-00005"
+    },
+    {
+      "attachment_id": "ATT-002",
+      "checks": [
+        "file_nonempty",
+        "yaml_subset_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00005/docker_compose.yml",
+      "status": "verified",
+      "test_id": "pgt2-tst-00005"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "csv_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00006/employee_list.csv",
+      "status": "verified",
+      "test_id": "pgt2-tst-00006"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "zip_opened",
+        "ooxml_parsed"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-tst-00007/strategy_report.pptx",
+      "status": "verified",
+      "test_id": "pgt2-tst-00007"
+    }
+  ],
+  "files": 76,
+  "issues": [],
+  "manifest_checks": 88,
+  "passed": true,
+  "statuses": {
+    "verified": 65,
+    "verified_layout": 11
+  },
+  "verified_files": 76
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Application log",
+  "sections": [
+    {
+      "kind": "heading",
+      "text": "auth_log"
+    },
+    {
+      "kind": "code",
+      "text": "2026-03-18T09:12:00Z INFO auth naree.kittipong58@example.net from 192.0.2.10 result=success request_id=req-92286\n2026-03-18T09:15:07Z INFO auth prasert.prasert@example.net from 192.0.2.10 result=success request_id=req-66262\n2026-03-18T09:18:14Z INFO auth maneerat.chanida91@example.com from 192.0.2.10 result=success request_id=req-46842\n2026-03-18T09:21:21Z INFO auth somchai.wichai@example.net from 192.0.2.10 result=success request_id=req-74498\n2026-03-18T09:24:28Z INFO auth naree.kittipong58@example.net from 192.0.2.10 result=success request_id=req-81598\n2026-03-18T09:27:35Z INFO auth prasert.prasert@example.net from 192.0.2.10 result=success request_id=req-72243\n2026-03-18T09:30:42Z INFO auth maneerat.chanida91@example.com from 192.0.2.10 result=success request_id=req-45191\n2026-03-18T09:33:49Z INFO auth somchai.wichai@example.net from 192.0.2.10 result=success request_id=req-18971\n"
+    }
+  ]
+}

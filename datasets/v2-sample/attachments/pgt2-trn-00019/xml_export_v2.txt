@@ -1,0 +1,5 @@
+ข้อมูลลูกค้า
+
+สถานะ: approved (previously draft)
+
+$.token: at_example_fake_b447d5c43b6d27152c4c

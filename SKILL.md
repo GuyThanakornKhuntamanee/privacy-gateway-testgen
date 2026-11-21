@@ -1,6 +1,6 @@
 ---
 name: privacy-gateway-testgen
-description: Generate reproducible synthetic test prompts, labeled test cases, and ground-truth JSONL/JSON datasets for privacy-aware data gateways, PII detection, DLP, privacy filters, masking/tokenization/redaction, AI sovereignty routers, and data-governance evaluations. Use this skill whenever the user asks for synthetic PII, payment-data, secret/credential, or infrastructure test cases; privacy-filter or DLP benchmarks; PII detection or redaction evaluations; policy-routing and minimum-action tests; false-positive/negative-case datasets; or asks to validate, verify, split, or audit an existing synthetic privacy dataset. Trigger it even when the user does not say "dataset" or "testgen" — for example "our gateway misses Thai national IDs in logs" or "we need realistic prompts with fake credentials for QA".
+description: Generate reproducible synthetic test prompts, realistic attachment files, labeled test cases, and ground-truth JSONL/JSON datasets for privacy-aware data gateways, PII detection, DLP, privacy filters, masking/tokenization/redaction, AI sovereignty routers, and data-governance evaluations. Use this skill whenever the user asks for synthetic PII, payment-data, secret/credential, or infrastructure test cases; privacy-filter or DLP benchmarks; file/attachment, PDF, DOCX, XLSX, PPTX, PNG/JPG or OCR-oriented test data; PII detection or redaction evaluations; policy-routing and minimum-action tests; false-positive/negative-case datasets; or asks to validate, verify, split, or audit an existing synthetic privacy dataset. Trigger it even when the user does not say "dataset" or "testgen" — for example "our gateway misses Thai national IDs in logs" or "we need realistic prompts with fake credentials for QA".
 ---
 
 # Privacy Gateway Testgen
@@ -52,6 +52,79 @@ publish; it does not make it safe to treat as a compliance certification.
 6. **Report the measured result**, including failed gates and limitations.
    Do not call a dataset production-ready unless both the test suite and the
    gates passed in this run.
+
+## v2: real files and realistic requests
+
+When the task needs attachments, use the schema `2.1` commands. v1 remains the
+default for prompt-only datasets; do not mix v1 and v2 rows in one file.
+
+```bash
+python -m privacy_gateway_testgen generate-v2 \
+  --config configs/v2/default.json --profile benchmark-balanced \
+  --out datasets/v2-sample
+python -m privacy_gateway_testgen validate-v2 --dataset datasets/v2-sample
+python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2 --check-reproducible
+python -m privacy_gateway_testgen verify-v2 --dataset datasets/v2-sample
+python -m privacy_gateway_testgen list-profiles-v2
+python -m privacy_gateway_testgen list-archetypes-v2
+```
+
+`report-v2 --check-reproducible` prints `benchmark_ready` and the safe-case
+count. Reports are byte-identical for the same dataset across
+`PYTHONHASHSEED` values; `evaluation.json`/`evaluation.md` contain no timestamp
+or absolute path.
+
+v2 emits actual files: TXT, CSV, JSON, YAML/YML, XML, LOG, MD, ENV, INI, CONF,
+TOML, SQL, Terraform, Python/JS/TS/Java/Go, DOCX, XLSX, PPTX, PDF, PNG and
+JPG/JPEG. The prompt is a human request about a task; the sensitive data is
+usually incidental and lives in the attachment. Common realistic examples:
+
+- `prod.env` attached with "ช่วยดูให้ทีว่าทำไมต่อ db ไม่ได้"
+- `employee_list.xlsx` attached with "ดู tab employee ให้หน่อยว่ามีใครข้อมูลไม่ครบ"
+- `transactions.csv` + `invoice.pdf` with "เทียบยอดสองอันนี้ให้หน่อย"
+- `support_ticket.png` with "อันนี้ของลูกค้าเมื่อวานนะ"
+
+Ground truth is file-aware. Prompt entities keep `character_start` /
+`character_end`; attachment entities use `source_attachment`, `filename` and a
+`location` object whose `kind` is one of `csv_cell`, `json_path`, `yaml_path`,
+`xml_path`, `key_path`, `xlsx_cell`, `docx_paragraph`, `docx_table_cell`,
+`docx_header`, `docx_footer`, `pptx_shape`, `pdf_text`, `pdf_image`,
+`image_ocr` or `text_span`. Never invent a location kind or convert an OCR
+result into ground truth.
+
+Schema `2.1` also records, per case:
+
+- `scenario_id`, `cross_file_links`, `bundle` (single, multi-file,
+  same-archetype, old/new) and `consistency_checks`;
+- `prompt_language`, `content_languages`, `language_mode`, `language_coverage`
+  and per-attachment `language` / `language_mix` / `language_check`;
+- `structure_references` that resolve to a real sheet, page, section, row,
+  slide, line or key;
+- `document_profile` with per-file sections, tables, rows, sheets, slides and
+  pages.
+
+Language rules:
+
+- `mixed` must contain real Thai and English script in the same file, not just a
+  Thai name in an English template. `attachment.language_check.contains_both`
+  must be true.
+- PDF and image renderers carry Thai, English and mixed content: PDF text is
+  embedded Sarabun TrueType with a ToUnicode map, and raster text is shaped with
+  Pillow + libraqm. Only `log` is English-only; a renderer that cannot carry a
+  language raises or records `language_routing` instead of writing `?`.
+- A multi-file case may mix attachment languages, for example Thai PDF plus
+  English XLSX plus English log. The prompt language is independent.
+
+Never claim cross-file consistency without checking `cross_file_links` and
+`consistency_checks`; `validate-v2` re-checks both.
+
+Before calling a v2 dataset ready, run `validate-v2`, `verify-v2` and
+`report-v2`. `verified_partial` means an image or scanned PDF was verified at
+render-layout level, not by an OCR engine. State that limitation explicitly.
+
+v2 profiles are `benchmark-balanced`, `real-world-enterprise`,
+`thai-enterprise`, `developer-security`, `office-documents`, `ocr` and
+`negative-hard`; a custom JSON profile path can be passed to `--profile`.
 
 ## Ground-truth rules
 

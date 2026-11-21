@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "privacy-gateway-testgen"
-version = "0.1.0"
-description = "Deterministic synthetic test-prompt and ground-truth generator for privacy-aware data gateways"
+version = "0.4.0"
+description = "Deterministic synthetic prompts, real attachment files and file-aware ground truth for privacy-aware data gateways"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
@@ -17,13 +17,25 @@ classifiers = [
   "Topic :: Security",
   "Topic :: Software Development :: Testing",
 ]
-dependencies = []
+# Thai-capable PDF and raster rendering.  See docs/v2.2-thai-rendering-design.md.
+# reportlab 5.x advertises >=3.9 but raises at import on 3.9, so 3.9 stays on 4.x.
+dependencies = [
+  "Pillow>=10.0,<14",
+  "reportlab>=4.0,<5; python_version < '3.10'",
+  "reportlab>=4.0,<6; python_version >= '3.10'",
+  "pypdf>=4.0,<8",
+]
 
 [project.scripts]
 privacy-gateway-testgen = "privacy_gateway_testgen.cli:main"
 
 [project.urls]
-Homepage = "https://example.invalid/privacy-gateway-testgen"
+Homepage = "https://github.com/GuyThanakornKhuntamanee/privacy-gateway-testgen"
+Repository = "https://github.com/GuyThanakornKhuntamanee/privacy-gateway-testgen.git"
+Issues = "https://github.com/GuyThanakornKhuntamanee/privacy-gateway-testgen/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"privacy_gateway_testgen" = ["assets/fonts/*.ttf", "assets/fonts/OFL.txt", "assets/fonts/README.md"]

@@ -1,0 +1,23 @@
+ประชุมแพลตฟอร์มรายสัปดาห์
+
+วันที่: 18 มี.ค. 2569  |  Location: internal video call
+
+ผู้เข้าร่วม
+
+- ธีรภัทร รุ่งเรือง - kittipong.prasert30@example.net
+- จุฑามาศ ภักดี - lalita.wichai@example.net
+- พิมพ์ชนก บุญมี - prasert.piyada@example.com
+บันทึก
+
+ทีมทบทวน checklist การ deploy และแผนย้ายข้อมูลลูกค้า ยังมีงานค้างหนึ่งรายการสำหรับเจ้าของฐานข้อมูล
+
+Finance noted a pending transaction: ORD-2026-488395
+
+ความเสี่ยง
+
+The migration window overlaps a finance close. The team will confirm the rollback owner.
+
+รายการที่ต้องทำ
+
+- ผู้รับผิดชอบ: จุฑามาศ ภักดี - confirm the migration window.
+- ผู้รับผิดชอบ: พิมพ์ชนก บุญมี - remove the old deployment credential.

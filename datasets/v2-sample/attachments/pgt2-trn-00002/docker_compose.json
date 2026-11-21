@@ -1,0 +1,19 @@
+{
+  "version": "3.9",
+  "services": {
+    "api": {
+      "image": "example/orders-api:1.4.2",
+      "ports": [
+        "8080:8080"
+      ],
+      "environment": {
+        "DB_PASSWORD": "Example-Fake-Passw0rd-6194!",
+        "API_KEY": "sk_example_fake_ed91d7149fe29bc2197f8d3b"
+      }
+    },
+    "worker": {
+      "image": "example/orders-worker:1.4.2"
+    }
+  },
+  "_language_note": "เอกสารนี้ใช้ภายในองค์กรเท่านั้น"
+}
