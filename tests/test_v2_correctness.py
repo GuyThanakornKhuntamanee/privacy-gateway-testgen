@@ -242,6 +242,18 @@ class LanguageLabelTests(unittest.TestCase):
             "th": {"min_thai_share": 0.30}, "en": {"min_latin_share": 0.80},
             "mixed": {"min_thai_share": 0.10, "min_latin_share": 0.10}}))
 
+    def test_slide_titles_count_toward_language(self):
+        ctx, _ = context("th")
+        thai_deck = BY_ID["incident_review_deck"].builder(ctx)
+        localize_doc(thai_deck, "th")
+        self.assertGreater(script_stats(document_static_text(thai_deck))["thai_chars"], 0,
+                           "slide titles are part of the document and must be measured")
+        english_ctx = copy.deepcopy(ctx)
+        english_ctx.doc_language = "en"
+        english_deck = BY_ID["incident_review_deck"].builder(english_ctx)
+        localize_doc(english_deck, "en")
+        self.assertEqual(script_stats(document_static_text(english_deck))["thai_chars"], 0)
+
     def test_declared_language_requires_measured_shares(self):
         config = make_config(8, 41)
         dataset = generate(config)
@@ -307,6 +319,33 @@ class PlaceholderAndPromptTests(unittest.TestCase):
                   and "```" in case["prompt"]]
         self.assertLess(len(fenced), len([case for case in self.dataset["cases"]
                                           if case["attachment_count"] == 0]))
+
+
+class DuplicateAndRevisionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dataset = generate(make_config(40, 91))
+
+    def test_no_two_attachments_share_bytes(self):
+        seen = {}
+        duplicates = []
+        for case in self.dataset["cases"]:
+            for attachment in case["attachments"]:
+                digest = attachment["sha256"]
+                if digest in seen:
+                    duplicates.append((seen[digest], (case["test_id"], attachment["filename"])))
+                seen[digest] = (case["test_id"], attachment["filename"])
+        self.assertEqual(duplicates, [])
+
+    def test_old_new_pairs_differ_in_content(self):
+        pairs = 0
+        for case in self.dataset["cases"]:
+            if case["bundle"]["kind"] != "old_new":
+                continue
+            hashes = [item["sha256"] for item in case["attachments"]]
+            self.assertEqual(len(hashes), len(set(hashes)), case["test_id"])
+            pairs += 1
+        self.assertGreater(pairs, 0, "dataset contained no old/new bundle to check")
 
 
 class StructureAndBundleTests(unittest.TestCase):

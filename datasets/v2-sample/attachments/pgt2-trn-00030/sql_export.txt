@@ -1,0 +1,7 @@
+SQL export
+
+CREATE TABLE customers (id text, name text, email text, phone text);
+INSERT INTO customers VALUES ('CUS-1000', 'ศิริพร นาคสุข', 'maneerat.maneerat@example.org', '084-543-7452');
+INSERT INTO customers VALUES ('CUS-1001', 'ลลิตา พูลสวัสดิ์', 'prasert.somchai11@example.net', '060-680-4693');
+INSERT INTO customers VALUES ('CUS-1002', 'พิมพ์ชนก ชัยมงคล', 'chanida.anan@example.net', '089-950-9076');
+INSERT INTO payments VALUES ('TXN-2026-51349942', '4111113851430552');

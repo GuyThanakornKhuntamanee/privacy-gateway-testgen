@@ -53,6 +53,15 @@ semantic versioning.
 
 ### Fixed
 
+- Old/new bundles can no longer contain two byte-identical files: a revision is
+  applied only to the structure the target renderer emits, record-only formats
+  fall back to a related render, and a rendered file that duplicates another one
+  is rejected.
+- Relabelling a document to `en` rebuilds it in English instead of leaving Thai
+  headings behind; slide titles now count toward the language measurement, so an
+  English deck really is English.
+- Prompts no longer ask to compare "these two" when the case carries fewer than
+  two attachments.
 - Re-localizing a document no longer stacks translations in front of a label
   (`อ้างอิง / อ้างอิง / อ้างอิง:`); bilingual `ไทย / English:` labels are collapsed
   or kept as one pair.

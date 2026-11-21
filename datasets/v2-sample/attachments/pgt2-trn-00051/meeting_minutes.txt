@@ -1,0 +1,19 @@
+ประชุมแพลตฟอร์มรายสัปดาห์
+
+วันที่: 18 มีนาคม 2569  |  Location: internal video call
+
+ผู้เข้าร่วม
+
+- ปิยะดา บุญมี - maneerat.maneerat@example.com
+- สมชาย ใจดี - anan.wichai22@example.net
+- ศิริพร พัฒนกิจ - piyada.thiraphat@example.net
+บันทึก
+
+ทีมทบทวน checklist การ deploy และแผนย้ายข้อมูลลูกค้า ยังมีงานค้างหนึ่งรายการสำหรับเจ้าของฐานข้อมูล
+
+Migration target: db-analytics.siam-meridian.internal:5432 via https://search.siam-meridian.internal/api/v1/orders
+
+รายการที่ต้องทำ
+
+- ผู้รับผิดชอบ: สมชาย ใจดี - confirm the migration window.
+- ผู้รับผิดชอบ: ศิริพร พัฒนกิจ - remove the old deployment credential.

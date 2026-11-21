@@ -442,13 +442,27 @@ def _contexts(language: str, persona: str = "") -> tuple:
     return tuple(phrase for phrase, allowed in pool if categories & set(allowed))
 
 
-def _task(rng: random.Random, intent: str, language: str) -> str:
+_MULTI_FILE_HINT = re.compile(r"\btwo\b|\bboth\b|\bthese\b|สอง", re.IGNORECASE)
+_GENERIC_TASK = {"th": "ดูให้หน่อย", "en": "take a look", "mixed": "ดูให้หน่อย"}
+
+
+def _task(rng: random.Random, intent: str, language: str, multi: bool = False) -> str:
     cores = INTENT_CORES[intent]
+
+    def pick(pool: Sequence[str]) -> str:
+        if not multi:
+            # "compare these two" is wrong when the case carries one file.
+            unambiguous = [phrase for phrase in pool if not _MULTI_FILE_HINT.search(phrase)]
+            if not unambiguous:
+                return _GENERIC_TASK["en" if language == "en" else "th"]
+            pool = unambiguous
+        return _pick(rng, pool)
+
     if language == "th":
-        return _pick(rng, cores["th"])
+        return pick(cores["th"])
     if language == "en":
-        return _pick(rng, cores["en"])
-    return _pick(rng, cores["th"] + cores["en"])
+        return pick(cores["en"])
+    return pick(tuple(cores["th"]) + tuple(cores["en"]))
 
 
 def _file_phrase(rng: random.Random, files: Sequence[dict], language: str) -> str:
@@ -548,7 +562,7 @@ def build_prompt(
     if files and rng.random() < 0.18:
         key = "vague"
     template = _pick(rng, templates[key])
-    task = _task(rng, intent, language)
+    task = _task(rng, intent, language, multi=len(files) >= 2)
     file_phrase = _file_phrase(rng, files, language)
     files_phrase = file_phrase
     # Protect attachment names: a user may typo the request, not the filename

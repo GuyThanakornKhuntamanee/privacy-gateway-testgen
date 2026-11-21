@@ -1,0 +1,23 @@
+Platform weekly - meeting minutes
+
+Date: 18 March 2026  |  Location: internal video call
+
+Attendees
+
+- Piyada Suksawat - naree.naree@example.net
+- Kittipong Suksawat - siriporn.siriporn3@example.net
+- Somchai Chaichana - somchai.wichai96@example.net
+Notes
+
+The team reviewed the deployment checklist and the customer migration plan. One action remains open for the database owner.
+
+Finance noted a pending transaction: ORD-2026-334881
+
+Risks
+
+The migration window overlaps a finance close. The team will confirm the rollback owner.
+
+Action items
+
+- Owner: Kittipong Suksawat - confirm the migration window.
+- Owner: Somchai Chaichana - remove the old deployment credential.

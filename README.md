@@ -277,39 +277,32 @@ images for artifacts shared with people; the setting is recorded in the manifest
 ### v2 measured sample
 
 The committed `datasets/v2-sample` uses the `benchmark-balanced` profile at seed
-21: 72 cases, 75 attachment files, 19 file types and 3 attachment languages.
+21: 72 cases, 76 attachment files, 17 file types and 3 attachment languages.
 `reports/v2/evaluation.json` records measured values: schema validity 1.0,
 prompt span accuracy 1.0, file open rate 1.0, extraction accuracy 1.0, entity
 location accuracy 1.0, exact/near/document duplicate rate 0.0, negative share
-0.2917, multi-domain share 0.1944 and attachment share 0.8056. Of 72 cases, 64
-are fully verified and 8 are `verified_partial` (image/scanned cases whose
+0.2222, multi-domain share 0.1806 and attachment share 0.8056. Of 72 cases, 62
+are fully verified and 10 are `verified_partial` (image/scanned cases whose
 annotations are render-layout verified, not OCR-verified).
 
-Language is measured, not assumed: prompt languages are Thai 30, English 17,
-mixed 25; attachment languages are Thai 28, English 40, mixed 7. Six attachments
-are Thai/mixed PDF or images, all render-verified; 6 native PDFs all extract
-their canonical text back, and 2 are hybrid pages. 6 cases need OCR from the
-gateway (`evaluation_requirement: ocr_required`) and 66 are direct text cases.
-
-`datasets/v2-thai-sample` is a focused 16-case sample from the new
-`thai-rendering` profile (24 files: Thai native, scanned and hybrid PDFs; Thai
-PNG/JPG/JPEG screenshots; mixed Thai-English images; cross-file Thai cases). It
-exists so the Thai rendering path can be inspected without reading tests.
-
-Language is measured, not assumed: prompt languages are Thai 30, English 17,
-mixed 25; attachment languages are Thai 28, English 40, mixed 7; 12 distinct
-prompt→attachment language pairs appear. Mean Thai script share is 0.7892 for
-Thai prompts, 0.4688 for mixed prompts and 0.0392 for English prompts, with 0
+Language is measured, not assumed: prompt languages are Thai 23, English 34,
+mixed 15; attachment languages are Thai 35, English 34, mixed 7; 11 distinct
+prompt/attachment language pairs appear. Mean Thai script share is 0.7538 for
+Thai prompts, 0.5527 for mixed prompts and 0.0139 for English prompts, with 0
 attachments below their declared threshold and 0 residual English labels in
-Thai documents. 23 cases carry a structure reference (all 24 references
-resolve), 13 cases have cross-file links (61 links), 13 cases are multi-file
-and 5 contain a same-archetype pair. 15 cases are prompt-only and use 7 distinct
-content forms.
+Thai documents. 26 cases carry a structure reference (all 27 references
+resolve), 14 cases have cross-file links (62 links), 15 cases are multi-file
+and 9 contain a same-archetype pair. 14 cases are prompt-only.
 
-Consistency reporting is structured: of 348 checks in the sample, 66 are
-`passed`, 282 are `not_applicable` (for example a structure-resolution check in
+Consistency reporting is structured: of 351 checks in the sample, 73 are
+`passed`, 278 are `not_applicable` (for example a structure-resolution check in
 a case whose prompt cites no structure) and 0 are `failed` or `not_evaluated`.
 `not_applicable` is never counted as a pass.
+
+`datasets/v2-thai-sample` is a focused 16-case sample from the
+`thai-rendering` profile (21 files: Thai native, scanned and hybrid PDFs; Thai
+PNG/JPG/JPEG screenshots; mixed Thai-English images; cross-file Thai cases). It
+exists so the Thai rendering path can be inspected without reading tests.
 
 ### Benchmark readiness and safe subset
 

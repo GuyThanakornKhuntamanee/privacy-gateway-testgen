@@ -1,0 +1,79 @@
+[
+  {
+    "transaction_ref": "TXN-2026-57972211",
+    "date": "2026-03-18",
+    "customer": "ศิริพร วิริยะ",
+    "email": "maneerat.prasert@example.org",
+    "amount": "233,705.00",
+    "status": "ชำระแล้ว / settled",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-UGEW8A",
+    "currency": "THB"
+  },
+  {
+    "transaction_ref": "TXN-2026-07779829",
+    "date": "2026-03-10",
+    "customer": "ศิริพร วิริยะ",
+    "email": "maneerat.prasert@example.org",
+    "amount": "8,149.00",
+    "status": "คืนเงินแล้ว / refunded",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-F9D2XV",
+    "currency": "THB"
+  },
+  {
+    "transaction_ref": "TXN-2026-01025849",
+    "date": "2026-03-11",
+    "customer": "ธีรภัทร ธีรวงศ์",
+    "email": "siriporn.piyada@example.net",
+    "amount": "2,810.00",
+    "status": "รอดำเนินการ / pending",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-MY8EXP",
+    "currency": "THB"
+  },
+  {
+    "transaction_ref": "TXN-2026-73124406",
+    "date": "2026-03-12",
+    "customer": "อรทัย บุญมี",
+    "email": "somchai.prasert2@example.net",
+    "amount": "20,258.00",
+    "status": "ชำระแล้ว / settled",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-H34YDP",
+    "currency": "THB"
+  },
+  {
+    "transaction_ref": "TXN-2026-21560482",
+    "date": "2026-03-13",
+    "customer": "อารีย์ ใจดี",
+    "email": "wichai.wichai@example.com",
+    "amount": "20,605.00",
+    "status": "รอดำเนินการ / pending",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-Z4BTXK",
+    "currency": "THB"
+  },
+  {
+    "transaction_ref": "TXN-2026-30924409",
+    "date": "2026-03-14",
+    "customer": "ศิริพร วิริยะ",
+    "email": "maneerat.prasert@example.org",
+    "amount": "7,320.00",
+    "status": "คืนเงินแล้ว / refunded",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-DFECEH",
+    "currency": "THB"
+  },
+  {
+    "transaction_ref": "TXN-2026-50621685",
+    "date": "2026-03-15",
+    "customer": "ธีรภัทร ธีรวงศ์",
+    "email": "siriporn.piyada@example.net",
+    "amount": "4,945.00",
+    "status": "ชำระแล้ว / settled",
+    "card": "4242426461844141",
+    "auth_code": "AUTH-0WCU5H",
+    "currency": "THB"
+  }
+]

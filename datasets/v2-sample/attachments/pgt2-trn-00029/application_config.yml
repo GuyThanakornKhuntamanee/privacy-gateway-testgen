@@ -1,0 +1,14 @@
+app:
+  name: orders-api
+  environment: production
+  port: 8080
+logging:
+  level: info
+  destination: stdout
+api_key: YOUR_API_KEY_HERE
+database:
+  engine: postgresql
+  port: 5432
+  username: example_app
+  password: changeme
+_language_note: "เอกสารนี้ใช้ภายในองค์กรเท่านั้น"

@@ -1,7 +1,0 @@
-APP_ENV = "production"
-APP_PORT = "8080"
-LOG_LEVEL = "info"
-DB_HOST = "db-primary.nimbus-lotus.internal:5432"
-REDIS_HOST = "gateway-12.nimbus-lotus.internal"
-API_BASE_URL = "https://api.nimbus-lotus.internal/api/v1/orders"
-_language_note = "เอกสารนี้ใช้ภายในองค์กรเท่านั้น"

@@ -1,25 +1,24 @@
 {
   "attachment_count_distribution": {
-    "1": 8,
-    "2": 8
+    "1": 11,
+    "2": 5
   },
   "attachment_extension_distribution": {
-    "docx": 2,
-    "jpeg": 1,
-    "jpg": 4,
+    "docx": 1,
+    "jpg": 7,
     "md": 1,
     "pdf": 7,
-    "png": 9
+    "png": 5
   },
   "attachment_language_distribution": {
-    "en": 2,
-    "mixed": 3,
+    "en": 1,
+    "mixed": 1,
     "th": 19
   },
   "attachments_sha256": {
     "pgt2-trn-00001/screenshot_chat.jpg": "234aedf1ef65498e2b76ab22dc2ca6856aa245ff1de781a0ed50abd3e353a845",
     "pgt2-trn-00002/scanned_invoice.pdf": "642de0ae3642ce7cfaeae0ff7deafdd5a99f9dad64e0b69bee712776e2e89372",
-    "pgt2-trn-00003/screenshot_code.jpg": "38cca1829afb55a6c985a93bd03ae6e7747a61791d5599012bc270a62b252308",
+    "pgt2-trn-00003/screenshot_code.jpg": "741b96719b1bd39c1d0cc20b0c647c832971f9c8201a3d01e95ab62d7f379f4e",
     "pgt2-trn-00004/architecture_notes.pdf": "695ca8fd473457534938bba63fd5b4f3de6939bf40918f3e597ab1b58c9754f6",
     "pgt2-trn-00004/screenshot_chat.png": "7a40a44390c37681ed0eaaa3ef75edff0e74b581ea436a9e2226a7fe3909208c",
     "pgt2-trn-00005/screenshot_dashboard.png": "77ef55c90a13d779b35dacb64daeb250df2bcd77eef3e0807fb8049ad3bbb7bf",
@@ -33,55 +32,56 @@
     "pgt2-trn-00010/meeting_minutes_v1.pdf": "3bcac11fa6114e1a3f2e7af944d2d39d2ff89524dfc4f650a55f7baf21b0d00e",
     "pgt2-trn-00011/meeting_minutes_v1.pdf": "aa5ce169b4035d96d0bbe86747047f49552f7662d348a4a7c6145c007c6bbf64",
     "pgt2-trn-00011/meeting_minutes_v2.pdf": "b95aa0ee2f5c4b4a8eed3db0eb4f7e1fefb799a1508d029e15980f1b567391d4",
-    "pgt2-trn-00012/screenshot_receipt_v1.png": "a6250dfb804b652aec95a9cf5a0bd81c6439a9e1a995d57bb3e5d0a8f39db27b",
-    "pgt2-trn-00012/screenshot_receipt_v2.png": "6b1376dd8d3562714b72566ade1065a0b26a77ffb4c35c9f674cb5235f04b215",
-    "pgt2-trn-00013/screenshot_email.png": "20d2aa97fe8dd79ce7962f792055eb8031f75c8c6c8a2aebe2399d95553345dc",
-    "pgt2-trn-00013/support_ticket.docx": "1c3b60f50481a7f0546db127e988fdad744b2ea0f898f6560b61f5c564ba35c1",
-    "pgt2-tst-00001/incident_report.pdf": "9c80a0ff4918e9dfa92e0c82693e9fb9e9a550b90e5757f82470c3ac92a96542",
-    "pgt2-val-00001/screenshot_form.png": "9e5793eab975c36d0aa9423ceb323416808096bea4d1b501e077e54981e4a5b4",
-    "pgt2-val-00002/screenshot_config.jpeg": "322c3796b29a72fee3ef43885cfbe5450e7cd866aa95e442db6305469f00188b",
-    "pgt2-val-00002/screenshot_config_v1.png": "cd7df1c4f44d5a3c6242b4375f1386f802c301860faf4baa58b3e51d23740498"
+    "pgt2-trn-00012/architecture_notes.pdf": "70cf19bc51bff6a2e82893aafafc5d31dad01749d6f9e0d3b3aa5edd99e1bff5",
+    "pgt2-trn-00013/screenshot_chat.jpg": "79ddb48fcf1d05fb8685b1bc55929719f1621ee02724736b446d33b51af1dd2d",
+    "pgt2-tst-00001/screenshot_receipt.jpg": "7a0ef3bcc4a99e3d13334ae3206bf91504429fa93bfc16c5dd8fdb612239db82",
+    "pgt2-val-00001/screenshot_config.png": "fb607a1f0dba912cdfb696b7f0001351b2f2873e8fd8526ab7dcd3e72d2d706e",
+    "pgt2-val-00002/screenshot_config.jpg": "23700917c6f78fff934df0e4049b995e47e8bc7641ea64d8fc8be6830c42f867"
   },
   "benchmark_excluded_cases": 0,
   "benchmark_safe_cases": 16,
   "benchmark_safe_ocr_cases": 13,
   "benchmark_safe_text_cases": 3,
   "bundle_distribution": {
-    "multi_file": 3,
-    "old_new": 2,
-    "same_archetype": 3,
-    "single_file": 8
+    "multi_file": 2,
+    "old_new": 1,
+    "same_archetype": 2,
+    "single_file": 11
   },
   "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
   "config_sha256": "48ac0dfd15c03e6226921bc33f97dd2fcf8c0adfbecf4aca07d3c5d398f881c8",
-  "consistency_checks": 87,
-  "consistency_passed": 19,
+  "consistency_checks": 86,
+  "consistency_passed": 16,
   "consistency_rate": 1.0,
   "consistency_status": {
-    "not_applicable": 68,
-    "passed": 19
+    "not_applicable": 70,
+    "passed": 16
   },
-  "cross_file_link_cases": 8,
+  "cross_file_link_cases": 5,
   "dataset_id": "pgt2-21-thai-rendering",
   "dataset_version": "2.2.0",
   "difficulty_distribution": {
-    "2": 5,
-    "3": 6,
+    "1": 1,
+    "2": 2,
+    "3": 7,
     "4": 4,
-    "5": 1
+    "5": 2
   },
   "disclosure": "metadata",
   "domain_combinations": {
-    "none": 3,
+    "infrastructure": 1,
+    "infrastructure+secrets": 1,
+    "none": 2,
     "payment": 4,
-    "pii": 5,
+    "pii": 4,
     "pii+secrets": 2,
     "secrets": 2
   },
   "domain_distribution": {
+    "infrastructure": 2,
     "payment": 4,
-    "pii": 7,
-    "secrets": 4
+    "pii": 6,
+    "secrets": 5
   },
   "evaluation_requirement_distribution": {
     "direct_text_extraction": 3,
@@ -153,74 +153,71 @@
     ]
   },
   "file_type_distribution": {
-    "docx": 2,
-    "jpeg": 1,
-    "jpg": 4,
+    "docx": 1,
+    "jpg": 7,
     "md": 1,
     "pdf": 6,
-    "png": 8
+    "png": 5
   },
   "files": {
     "NOTICE.md": "4ab85ebedc21ed01f5b60d3e6281c88174a3ea01df1f564806aee572d728478c",
-    "all.json": "029a81920bfb77d7a592b52d6da06c3b803fe2a15286f551627ddd1fbd297b8d",
+    "all.json": "dbd50e9cea05b46cac847de3b89d223af5071039c0c4ad38c463347e1d8d910e",
     "benchmark_excluded_cases.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "benchmark_safe_cases.jsonl": "9a03458f1857ffa719fd5774caad86512817c44d5f63d4ad9a71a99f5b1e7782",
-    "benchmark_safe_ocr_cases.jsonl": "4bad7a5223f4d0a67cb354f49c4645fdb626c30b7ca8e8abd25f317afae71a48",
-    "benchmark_safe_text_cases.jsonl": "55554cae70f7a6c3765a228b6ff6cbeaf9bbf37015027e9cdbe824233535a08b",
-    "cases.jsonl": "9a03458f1857ffa719fd5774caad86512817c44d5f63d4ad9a71a99f5b1e7782",
-    "ground_truth/entities.jsonl": "f9ab50551d745af87f56b08a86e99e9f32402ef11c1ef2d69a422ade13ed18f1",
-    "stats.json": "d21237162720e51e2fb7f06e05dc435f1108680d64dd8484814f9170ed479c34",
-    "test.jsonl": "f71f145d85a7bc5e9f06cdc4c66f1d541728fce88a62b5df2ca198ee508a57c7",
-    "train.jsonl": "12193c3934be97322d1e0e2dd5b5f02919fcf0d2d89ed96d6d80d218bd42739d",
-    "validation.jsonl": "3b124aad429a43d17c60ffd8a2e1ece241af7dc0f67be5ab69e95bf2e4b97aae"
+    "benchmark_safe_cases.jsonl": "957459b1c2dad834373f27727f9f05287eb40accbcc73643561029f7c28cc2ee",
+    "benchmark_safe_ocr_cases.jsonl": "49ff5a7a493eee2d8eb4815355ab4ae9b0e62ae8533ac4a10ca85950a98211ae",
+    "benchmark_safe_text_cases.jsonl": "a2857b93ebca5590ab3442d9a8a73a1562c7aa7b875271b4f48394ac98a5806d",
+    "cases.jsonl": "957459b1c2dad834373f27727f9f05287eb40accbcc73643561029f7c28cc2ee",
+    "ground_truth/entities.jsonl": "534e5b4d9ed23d7cd4b9b3d74b161c20fd36f59a199fb63c7e1c3e015d5bcba1",
+    "stats.json": "b0739100cc768aa66d06712bcb11e8a8be412e5a4b2fc7c62bbab819c82f45c3",
+    "test.jsonl": "f12451c0dba875fa1f23eea6a682a2e1e8386df05ba44a7233f3e7912bfb6148",
+    "train.jsonl": "0d0b6ef91e4084bce88637e6051f7c81cee954214cb5307204b174911c9ee0c1",
+    "validation.jsonl": "4407b745c6a46e7242842089bdec273f477ca7905d69ddcec52f17155168836b"
   },
   "generated_at": "2026-01-01T00:00:00Z",
   "generator_version": "0.4.0",
   "intent_distribution": {
-    "analyze": 1,
+    "analyze": 2,
     "calculate": 1,
     "classify": 1,
-    "convert_format": 1,
-    "create_chart": 1,
     "draft_email": 1,
     "extract_fields": 1,
     "find_anomalies": 2,
-    "modify_document": 1,
     "prepare_report": 2,
     "review_document": 1,
-    "summarize": 2,
+    "summarize": 4,
     "troubleshoot": 1
   },
   "language_distribution": {
-    "en": 1,
-    "mixed": 6,
-    "th": 9
+    "en": 2,
+    "mixed": 4,
+    "th": 10
   },
   "language_matrix": {
     "en->en": 1,
-    "mixed->en": 1,
-    "mixed->th": 8,
-    "th->mixed": 3,
-    "th->th": 11
+    "en->th": 1,
+    "mixed->th": 5,
+    "th->mixed": 1,
+    "th->th": 13
   },
   "near_duplicate_threshold": 0.96,
   "notes": "Synthetic only (see NOTICE.md). Attachment hashes and case JSON are deterministic for this seed and config.",
   "persona_distribution": {
-    "analyst": 1,
+    "analyst": 2,
     "devops": 1,
-    "executive_assistant": 2,
+    "executive_assistant": 1,
     "finance": 1,
     "healthcare_admin": 2,
+    "hr": 1,
     "intern": 1,
-    "manager": 3,
-    "sales": 3,
-    "support": 1,
-    "sysadmin": 1
+    "manager": 2,
+    "operations": 1,
+    "sales": 2,
+    "support": 2
   },
   "policy_sha256": "542691e4c21940c5dc274c220595ee39b3365439f2f345af42a37f97c57ee1f7",
   "positive_negative_ratio": {
-    "negative": 3,
-    "positive": 13
+    "negative": 2,
+    "positive": 14
   },
   "profile": "thai-rendering",
   "reproducible": true,
@@ -231,11 +228,11 @@
     "train": 13,
     "validation": 2
   },
-  "structure_reference_cases": 4,
+  "structure_reference_cases": 5,
   "synthetic": true,
   "synthetic_notice": "NOTICE.md",
   "total_cases": 16,
-  "total_files": 24,
+  "total_files": 21,
   "verification_status": {
     "verified": 2,
     "verified_partial": 14

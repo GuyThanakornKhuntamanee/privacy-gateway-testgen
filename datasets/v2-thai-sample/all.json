@@ -215,7 +215,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 4,
-    "document_fingerprint": "16071590f7c7c400",
+    "document_fingerprint": "87bb1ec710836ba0",
     "document_profile": [
       {
         "archetype": "screenshot_chat",
@@ -1044,7 +1044,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 3,
-    "document_fingerprint": "abe6a4de0b73033c",
+    "document_fingerprint": "59b83df64cede376",
     "document_profile": [
       {
         "archetype": "scanned_invoice",
@@ -1436,33 +1436,33 @@
           "mixed"
         ],
         "language_check": {
-          "contains_both": true,
+          "contains_both": false,
           "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 362,
-          "latin_characters": 233,
-          "latin_chars": 233,
-          "latin_share": 0.8535,
+          "contains_thai": false,
+          "counted_chars": 356,
+          "latin_characters": 267,
+          "latin_chars": 267,
+          "latin_share": 1.0,
           "matches_declared_language": true,
           "neutral_chars": 89,
-          "neutral_share": 0.2459,
+          "neutral_share": 0.25,
           "static": {
-            "contains_both": true,
+            "contains_both": false,
             "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 322,
-            "latin_characters": 210,
-            "latin_chars": 210,
-            "latin_share": 0.84,
+            "contains_thai": false,
+            "counted_chars": 316,
+            "latin_characters": 244,
+            "latin_chars": 244,
+            "latin_share": 1.0,
             "neutral_chars": 72,
-            "neutral_share": 0.2236,
-            "thai_characters": 40,
-            "thai_chars": 40,
-            "thai_share": 0.16
+            "neutral_share": 0.2278,
+            "thai_characters": 0,
+            "thai_chars": 0,
+            "thai_share": 0.0
           },
-          "thai_characters": 40,
-          "thai_chars": 40,
-          "thai_share": 0.1465
+          "thai_characters": 0,
+          "thai_chars": 0,
+          "thai_share": 0.0
         },
         "language_mix": "English business prose",
         "language_mode": "en",
@@ -1474,17 +1474,17 @@
         "renderer": "jpeg",
         "renderer_version": "2.2",
         "revision_changes": [],
-        "sha256": "38cca1829afb55a6c985a93bd03ae6e7747a61791d5599012bc270a62b252308",
-        "size_bytes": 114736,
+        "sha256": "741b96719b1bd39c1d0cc20b0c647c832971f9c8201a3d01e95ab62d7f379f4e",
+        "size_bytes": 113660,
         "structure": {
           "columns": 0,
           "delimiter": null,
           "headers": [],
           "headings": [
-            "ซอร์สโค้ดแอปพลิเคชัน"
+            "Application source"
           ],
           "keys": [],
-          "lines": 528,
+          "lines": 515,
           "pages": 0,
           "renderer": "jpeg",
           "rows": 0,
@@ -1608,7 +1608,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 3,
-    "document_fingerprint": "bc6d83959d54409a",
+    "document_fingerprint": "8d35c4477c8bb0ca",
     "document_profile": [
       {
         "archetype": "screenshot_code",
@@ -1691,7 +1691,7 @@
       ],
       "by_file_type": {
         "jpg": {
-          "attachments": 362,
+          "attachments": 356,
           "declared": {
             "en": 1
           },
@@ -1726,58 +1726,58 @@
       "attachments": [
         {
           "attachment_id": "ATT-001",
-          "contains_both": true,
+          "contains_both": false,
           "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 362,
+          "contains_thai": false,
+          "counted_chars": 356,
           "extension": "jpg",
           "language": "en",
-          "latin_characters": 233,
-          "latin_chars": 233,
-          "latin_share": 0.8535,
+          "latin_characters": 267,
+          "latin_chars": 267,
+          "latin_share": 1.0,
           "matches_declared_language": true,
           "neutral_chars": 89,
-          "neutral_share": 0.2459,
+          "neutral_share": 0.25,
           "static": {
-            "contains_both": true,
+            "contains_both": false,
             "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 322,
-            "latin_characters": 210,
-            "latin_chars": 210,
-            "latin_share": 0.84,
+            "contains_thai": false,
+            "counted_chars": 316,
+            "latin_characters": 244,
+            "latin_chars": 244,
+            "latin_share": 1.0,
             "neutral_chars": 72,
-            "neutral_share": 0.2236,
-            "thai_characters": 40,
-            "thai_chars": 40,
-            "thai_share": 0.16
+            "neutral_share": 0.2278,
+            "thai_characters": 0,
+            "thai_chars": 0,
+            "thai_share": 0.0
           },
-          "thai_characters": 40,
-          "thai_chars": 40,
-          "thai_share": 0.1465
+          "thai_characters": 0,
+          "thai_chars": 0,
+          "thai_share": 0.0
         }
       ],
       "prompt": {
         "contains_both": false,
         "contains_latin": true,
         "contains_thai": false,
-        "counted_chars": 38,
-        "latin_characters": 38,
-        "latin_chars": 38,
+        "counted_chars": 24,
+        "latin_characters": 22,
+        "latin_chars": 22,
         "latin_share": 1.0,
         "matches_declared_language": true,
-        "neutral_chars": 0,
-        "neutral_share": 0.0,
+        "neutral_chars": 2,
+        "neutral_share": 0.0833,
         "static": {
           "contains_both": false,
           "contains_latin": true,
           "contains_thai": false,
-          "counted_chars": 38,
-          "latin_characters": 38,
-          "latin_chars": 38,
+          "counted_chars": 24,
+          "latin_characters": 22,
+          "latin_chars": 22,
           "latin_share": 1.0,
-          "neutral_chars": 0,
-          "neutral_share": 0.0,
+          "neutral_chars": 2,
+          "neutral_share": 0.0833,
           "thai_characters": 0,
           "thai_chars": 0,
           "thai_share": 0.0
@@ -1797,10 +1797,10 @@
     ],
     "policy_scenario": "external_assistant",
     "profile": "thai-rendering",
-    "prompt": "please this came from the customer yesterday",
+    "prompt": "this is broken, can you look?",
     "prompt_form": "with_attachment",
     "prompt_language": "en",
-    "prompt_length": 44,
+    "prompt_length": 29,
     "prompt_length_class": "short",
     "prompt_style": "short",
     "prompt_styles": [
@@ -2261,7 +2261,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 4,
-    "document_fingerprint": "aa50bed9bbdc0cd4",
+    "document_fingerprint": "2d08467cf0a848e7",
     "document_profile": [
       {
         "archetype": "architecture_notes",
@@ -3376,7 +3376,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 2,
-    "document_fingerprint": "be9499efcda5bdcb",
+    "document_fingerprint": "73df6401a4ade3ef",
     "document_profile": [
       {
         "archetype": "screenshot_dashboard",
@@ -4409,7 +4409,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 5,
-    "document_fingerprint": "260e7c3ae6c94097",
+    "document_fingerprint": "d548b8fc02e37d0a",
     "document_profile": [
       {
         "archetype": "screenshot_dashboard",
@@ -5299,7 +5299,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 3,
-    "document_fingerprint": "0ce3d44c0a048a7c",
+    "document_fingerprint": "a6e41e428129d2c0",
     "document_profile": [
       {
         "archetype": "screenshot_dashboard",
@@ -6226,7 +6226,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 3,
-    "document_fingerprint": "126fb507f1624c46",
+    "document_fingerprint": "06427b39801dbca0",
     "document_profile": [
       {
         "archetype": "scanned_invoice",
@@ -7072,7 +7072,7 @@
     "detection_expected": true,
     "detection_mode": "deterministic",
     "difficulty": 2,
-    "document_fingerprint": "99247a04e407732a",
+    "document_fingerprint": "a222622c77694882",
     "document_profile": [
       {
         "archetype": "screenshot_chat",
@@ -8473,7 +8473,7 @@
     "detection_expected": false,
     "detection_mode": "deterministic",
     "difficulty": 3,
-    "document_fingerprint": "e59d9fad0e284873",
+    "document_fingerprint": "cb8a9f79adcd9e31",
     "document_profile": [
       {
         "archetype": "meeting_minutes",
@@ -9894,7 +9894,7 @@
     "detection_expected": false,
     "detection_mode": "deterministic",
     "difficulty": 4,
-    "document_fingerprint": "db439af6a6009b1f",
+    "document_fingerprint": "37359b4d65c49f1b",
     "document_profile": [
       {
         "archetype": "meeting_minutes",
@@ -10748,140 +10748,32 @@
   },
   {
     "action_expected": {
-      "email_address": "MASK",
-      "thai_address": "MASK",
-      "thai_name": "REDACT"
+      "api_key": "BLOCK"
     },
-    "adversarial": false,
+    "adversarial": true,
     "ambiguity": {
       "is_ambiguous": false,
       "rationale": "Single interpretation."
     },
     "archetype_categories": [
-      "Finance"
+      "IT"
     ],
     "archetypes": [
-      "screenshot_receipt"
+      "architecture_notes"
     ],
-    "attachment_count": 2,
+    "attachment_count": 1,
     "attachments": [
       {
-        "archetype": "screenshot_receipt",
-        "archetype_category": "Finance",
-        "archetype_label": "Receipt screenshot",
+        "archetype": "architecture_notes",
+        "archetype_category": "IT",
+        "archetype_label": "Architecture notes",
         "attachment_id": "ATT-001",
-        "dependency_renderer": "pillow+pypdf",
-        "evaluation_requirement": "ocr_required",
-        "expected_extraction_method": "ocr",
-        "extension": "png",
-        "file_type": "png",
-        "filename": "screenshot_receipt_v1.png",
-        "generated_seed": 21,
-        "language": "en",
-        "language_capability": [
-          "th",
-          "en",
-          "mixed"
-        ],
-        "language_check": {
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 583,
-          "latin_characters": 276,
-          "latin_chars": 276,
-          "latin_share": 0.7841,
-          "matches_declared_language": true,
-          "neutral_chars": 231,
-          "neutral_share": 0.3962,
-          "static": {
-            "contains_both": false,
-            "contains_latin": true,
-            "contains_thai": false,
-            "counted_chars": 468,
-            "latin_characters": 253,
-            "latin_chars": 253,
-            "latin_share": 1.0,
-            "neutral_chars": 215,
-            "neutral_share": 0.4594,
-            "thai_characters": 0,
-            "thai_chars": 0,
-            "thai_share": 0.0
-          },
-          "thai_characters": 76,
-          "thai_chars": 76,
-          "thai_share": 0.2159
-        },
-        "language_mix": "English business prose",
-        "language_mode": "en",
-        "language_requested": "en",
-        "language_routing": null,
-        "mime_type": "image/png",
-        "path": "pgt2-trn-00012/screenshot_receipt_v1.png",
-        "render_mode": null,
-        "renderer": "png",
-        "renderer_version": "2.2",
-        "revision_changes": [],
-        "sha256": "a6250dfb804b652aec95a9cf5a0bd81c6439a9e1a995d57bb3e5d0a8f39db27b",
-        "size_bytes": 524627,
-        "structure": {
-          "columns": 4,
-          "delimiter": null,
-          "headers": [
-            "description",
-            "quantity",
-            "unit_price",
-            "line_total"
-          ],
-          "headings": [
-            "Invoice"
-          ],
-          "keys": [],
-          "lines": 2111,
-          "pages": 0,
-          "renderer": "png",
-          "rows": 10,
-          "sheets": [],
-          "slide_titles": [],
-          "slides": 0,
-          "tables": [
-            {
-              "columns": 4,
-              "rows": 6,
-              "title": "Items"
-            },
-            {
-              "columns": 2,
-              "rows": 4,
-              "title": "Summary"
-            }
-          ]
-        },
-        "synthetic": true,
-        "text_shaping": "harfbuzz",
-        "verification": {
-          "checks": [
-            "file_nonempty",
-            "image_decoded",
-            "ocr_layout_verified"
-          ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
-          "issues": [],
-          "status": "verified_layout"
-        }
-      },
-      {
-        "archetype": "screenshot_receipt",
-        "archetype_category": "Finance",
-        "archetype_label": "Receipt screenshot",
-        "attachment_id": "ATT-002",
-        "dependency_renderer": "pillow+pypdf",
-        "evaluation_requirement": "ocr_required",
-        "expected_extraction_method": "ocr",
-        "extension": "png",
-        "file_type": "png",
-        "filename": "screenshot_receipt_v2.png",
+        "dependency_renderer": "reportlab+pillow+pypdf",
+        "evaluation_requirement": "direct_text_extraction",
+        "expected_extraction_method": "pdf_text",
+        "extension": "pdf",
+        "file_type": "pdf",
+        "filename": "architecture_notes.pdf",
         "generated_seed": 21,
         "language": "th",
         "language_capability": [
@@ -10893,1056 +10785,55 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 690,
-          "latin_characters": 218,
-          "latin_chars": 218,
-          "latin_share": 0.4812,
+          "counted_chars": 220,
+          "latin_characters": 93,
+          "latin_chars": 93,
+          "latin_share": 0.4581,
           "matches_declared_language": true,
-          "neutral_chars": 237,
-          "neutral_share": 0.3435,
+          "neutral_chars": 17,
+          "neutral_share": 0.0773,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 575,
-            "latin_characters": 195,
-            "latin_chars": 195,
-            "latin_share": 0.5508,
-            "neutral_chars": 221,
-            "neutral_share": 0.3843,
-            "thai_characters": 159,
-            "thai_chars": 159,
-            "thai_share": 0.4492
+            "counted_chars": 180,
+            "latin_characters": 69,
+            "latin_chars": 69,
+            "latin_share": 0.3855,
+            "neutral_chars": 1,
+            "neutral_share": 0.0056,
+            "thai_characters": 110,
+            "thai_chars": 110,
+            "thai_share": 0.6145
           },
-          "thai_characters": 235,
-          "thai_chars": 235,
-          "thai_share": 0.5188
+          "thai_characters": 110,
+          "thai_chars": 110,
+          "thai_share": 0.5419
         },
         "language_mix": "Thai business prose with English technical terms",
         "language_mode": "th",
-        "language_requested": "mixed",
-        "language_routing": "relabelled_from_mixed",
-        "mime_type": "image/png",
-        "path": "pgt2-trn-00012/screenshot_receipt_v2.png",
-        "render_mode": null,
-        "renderer": "png",
-        "renderer_version": "2.2",
-        "revision_changes": [
-          {
-            "after": "approved",
-            "before": "draft",
-            "change_type": "status_changed",
-            "from": "draft",
-            "kind": "status_changed",
-            "source_v1": {
-              "block": "paragraph",
-              "column": 0,
-              "row": 0,
-              "table": "document"
-            },
-            "source_v2": {
-              "block": "paragraph",
-              "column": 0,
-              "row": 0,
-              "table": "document"
-            },
-            "to": "approved"
-          }
-        ],
-        "sha256": "6b1376dd8d3562714b72566ade1065a0b26a77ffb4c35c9f674cb5235f04b215",
-        "size_bytes": 599407,
-        "structure": {
-          "columns": 4,
-          "delimiter": null,
-          "headers": [
-            "รายการ / description",
-            "จำนวน / quantity",
-            "ราคาต่อหน่วย / unit_price",
-            "ยอดรวมรายการ / line_total"
-          ],
-          "headings": [
-            "ใบแจ้งหนี้"
-          ],
-          "keys": [],
-          "lines": 2429,
-          "pages": 0,
-          "renderer": "png",
-          "rows": 10,
-          "sheets": [],
-          "slide_titles": [],
-          "slides": 0,
-          "tables": [
-            {
-              "columns": 4,
-              "rows": 6,
-              "title": "Items"
-            },
-            {
-              "columns": 2,
-              "rows": 4,
-              "title": "สรุป"
-            }
-          ]
-        },
-        "synthetic": true,
-        "text_shaping": "harfbuzz",
-        "verification": {
-          "checks": [
-            "file_nonempty",
-            "image_decoded",
-            "ocr_layout_verified"
-          ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
-          "issues": [],
-          "status": "verified_layout"
-        }
-      }
-    ],
-    "audit_log_expected": {
-      "forbidden_fields": [
-        "exact_entity_value"
-      ],
-      "record_fields": [
-        "test_id",
-        "policy_scenario",
-        "entity_types",
-        "actions",
-        "attachments"
-      ]
-    },
-    "bundle": {
-      "bundle_id": "BND-00012",
-      "kind": "old_new",
-      "members": [
-        {
-          "archetype": "screenshot_receipt",
-          "attachment_id": "ATT-001",
-          "filename": "screenshot_receipt_v1.png",
-          "role": "original"
-        },
-        {
-          "archetype": "screenshot_receipt",
-          "attachment_id": "ATT-002",
-          "filename": "screenshot_receipt_v2.png",
-          "role": "revised"
-        }
-      ],
-      "relationship": {
-        "evidence": [
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-b5cc7e92060b"
-          },
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-cbce7202d140"
-          },
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-e41dd5b80ca2"
-          },
-          {
-            "changes": 1,
-            "kind": "controlled_revision"
-          },
-          {
-            "archetype": "screenshot_receipt",
-            "kind": "same_archetype"
-          }
-        ],
-        "status": "related"
-      },
-      "revision_changes": [
-        {
-          "after": "approved",
-          "before": "draft",
-          "change_type": "status_changed",
-          "from": "draft",
-          "kind": "status_changed",
-          "source_v1": {
-            "block": "paragraph",
-            "column": 0,
-            "row": 0,
-            "table": "document"
-          },
-          "source_v2": {
-            "block": "paragraph",
-            "column": 0,
-            "row": 0,
-            "table": "document"
-          },
-          "to": "approved"
-        }
-      ]
-    },
-    "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
-    "classification_expected": [
-      "email_address",
-      "thai_address",
-      "thai_name"
-    ],
-    "consistency_checks": [
-      {
-        "attachment_id": "ATT-001",
-        "check": "invoice_arithmetic",
-        "details": {
-          "line_items": 6,
-          "subtotal": 245050,
-          "tax": 17154,
-          "total": 262204
-        },
-        "evaluated_items": 6,
-        "passed": true,
-        "status": "passed"
-      },
-      {
-        "attachment_id": "ATT-001",
-        "check": "invoice_due_date",
-        "details": {
-          "due_date": "2026-04-17",
-          "issue_date": "2026-03-18",
-          "terms_days": 30
-        },
-        "evaluated_items": 1,
-        "passed": true,
-        "status": "passed"
-      },
-      {
-        "attachment_id": null,
-        "check": "linked_amount_matches",
-        "details": {
-          "observed_values": [
-            262204
-          ],
-          "reason": "fewer than two rendered amounts in this bundle"
-        },
-        "evaluated_items": 0,
-        "passed": false,
-        "status": "not_applicable"
-      },
-      {
-        "attachment_id": null,
-        "check": "linked_currency_matches",
-        "details": {
-          "observed_values": [
-            "THB"
-          ],
-          "reason": "fewer than two rendered currencies in this bundle"
-        },
-        "evaluated_items": 0,
-        "passed": false,
-        "status": "not_applicable"
-      },
-      {
-        "attachment_id": null,
-        "check": "linked_transaction_reference_matches",
-        "details": {
-          "observed_values": [],
-          "reason": "fewer than two rendered references in this bundle"
-        },
-        "evaluated_items": 0,
-        "passed": false,
-        "status": "not_applicable"
-      },
-      {
-        "attachment_id": null,
-        "check": "structure_reference_resolution",
-        "details": {
-          "reason": "the prompt cites no structure",
-          "references": 0
-        },
-        "evaluated_items": 0,
-        "passed": false,
-        "status": "not_applicable"
-      },
-      {
-        "attachment_id": null,
-        "check": "cross_file_identifiers",
-        "details": {
-          "consistent": 3,
-          "linked_attachments": 2,
-          "links": 3
-        },
-        "evaluated_items": 3,
-        "passed": true,
-        "status": "passed"
-      }
-    ],
-    "content_language": "mixed",
-    "content_languages": [
-      "en",
-      "th"
-    ],
-    "context_complexity": "high",
-    "cross_file_links": [
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-b5cc7e92060b",
-        "canonical_entity_value": "prasert.piyada@example.com",
-        "consistent": true,
-        "entity_type": "email_address",
-        "exact_entity_value": "prasert.piyada@example.com",
-        "filenames": [
-          "screenshot_receipt_v1.png",
-          "screenshot_receipt_v2.png"
-        ],
-        "link_id": "XFL-001",
-        "occurrences": 2,
-        "representation_variants": [
-          "prasert.piyada@example.com"
-        ]
-      },
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-cbce7202d140",
-        "canonical_entity_value": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-        "consistent": true,
-        "entity_type": "thai_address",
-        "exact_entity_value": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-        "filenames": [
-          "screenshot_receipt_v1.png",
-          "screenshot_receipt_v2.png"
-        ],
-        "link_id": "XFL-002",
-        "occurrences": 2,
-        "representation_variants": [
-          "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000"
-        ]
-      },
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-e41dd5b80ca2",
-        "canonical_entity_value": "จุฑามาศ อินทรีย์",
-        "consistent": true,
-        "entity_type": "thai_name",
-        "exact_entity_value": "จุฑามาศ อินทรีย์",
-        "filenames": [
-          "screenshot_receipt_v1.png",
-          "screenshot_receipt_v2.png"
-        ],
-        "link_id": "XFL-003",
-        "occurrences": 2,
-        "representation_variants": [
-          "จุฑามาศ อินทรีย์"
-        ]
-      }
-    ],
-    "dataset_version": "2.2.0",
-    "detection_expected": true,
-    "detection_mode": "deterministic",
-    "difficulty": 2,
-    "document_fingerprint": "c7a7bac96a35a17b",
-    "document_profile": [
-      {
-        "archetype": "screenshot_receipt",
-        "attachment_id": "ATT-001",
-        "delimiter": null,
-        "filename": "screenshot_receipt_v1.png",
-        "language": "en",
+        "language_requested": "th",
         "language_routing": null,
-        "pages": 0,
-        "renderer": "png",
-        "rows": 10,
-        "sections": 1,
-        "sheets": 0,
-        "slides": 0,
-        "tables": 2
-      },
-      {
-        "archetype": "screenshot_receipt",
-        "attachment_id": "ATT-002",
-        "delimiter": null,
-        "filename": "screenshot_receipt_v2.png",
-        "language": "th",
-        "language_routing": "relabelled_from_mixed",
-        "pages": 0,
-        "renderer": "png",
-        "rows": 10,
-        "sections": 1,
-        "sheets": 0,
-        "slides": 0,
-        "tables": 2
-      }
-    ],
-    "domain_scope": "single_domain",
-    "domains": [
-      "pii"
-    ],
-    "edge_case": false,
-    "entities": [
-      {
-        "annotation_id": "ENT-00001",
-        "canonical_entity_id": "canon-e41dd5b80ca2",
-        "canonical_entity_value": "จุฑามาศ อินทรีย์",
-        "classification_expected": "thai_name",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_name",
-        "exact_entity_value": "จุฑามาศ อินทรีย์",
-        "filename": "screenshot_receipt_v1.png",
-        "location": {
-          "bbox": [
-            92.2,
-            153.0,
-            139.2,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 139.2,
-          "expected_ocr_text": "Bill to: จุฑามาศ อินทรีย์ | prasert.piyada@example.com",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 783,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 829
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00002",
-        "canonical_entity_id": "canon-b5cc7e92060b",
-        "canonical_entity_value": "prasert.piyada@example.com",
-        "classification_expected": "email_address",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "email_address",
-        "exact_entity_value": "prasert.piyada@example.com",
-        "filename": "screenshot_receipt_v1.png",
-        "location": {
-          "bbox": [
-            246.8,
-            153.0,
-            266.2,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 266.2,
-          "expected_ocr_text": "Bill to: จุฑามาศ อินทรีย์ | prasert.piyada@example.com",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 783,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 829
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00003",
-        "canonical_entity_id": "canon-cbce7202d140",
-        "canonical_entity_value": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-        "classification_expected": "thai_address",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_address",
-        "exact_entity_value": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-        "filename": "screenshot_receipt_v1.png",
-        "location": {
-          "bbox": [
-            28.0,
-            221.0,
-            772.3,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 772.3,
-          "expected_ocr_text": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 783,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 829
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00004",
-        "canonical_entity_id": "canon-e41dd5b80ca2",
-        "canonical_entity_value": "จุฑามาศ อินทรีย์",
-        "classification_expected": "thai_name",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_name",
-        "exact_entity_value": "จุฑามาศ อินทรีย์",
-        "filename": "screenshot_receipt_v2.png",
-        "location": {
-          "bbox": [
-            174.7,
-            153.0,
-            139.2,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 139.2,
-          "expected_ocr_text": "เรียกเก็บเงินจาก: จุฑามาศ อินทรีย์ | prasert.piyada@example.com",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 881,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 829
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00005",
-        "canonical_entity_id": "canon-b5cc7e92060b",
-        "canonical_entity_value": "prasert.piyada@example.com",
-        "classification_expected": "email_address",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "email_address",
-        "exact_entity_value": "prasert.piyada@example.com",
-        "filename": "screenshot_receipt_v2.png",
-        "location": {
-          "bbox": [
-            329.2,
-            153.0,
-            266.2,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 266.2,
-          "expected_ocr_text": "เรียกเก็บเงินจาก: จุฑามาศ อินทรีย์ | prasert.piyada@example.com",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 881,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 829
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00006",
-        "canonical_entity_id": "canon-cbce7202d140",
-        "canonical_entity_value": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-        "classification_expected": "thai_address",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_address",
-        "exact_entity_value": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-        "filename": "screenshot_receipt_v2.png",
-        "location": {
-          "bbox": [
-            28.0,
-            221.0,
-            772.3,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 772.3,
-          "expected_ocr_text": "66/62 หมู่ 8 ซอย 31 ถนนสุขุมวิท ตำบลบางพูน อำเภอเมืองปทุมธานี จังหวัดปทุมธานี 12000",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 881,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 829
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified_layout"
-      }
-    ],
-    "entity_types": [
-      "email_address",
-      "thai_address",
-      "thai_name"
-    ],
-    "evaluation_requirement": "ocr_required",
-    "extraction_methods": [
-      "ocr"
-    ],
-    "file_types": [
-      "png"
-    ],
-    "formality": "neutral",
-    "generation_method": "archetype+span_first+scenario_plan+real_file_renderer",
-    "intent": "review_document",
-    "language": "mixed",
-    "language_coverage": {
-      "attachment_languages": [
-        "en",
-        "th"
-      ],
-      "by_file_type": {
-        "png": {
-          "attachments": 1273,
-          "declared": {
-            "en": 1,
-            "th": 1
-          },
-          "matches": 2
-        }
-      },
-      "content_languages": [
-        "en",
-        "th"
-      ],
-      "matrices": [
-        "mixed->en",
-        "mixed->th"
-      ],
-      "mixed_attachments": 0,
-      "mixed_script_verified": true,
-      "prompt_language": "mixed",
-      "routed_attachments": 1,
-      "thresholds": {
-        "en": {
-          "min_latin_share": 0.8
-        },
-        "mixed": {
-          "min_latin_share": 0.1,
-          "min_thai_share": 0.1
-        },
-        "th": {
-          "min_thai_share": 0.3
-        }
-      }
-    },
-    "language_mode": "mixed",
-    "language_stats": {
-      "attachments": [
-        {
-          "attachment_id": "ATT-001",
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 583,
-          "extension": "png",
-          "language": "en",
-          "latin_characters": 276,
-          "latin_chars": 276,
-          "latin_share": 0.7841,
-          "matches_declared_language": true,
-          "neutral_chars": 231,
-          "neutral_share": 0.3962,
-          "static": {
-            "contains_both": false,
-            "contains_latin": true,
-            "contains_thai": false,
-            "counted_chars": 468,
-            "latin_characters": 253,
-            "latin_chars": 253,
-            "latin_share": 1.0,
-            "neutral_chars": 215,
-            "neutral_share": 0.4594,
-            "thai_characters": 0,
-            "thai_chars": 0,
-            "thai_share": 0.0
-          },
-          "thai_characters": 76,
-          "thai_chars": 76,
-          "thai_share": 0.2159
-        },
-        {
-          "attachment_id": "ATT-002",
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 690,
-          "extension": "png",
-          "language": "th",
-          "latin_characters": 218,
-          "latin_chars": 218,
-          "latin_share": 0.4812,
-          "matches_declared_language": true,
-          "neutral_chars": 237,
-          "neutral_share": 0.3435,
-          "residual_english_labels": [],
-          "static": {
-            "contains_both": true,
-            "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 575,
-            "latin_characters": 195,
-            "latin_chars": 195,
-            "latin_share": 0.5508,
-            "neutral_chars": 221,
-            "neutral_share": 0.3843,
-            "thai_characters": 159,
-            "thai_chars": 159,
-            "thai_share": 0.4492
-          },
-          "thai_characters": 235,
-          "thai_chars": 235,
-          "thai_share": 0.5188
-        }
-      ],
-      "prompt": {
-        "contains_both": true,
-        "contains_latin": true,
-        "contains_thai": true,
-        "counted_chars": 101,
-        "latin_characters": 34,
-        "latin_chars": 34,
-        "latin_share": 0.3505,
-        "matches_declared_language": true,
-        "neutral_chars": 4,
-        "neutral_share": 0.0396,
-        "static": {
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 101,
-          "latin_characters": 34,
-          "latin_chars": 34,
-          "latin_share": 0.3505,
-          "neutral_chars": 4,
-          "neutral_share": 0.0396,
-          "thai_characters": 63,
-          "thai_chars": 63,
-          "thai_share": 0.6495
-        },
-        "thai_characters": 63,
-        "thai_chars": 63,
-        "thai_share": 0.6495
-      }
-    },
-    "output_leakage_check_expected": true,
-    "persona": "manager",
-    "persona_label": "manager",
-    "polarity": "positive",
-    "policy_decision_expected": "REDACT",
-    "policy_rule_ids": [
-      "pii.default",
-      "pii.name_redaction"
-    ],
-    "policy_scenario": "local_model",
-    "profile": "thai-rendering",
-    "prompt": "อันนี้มัน error ตรงไหนอะ. ข้อมูลเมื่อวานนะ; use this one instead. เพิ่ง export มาเมื่อเช้า. อันนี้จะส่งให้ vendor",
-    "prompt_form": "with_attachment",
-    "prompt_language": "mixed",
-    "prompt_length": 113,
-    "prompt_length_class": "short",
-    "prompt_style": "long",
-    "prompt_styles": [
-      "short"
-    ],
-    "rationale": "Archetype screenshot_receipt from Aurora Teak. Scenario SCN-00012. Task: review_document. Sensitive values are incidental to the request.",
-    "routing_expected": "local",
-    "scenario_id": "SCN-00012",
-    "schema_version": "2.1",
-    "seed": 21,
-    "split": "train",
-    "structure": "file_attachment",
-    "structure_references": [],
-    "tags": [
-      "archetype:screenshot_receipt",
-      "attachment_lang:en",
-      "attachment_lang:th",
-      "bundle:old_new",
-      "content_lang:mixed",
-      "cross_file",
-      "destination_context",
-      "difficulty:2",
-      "email_address",
-      "file:png",
-      "file_aware",
-      "intent:review_document",
-      "lang:mixed",
-      "matrix:mixed>en",
-      "matrix:mixed>th",
-      "multi_attachment",
-      "ocr",
-      "persona:manager",
-      "pii",
-      "profile:thai-rendering",
-      "split:train",
-      "thai_address",
-      "thai_name"
-    ],
-    "template_family": "screenshot_receipt:png:screenshot_receipt:png",
-    "template_id": "screenshot_receipt",
-    "test_category": "single_domain",
-    "test_id": "pgt2-trn-00012",
-    "test_objective": "file_ingestion_and_policy",
-    "token_restoration_expected": "not_applicable",
-    "transformation_expected": [
-      {
-        "action": "MASK",
-        "entity_type": "email_address"
-      },
-      {
-        "action": "MASK",
-        "entity_type": "thai_address"
-      },
-      {
-        "action": "REDACT",
-        "entity_type": "thai_name"
-      }
-    ],
-    "verification": {
-      "attachments_checked": 2,
-      "attachments_verified": 2,
-      "language_checked": 2,
-      "language_passed": true,
-      "mixed_language_verified": true,
-      "ocr_layout_only": 2,
-      "prompt_language_passed": true,
-      "residual_english_labels": 0,
-      "status": "verified_partial"
-    },
-    "verification_status": "verified_partial"
-  },
-  {
-    "action_expected": {
-      "email_address": "MASK",
-      "thai_name": "REDACT",
-      "thai_phone": "MASK"
-    },
-    "adversarial": false,
-    "ambiguity": {
-      "is_ambiguous": false,
-      "rationale": "Single interpretation."
-    },
-    "archetype_categories": [
-      "Operations"
-    ],
-    "archetypes": [
-      "screenshot_email",
-      "support_ticket"
-    ],
-    "attachment_count": 2,
-    "attachments": [
-      {
-        "archetype": "screenshot_email",
-        "archetype_category": "Operations",
-        "archetype_label": "Email screenshot",
-        "attachment_id": "ATT-001",
-        "dependency_renderer": "pillow+pypdf",
-        "evaluation_requirement": "ocr_required",
-        "expected_extraction_method": "ocr",
-        "extension": "png",
-        "file_type": "png",
-        "filename": "screenshot_email.png",
-        "generated_seed": 21,
-        "language": "mixed",
-        "language_capability": [
-          "th",
-          "en",
-          "mixed"
-        ],
-        "language_check": {
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 315,
-          "latin_characters": 190,
-          "latin_chars": 190,
-          "latin_share": 0.7011,
-          "matches_declared_language": true,
-          "neutral_chars": 44,
-          "neutral_share": 0.1397,
-          "static": {
-            "contains_both": true,
-            "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 257,
-            "latin_characters": 165,
-            "latin_chars": 165,
-            "latin_share": 0.7174,
-            "neutral_chars": 27,
-            "neutral_share": 0.1051,
-            "thai_characters": 65,
-            "thai_chars": 65,
-            "thai_share": 0.2826
-          },
-          "thai_characters": 81,
-          "thai_chars": 81,
-          "thai_share": 0.2989
-        },
-        "language_mix": "Thai prose with English field names and technical terms",
-        "language_mode": "mixed",
-        "language_requested": "th",
-        "language_routing": "relabelled_from_th",
-        "mime_type": "image/png",
-        "path": "pgt2-trn-00013/screenshot_email.png",
-        "render_mode": null,
-        "renderer": "png",
+        "mime_type": "application/pdf",
+        "path": "pgt2-trn-00012/architecture_notes.pdf",
+        "render_mode": "native",
+        "renderer": "pdf_native",
         "renderer_version": "2.2",
         "revision_changes": [],
-        "sha256": "20d2aa97fe8dd79ce7962f792055eb8031f75c8c6c8a2aebe2399d95553345dc",
-        "size_bytes": 43476,
+        "sha256": "70cf19bc51bff6a2e82893aafafc5d31dad01749d6f9e0d3b3aa5edd99e1bff5",
+        "size_bytes": 23553,
         "structure": {
           "columns": 0,
           "delimiter": null,
           "headers": [],
           "headings": [
-            "Support ticket #70417"
+            "สถาปัตยกรรมระบบคำสั่งซื้อ"
           ],
           "keys": [],
-          "lines": 122,
-          "pages": 0,
-          "renderer": "png",
-          "rows": 0,
-          "sheets": [],
-          "slide_titles": [],
-          "slides": 0,
-          "tables": []
-        },
-        "synthetic": true,
-        "text_shaping": "harfbuzz",
-        "verification": {
-          "checks": [
-            "file_nonempty",
-            "image_decoded",
-            "ocr_layout_verified"
-          ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
-          "issues": [],
-          "status": "verified_layout"
-        }
-      },
-      {
-        "archetype": "support_ticket",
-        "archetype_category": "Operations",
-        "archetype_label": "Support ticket",
-        "attachment_id": "ATT-002",
-        "dependency_renderer": "stdlib",
-        "evaluation_requirement": "direct_text_extraction",
-        "expected_extraction_method": "office_parser",
-        "extension": "docx",
-        "file_type": "docx",
-        "filename": "support_ticket.docx",
-        "generated_seed": 21,
-        "language": "mixed",
-        "language_capability": [
-          "th",
-          "en",
-          "mixed"
-        ],
-        "language_check": {
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 315,
-          "latin_characters": 190,
-          "latin_chars": 190,
-          "latin_share": 0.7011,
-          "matches_declared_language": true,
-          "neutral_chars": 44,
-          "neutral_share": 0.1397,
-          "static": {
-            "contains_both": true,
-            "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 257,
-            "latin_characters": 165,
-            "latin_chars": 165,
-            "latin_share": 0.7174,
-            "neutral_chars": 27,
-            "neutral_share": 0.1051,
-            "thai_characters": 65,
-            "thai_chars": 65,
-            "thai_share": 0.2826
-          },
-          "thai_characters": 81,
-          "thai_chars": 81,
-          "thai_share": 0.2989
-        },
-        "language_mix": "Thai prose with English field names and technical terms",
-        "language_mode": "mixed",
-        "language_requested": "th",
-        "language_routing": "relabelled_from_th",
-        "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "path": "pgt2-trn-00013/support_ticket.docx",
-        "render_mode": null,
-        "renderer": "docx",
-        "renderer_version": "2.2",
-        "revision_changes": [],
-        "sha256": "1c3b60f50481a7f0546db127e988fdad744b2ea0f898f6560b61f5c564ba35c1",
-        "size_bytes": 3511,
-        "structure": {
-          "columns": 0,
-          "delimiter": null,
-          "headers": [],
-          "headings": [
-            "Support ticket #70417"
-          ],
-          "keys": [],
-          "lines": 12,
-          "pages": 0,
-          "renderer": "docx",
+          "lines": 223,
+          "pages": 1,
+          "renderer": "pdf_native",
           "rows": 0,
           "sheets": [],
           "slide_titles": [],
@@ -11954,11 +10845,11 @@
         "verification": {
           "checks": [
             "file_nonempty",
-            "zip_opened",
-            "ooxml_parsed"
+            "pdf_parsed",
+            "pdf_text_extracted"
           ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
+          "entity_count": 1,
+          "extracted_entity_count": 1,
           "issues": [],
           "status": "verified"
         }
@@ -11977,58 +10868,25 @@
       ]
     },
     "bundle": {
-      "bundle_id": "BND-00013",
-      "kind": "multi_file",
+      "bundle_id": "BND-00012",
+      "kind": "single_file",
       "members": [
         {
-          "archetype": "screenshot_email",
+          "archetype": "architecture_notes",
           "attachment_id": "ATT-001",
-          "filename": "screenshot_email.png",
-          "role": "related"
-        },
-        {
-          "archetype": "support_ticket",
-          "attachment_id": "ATT-002",
-          "filename": "support_ticket.docx",
+          "filename": "architecture_notes.pdf",
           "role": "related"
         }
       ],
       "relationship": {
-        "evidence": [
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-4255cb46ce21"
-          },
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-74610a982ded"
-          },
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-a756f9b078a0"
-          }
-        ],
-        "status": "related"
+        "evidence": [],
+        "status": "intentionally_unrelated"
       },
       "revision_changes": []
     },
     "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
     "classification_expected": [
-      "email_address",
-      "thai_name",
-      "thai_phone"
+      "api_key"
     ],
     "consistency_checks": [
       {
@@ -12068,123 +10926,46 @@
         "attachment_id": null,
         "check": "structure_reference_resolution",
         "details": {
-          "reason": "the prompt cites no structure",
-          "references": 0
+          "references": 1,
+          "resolved": 1
         },
-        "evaluated_items": 0,
-        "passed": false,
-        "status": "not_applicable"
+        "evaluated_items": 1,
+        "passed": true,
+        "status": "passed"
       },
       {
         "attachment_id": null,
         "check": "cross_file_identifiers",
         "details": {
-          "consistent": 3,
-          "linked_attachments": 2,
-          "links": 3
+          "links": 0,
+          "reason": "no shared identifier across attachments"
         },
-        "evaluated_items": 3,
-        "passed": true,
-        "status": "passed"
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
       }
     ],
-    "content_language": "mixed",
+    "content_language": "th",
     "content_languages": [
-      "mixed"
+      "th"
     ],
-    "context_complexity": "medium",
-    "cross_file_links": [
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-4255cb46ce21",
-        "canonical_entity_value": "จุฑามาศ รุ่งเรือง",
-        "consistent": true,
-        "entity_type": "thai_name",
-        "exact_entity_value": "จุฑามาศ รุ่งเรือง",
-        "filenames": [
-          "screenshot_email.png",
-          "support_ticket.docx"
-        ],
-        "link_id": "XFL-001",
-        "occurrences": 2,
-        "representation_variants": [
-          "จุฑามาศ รุ่งเรือง"
-        ]
-      },
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-74610a982ded",
-        "canonical_entity_value": "080-581-4782",
-        "consistent": true,
-        "entity_type": "thai_phone",
-        "exact_entity_value": "080-581-4782",
-        "filenames": [
-          "screenshot_email.png",
-          "support_ticket.docx"
-        ],
-        "link_id": "XFL-002",
-        "occurrences": 2,
-        "representation_variants": [
-          "080-581-4782"
-        ]
-      },
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-a756f9b078a0",
-        "canonical_entity_value": "wichai.kittipong78@example.com",
-        "consistent": true,
-        "entity_type": "email_address",
-        "exact_entity_value": "wichai.kittipong78@example.com",
-        "filenames": [
-          "screenshot_email.png",
-          "support_ticket.docx"
-        ],
-        "link_id": "XFL-003",
-        "occurrences": 2,
-        "representation_variants": [
-          "wichai.kittipong78@example.com"
-        ]
-      }
-    ],
+    "context_complexity": "high",
+    "cross_file_links": [],
     "dataset_version": "2.2.0",
     "detection_expected": true,
     "detection_mode": "deterministic",
-    "difficulty": 2,
-    "document_fingerprint": "c0b95c129e52ad85",
+    "difficulty": 5,
+    "document_fingerprint": "3a73cbdae2c12f1a",
     "document_profile": [
       {
-        "archetype": "screenshot_email",
+        "archetype": "architecture_notes",
         "attachment_id": "ATT-001",
         "delimiter": null,
-        "filename": "screenshot_email.png",
-        "language": "mixed",
-        "language_routing": "relabelled_from_th",
-        "pages": 0,
-        "renderer": "png",
-        "rows": 0,
-        "sections": 1,
-        "sheets": 0,
-        "slides": 0,
-        "tables": 0
-      },
-      {
-        "archetype": "support_ticket",
-        "attachment_id": "ATT-002",
-        "delimiter": null,
-        "filename": "support_ticket.docx",
-        "language": "mixed",
-        "language_routing": "relabelled_from_th",
-        "pages": 0,
-        "renderer": "docx",
+        "filename": "architecture_notes.pdf",
+        "language": "th",
+        "language_routing": null,
+        "pages": 1,
+        "renderer": "pdf_native",
         "rows": 0,
         "sections": 1,
         "sheets": 0,
@@ -12194,253 +10975,78 @@
     ],
     "domain_scope": "single_domain",
     "domains": [
-      "pii"
+      "secrets"
     ],
-    "edge_case": false,
+    "edge_case": true,
     "entities": [
       {
         "annotation_id": "ENT-00001",
-        "canonical_entity_id": "canon-4255cb46ce21",
-        "canonical_entity_value": "จุฑามาศ รุ่งเรือง",
-        "classification_expected": "thai_name",
+        "canonical_entity_id": "canon-cc1dabf68d44",
+        "canonical_entity_value": "sk_example_fake_ec01ef40e0b50008da2a8cd0",
+        "character_end": 85,
+        "character_start": 45,
+        "classification_expected": "api_key",
         "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_name",
-        "exact_entity_value": "จุฑามาศ รุ่งเรือง",
-        "filename": "screenshot_email.png",
+        "domain": "secrets",
+        "entity_type": "api_key",
+        "exact_entity_value": "sk_example_fake_ec01ef40e0b50008da2a8cd0",
+        "filename": "architecture_notes.pdf",
         "location": {
-          "bbox": [
-            88.8,
-            153.0,
-            135.8,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 135.8,
-          "expected_ocr_text": "ผู้แจ้ง: จุฑามาศ รุ่งเรือง <wichai.kittipong78@example.com>",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 430,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 900
+          "character_end": 85,
+          "character_start": 45,
+          "height": 14,
+          "kind": "pdf_text",
+          "page": 1,
+          "source_type": "native_text",
+          "width": 200.42,
+          "x": 237.71,
+          "y": 116
         },
         "note": "",
         "role": "body",
         "source": "attachment",
         "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00002",
-        "canonical_entity_id": "canon-a756f9b078a0",
-        "canonical_entity_value": "wichai.kittipong78@example.com",
-        "classification_expected": "email_address",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "email_address",
-        "exact_entity_value": "wichai.kittipong78@example.com",
-        "filename": "screenshot_email.png",
-        "location": {
-          "bbox": [
-            242.5,
-            153.0,
-            304.9,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 304.9,
-          "expected_ocr_text": "ผู้แจ้ง: จุฑามาศ รุ่งเรือง <wichai.kittipong78@example.com>",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 430,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 900
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00003",
-        "canonical_entity_id": "canon-74610a982ded",
-        "canonical_entity_value": "080-581-4782",
-        "classification_expected": "thai_phone",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_phone",
-        "exact_entity_value": "080-581-4782",
-        "filename": "screenshot_email.png",
-        "location": {
-          "bbox": [
-            116.9,
-            187.0,
-            129.8,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 129.8,
-          "expected_ocr_text": "เบอร์โทร: 080-581-4782  บัญชี: CUS-735",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 430,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 900
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00004",
-        "canonical_entity_id": "canon-4255cb46ce21",
-        "canonical_entity_value": "จุฑามาศ รุ่งเรือง",
-        "character_end": 26,
-        "character_start": 9,
-        "classification_expected": "thai_name",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_name",
-        "exact_entity_value": "จุฑามาศ รุ่งเรือง",
-        "filename": "support_ticket.docx",
-        "location": {
-          "character_end": 26,
-          "character_start": 9,
-          "kind": "docx_paragraph",
-          "paragraph": 1,
-          "source_type": "native"
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified"
-      },
-      {
-        "annotation_id": "ENT-00005",
-        "canonical_entity_id": "canon-a756f9b078a0",
-        "canonical_entity_value": "wichai.kittipong78@example.com",
-        "character_end": 58,
-        "character_start": 28,
-        "classification_expected": "email_address",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "email_address",
-        "exact_entity_value": "wichai.kittipong78@example.com",
-        "filename": "support_ticket.docx",
-        "location": {
-          "character_end": 58,
-          "character_start": 28,
-          "kind": "docx_paragraph",
-          "paragraph": 1,
-          "source_type": "native"
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified"
-      },
-      {
-        "annotation_id": "ENT-00006",
-        "canonical_entity_id": "canon-74610a982ded",
-        "canonical_entity_value": "080-581-4782",
-        "character_end": 22,
-        "character_start": 10,
-        "classification_expected": "thai_phone",
-        "detection_expected": true,
-        "domain": "pii",
-        "entity_type": "thai_phone",
-        "exact_entity_value": "080-581-4782",
-        "filename": "support_ticket.docx",
-        "location": {
-          "character_end": 22,
-          "character_start": 10,
-          "kind": "docx_paragraph",
-          "paragraph": 2,
-          "source_type": "native"
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
         "valid": true,
         "verification": "verified"
       }
     ],
     "entity_types": [
-      "email_address",
-      "thai_name",
-      "thai_phone"
+      "api_key"
     ],
-    "evaluation_requirement": "ocr_required",
+    "evaluation_requirement": "direct_text_extraction",
     "extraction_methods": [
-      "ocr",
-      "office_parser"
+      "pdf_text"
     ],
     "file_types": [
-      "docx",
-      "png"
+      "pdf"
     ],
     "formality": "neutral",
     "generation_method": "archetype+span_first+scenario_plan+real_file_renderer",
-    "intent": "modify_document",
+    "intent": "analyze",
     "language": "th",
     "language_coverage": {
       "attachment_languages": [
-        "mixed",
-        "mixed"
+        "th"
       ],
       "by_file_type": {
-        "docx": {
-          "attachments": 315,
+        "pdf": {
+          "attachments": 220,
           "declared": {
-            "mixed": 1
-          },
-          "matches": 1
-        },
-        "png": {
-          "attachments": 315,
-          "declared": {
-            "mixed": 1
+            "th": 1
           },
           "matches": 1
         }
       },
       "content_languages": [
-        "mixed"
+        "th"
       ],
       "matrices": [
-        "th->mixed",
-        "th->mixed"
+        "th->th"
       ],
-      "mixed_attachments": 2,
+      "mixed_attachments": 0,
       "mixed_script_verified": true,
       "prompt_language": "th",
-      "routed_attachments": 2,
+      "routed_attachments": 0,
       "thresholds": {
         "en": {
           "min_latin_share": 0.8
@@ -12454,7 +11060,7 @@
         }
       }
     },
-    "language_mode": "mixed",
+    "language_mode": "th",
     "language_stats": {
       "attachments": [
         {
@@ -12462,207 +11068,174 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 315,
-          "extension": "png",
-          "language": "mixed",
-          "latin_characters": 190,
-          "latin_chars": 190,
-          "latin_share": 0.7011,
+          "counted_chars": 220,
+          "extension": "pdf",
+          "language": "th",
+          "latin_characters": 93,
+          "latin_chars": 93,
+          "latin_share": 0.4581,
           "matches_declared_language": true,
-          "neutral_chars": 44,
-          "neutral_share": 0.1397,
+          "neutral_chars": 17,
+          "neutral_share": 0.0773,
+          "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 257,
-            "latin_characters": 165,
-            "latin_chars": 165,
-            "latin_share": 0.7174,
-            "neutral_chars": 27,
-            "neutral_share": 0.1051,
-            "thai_characters": 65,
-            "thai_chars": 65,
-            "thai_share": 0.2826
+            "counted_chars": 180,
+            "latin_characters": 69,
+            "latin_chars": 69,
+            "latin_share": 0.3855,
+            "neutral_chars": 1,
+            "neutral_share": 0.0056,
+            "thai_characters": 110,
+            "thai_chars": 110,
+            "thai_share": 0.6145
           },
-          "thai_characters": 81,
-          "thai_chars": 81,
-          "thai_share": 0.2989
-        },
-        {
-          "attachment_id": "ATT-002",
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 315,
-          "extension": "docx",
-          "language": "mixed",
-          "latin_characters": 190,
-          "latin_chars": 190,
-          "latin_share": 0.7011,
-          "matches_declared_language": true,
-          "neutral_chars": 44,
-          "neutral_share": 0.1397,
-          "static": {
-            "contains_both": true,
-            "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 257,
-            "latin_characters": 165,
-            "latin_chars": 165,
-            "latin_share": 0.7174,
-            "neutral_chars": 27,
-            "neutral_share": 0.1051,
-            "thai_characters": 65,
-            "thai_chars": 65,
-            "thai_share": 0.2826
-          },
-          "thai_characters": 81,
-          "thai_chars": 81,
-          "thai_share": 0.2989
+          "thai_characters": 110,
+          "thai_chars": 110,
+          "thai_share": 0.5419
         }
       ],
       "prompt": {
-        "contains_both": false,
-        "contains_latin": false,
+        "contains_both": true,
+        "contains_latin": true,
         "contains_thai": true,
-        "counted_chars": 78,
-        "latin_characters": 0,
-        "latin_chars": 0,
-        "latin_share": 0.0,
+        "counted_chars": 79,
+        "latin_characters": 20,
+        "latin_chars": 20,
+        "latin_share": 0.2703,
         "matches_declared_language": true,
-        "neutral_chars": 1,
-        "neutral_share": 0.0128,
+        "neutral_chars": 5,
+        "neutral_share": 0.0633,
         "static": {
-          "contains_both": false,
-          "contains_latin": false,
+          "contains_both": true,
+          "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 78,
-          "latin_characters": 0,
-          "latin_chars": 0,
-          "latin_share": 0.0,
-          "neutral_chars": 1,
-          "neutral_share": 0.0128,
-          "thai_characters": 77,
-          "thai_chars": 77,
-          "thai_share": 1.0
+          "counted_chars": 79,
+          "latin_characters": 20,
+          "latin_chars": 20,
+          "latin_share": 0.2703,
+          "neutral_chars": 5,
+          "neutral_share": 0.0633,
+          "thai_characters": 54,
+          "thai_chars": 54,
+          "thai_share": 0.7297
         },
-        "thai_characters": 77,
-        "thai_chars": 77,
-        "thai_share": 1.0
+        "thai_characters": 54,
+        "thai_chars": 54,
+        "thai_share": 0.7297
       }
     },
     "output_leakage_check_expected": true,
-    "persona": "executive_assistant",
-    "persona_label": "executive assistant",
+    "persona": "operations",
+    "persona_label": "operations staff",
     "polarity": "positive",
-    "policy_decision_expected": "REDACT",
+    "policy_decision_expected": "BLOCK",
     "policy_rule_ids": [
-      "pii.default",
-      "pii.name_redaction"
+      "secrets.default"
     ],
     "policy_scenario": "external_assistant",
     "profile": "thai-rendering",
-    "prompt": "รบกวนช่วย สองไฟล์นี้ช่วยแก้เอกสารนี้หน่อยครับ. ไม่แน่ใจว่าใช่ไฟล์เดียวกันไหมครับ",
+    "prompt": "architecture_notes.pdf วิเคราะห์ให้ที. ไม่แน่ใจว่าใช่ไฟล์เดียวกันไหม. ดู หน้า 1 หน่อย",
     "prompt_form": "with_attachment",
     "prompt_language": "th",
-    "prompt_length": 80,
+    "prompt_length": 85,
     "prompt_length_class": "short",
     "prompt_style": "medium",
     "prompt_styles": [
       "short"
     ],
-    "rationale": "Archetype screenshot_email from Mekong Byte. Scenario SCN-00013. Task: modify_document. Sensitive values are incidental to the request.",
-    "routing_expected": "external",
-    "scenario_id": "SCN-00013",
+    "rationale": "Archetype architecture_notes from Siam Meridian. Scenario SCN-00012. Task: analyze. Sensitive values are incidental to the request.",
+    "routing_expected": "blocked",
+    "scenario_id": "SCN-00012",
     "schema_version": "2.1",
     "seed": 21,
     "split": "train",
     "structure": "file_attachment",
-    "structure_references": [],
-    "tags": [
-      "archetype:screenshot_email",
-      "archetype:support_ticket",
-      "attachment_lang:mixed",
-      "bundle:multi_file",
-      "content_lang:mixed",
-      "cross_file",
-      "difficulty:2",
-      "email_address",
-      "file:docx",
-      "file:png",
-      "file_aware",
-      "intent:modify_document",
-      "lang:th",
-      "matrix:th>mixed",
-      "multi_attachment",
-      "ocr",
-      "persona:executive_assistant",
-      "pii",
-      "profile:thai-rendering",
-      "split:train",
-      "thai_name",
-      "thai_phone"
+    "structure_references": [
+      {
+        "attachment_id": "ATT-001",
+        "filename": "architecture_notes.pdf",
+        "kind": "page",
+        "resolved": true,
+        "user_visible": true,
+        "valid": true,
+        "value": 1
+      }
     ],
-    "template_family": "screenshot_email:png:support_ticket:docx",
-    "template_id": "screenshot_email",
+    "tags": [
+      "api_key",
+      "archetype:architecture_notes",
+      "attachment_lang:th",
+      "bundle:single_file",
+      "content_lang:th",
+      "difficulty:5",
+      "file:pdf",
+      "file_aware",
+      "intent:analyze",
+      "lang:th",
+      "matrix:th>th",
+      "persona:operations",
+      "profile:thai-rendering",
+      "secrets",
+      "split:train",
+      "structure_reference"
+    ],
+    "template_family": "architecture_notes:pdf",
+    "template_id": "architecture_notes",
     "test_category": "single_domain",
-    "test_id": "pgt2-trn-00013",
+    "test_id": "pgt2-trn-00012",
     "test_objective": "file_ingestion_and_policy",
     "token_restoration_expected": "not_applicable",
     "transformation_expected": [
       {
-        "action": "MASK",
-        "entity_type": "email_address"
-      },
-      {
-        "action": "REDACT",
-        "entity_type": "thai_name"
-      },
-      {
-        "action": "MASK",
-        "entity_type": "thai_phone"
+        "action": "BLOCK",
+        "entity_type": "api_key"
       }
     ],
     "verification": {
-      "attachments_checked": 2,
-      "attachments_verified": 2,
-      "language_checked": 2,
+      "attachments_checked": 1,
+      "attachments_verified": 1,
+      "language_checked": 1,
       "language_passed": true,
       "mixed_language_verified": true,
-      "ocr_layout_only": 1,
+      "ocr_layout_only": 0,
       "prompt_language_passed": true,
       "residual_english_labels": 0,
-      "status": "verified_partial"
+      "status": "verified"
     },
-    "verification_status": "verified_partial"
+    "verification_status": "verified"
   },
   {
-    "action_expected": {},
+    "action_expected": {
+      "email_address": "LOCAL_ONLY",
+      "thai_name": "LOCAL_ONLY"
+    },
     "adversarial": false,
     "ambiguity": {
-      "is_ambiguous": false,
-      "rationale": "Single interpretation."
+      "is_ambiguous": true,
+      "rationale": "Mixed lookalike and contextual values; interpretation depends on context."
     },
     "archetype_categories": [
-      "HR"
+      "Operations"
     ],
     "archetypes": [
-      "screenshot_form"
+      "screenshot_chat"
     ],
     "attachment_count": 1,
     "attachments": [
       {
-        "archetype": "screenshot_form",
-        "archetype_category": "HR",
-        "archetype_label": "Form screenshot",
+        "archetype": "screenshot_chat",
+        "archetype_category": "Operations",
+        "archetype_label": "Chat screenshot",
         "attachment_id": "ATT-001",
         "dependency_renderer": "pillow+pypdf",
         "evaluation_requirement": "ocr_required",
         "expected_extraction_method": "ocr",
-        "extension": "png",
-        "file_type": "png",
-        "filename": "screenshot_form.png",
+        "extension": "jpg",
+        "file_type": "jpg",
+        "filename": "screenshot_chat.jpg",
         "generated_seed": 21,
         "language": "th",
         "language_capability": [
@@ -12674,55 +11247,59 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 239,
-          "latin_characters": 36,
-          "latin_chars": 36,
-          "latin_share": 0.1809,
+          "counted_chars": 523,
+          "latin_characters": 236,
+          "latin_chars": 236,
+          "latin_share": 0.4816,
           "matches_declared_language": true,
-          "neutral_chars": 40,
-          "neutral_share": 0.1674,
+          "neutral_chars": 33,
+          "neutral_share": 0.0631,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 184,
-            "latin_characters": 11,
-            "latin_chars": 11,
-            "latin_share": 0.0738,
-            "neutral_chars": 35,
-            "neutral_share": 0.1902,
-            "thai_characters": 138,
-            "thai_chars": 138,
-            "thai_share": 0.9262
+            "counted_chars": 385,
+            "latin_characters": 170,
+            "latin_chars": 170,
+            "latin_share": 0.4683,
+            "neutral_chars": 22,
+            "neutral_share": 0.0571,
+            "thai_characters": 193,
+            "thai_chars": 193,
+            "thai_share": 0.5317
           },
-          "thai_characters": 163,
-          "thai_chars": 163,
-          "thai_share": 0.8191
+          "thai_characters": 254,
+          "thai_chars": 254,
+          "thai_share": 0.5184
         },
         "language_mix": "Thai business prose with English technical terms",
         "language_mode": "th",
-        "language_requested": "th",
-        "language_routing": null,
-        "mime_type": "image/png",
-        "path": "pgt2-val-00001/screenshot_form.png",
+        "language_requested": "mixed",
+        "language_routing": "relabelled_from_mixed",
+        "mime_type": "image/jpeg",
+        "path": "pgt2-trn-00013/screenshot_chat.jpg",
         "render_mode": null,
-        "renderer": "png",
+        "renderer": "jpeg",
         "renderer_version": "2.2",
         "revision_changes": [],
-        "sha256": "9e5793eab975c36d0aa9423ceb323416808096bea4d1b501e077e54981e4a5b4",
-        "size_bytes": 287653,
+        "sha256": "79ddb48fcf1d05fb8685b1bc55929719f1621ee02724736b446d33b51af1dd2d",
+        "size_bytes": 123987,
         "structure": {
           "columns": 0,
           "delimiter": null,
           "headers": [],
           "headings": [
-            "แบบฟอร์มขอลา"
+            "ประชุมแพลตฟอร์มรายสัปดาห์",
+            "ผู้เข้าร่วม",
+            "บันทึก",
+            "ความเสี่ยง",
+            "รายการที่ต้องทำ"
           ],
           "keys": [],
-          "lines": 1055,
+          "lines": 422,
           "pages": 0,
-          "renderer": "png",
+          "renderer": "jpeg",
           "rows": 0,
           "sheets": [],
           "slide_titles": [],
@@ -12737,8 +11314,8 @@
             "image_decoded",
             "ocr_layout_verified"
           ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
+          "entity_count": 8,
+          "extracted_entity_count": 8,
           "issues": [],
           "status": "verified_layout"
         }
@@ -12757,13 +11334,13 @@
       ]
     },
     "bundle": {
-      "bundle_id": "BND-00001",
+      "bundle_id": "BND-00013",
       "kind": "single_file",
       "members": [
         {
-          "archetype": "screenshot_form",
+          "archetype": "screenshot_chat",
           "attachment_id": "ATT-001",
-          "filename": "screenshot_form.png",
+          "filename": "screenshot_chat.jpg",
           "role": "related"
         }
       ],
@@ -12774,7 +11351,10 @@
       "revision_changes": []
     },
     "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
-    "classification_expected": [],
+    "classification_expected": [
+      "email_address",
+      "thai_name"
+    ],
     "consistency_checks": [
       {
         "attachment_id": null,
@@ -12836,66 +11416,68 @@
     "content_languages": [
       "th"
     ],
-    "context_complexity": "high",
+    "context_complexity": "low",
     "cross_file_links": [],
     "dataset_version": "2.2.0",
-    "detection_expected": false,
-    "detection_mode": "deterministic",
-    "difficulty": 2,
-    "document_fingerprint": "fcabea6be35c9799",
+    "detection_expected": true,
+    "detection_mode": "contextual",
+    "difficulty": 1,
+    "document_fingerprint": "b4a8cb3fe078efaa",
     "document_profile": [
       {
-        "archetype": "screenshot_form",
+        "archetype": "screenshot_chat",
         "attachment_id": "ATT-001",
         "delimiter": null,
-        "filename": "screenshot_form.png",
+        "filename": "screenshot_chat.jpg",
         "language": "th",
-        "language_routing": null,
+        "language_routing": "relabelled_from_mixed",
         "pages": 0,
-        "renderer": "png",
+        "renderer": "jpeg",
         "rows": 0,
-        "sections": 1,
+        "sections": 5,
         "sheets": 0,
         "slides": 0,
         "tables": 0
       }
     ],
-    "domain_scope": "none",
-    "domains": [],
-    "edge_case": false,
+    "domain_scope": "single_domain",
+    "domains": [
+      "pii"
+    ],
+    "edge_case": true,
     "entities": [
       {
         "annotation_id": "ENT-00001",
-        "canonical_entity_id": "canon-9504cf908d4c",
-        "canonical_entity_value": "อนุชา พัฒนกิจ",
-        "classification_expected": null,
-        "detection_expected": false,
-        "domain": "lookalike",
-        "entity_type": "document_person_name",
-        "exact_entity_value": "อนุชา พัฒนกิจ",
-        "filename": "screenshot_form.png",
+        "canonical_entity_id": "canon-2827f47691ed",
+        "canonical_entity_value": "รัตนา ใจดี",
+        "classification_expected": "thai_name",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "thai_name",
+        "exact_entity_value": "รัตนา ใจดี",
+        "filename": "screenshot_chat.jpg",
         "location": {
           "bbox": [
-            136.1,
-            141.0,
-            123.4,
+            495.2,
+            194.0,
+            83.6,
             28.0
           ],
           "bbox_space": "final",
           "case_sensitive": false,
           "entity_strategy": "atomic_line",
-          "entity_text_width": 123.4,
-          "expected_ocr_text": "พนักงาน: อนุชา พัฒนกิจ  |  อีเมล: prasert.siriporn22@example.org",
+          "entity_text_width": 83.6,
+          "expected_ocr_text": "- รัตนา ใจดี - anan.lalita@example.com",
           "fragment_count": 1,
           "fragment_index": 0,
-          "height": 430,
+          "height": 669,
           "kind": "image_ocr",
           "ocr_normalized": false,
           "rotation_applied": false,
           "source_type": "native",
           "width": 900
         },
-        "note": "synthetic organisation identity, not an annotated target entity",
+        "note": "",
         "role": "body",
         "source": "attachment",
         "source_attachment": "ATT-001",
@@ -12904,36 +11486,36 @@
       },
       {
         "annotation_id": "ENT-00002",
-        "canonical_entity_id": "canon-37882a0304ba",
-        "canonical_entity_value": "prasert.siriporn22@example.org",
-        "classification_expected": null,
-        "detection_expected": false,
-        "domain": "lookalike",
-        "entity_type": "document_email",
-        "exact_entity_value": "prasert.siriporn22@example.org",
-        "filename": "screenshot_form.png",
+        "canonical_entity_id": "canon-0661ed737c2b",
+        "canonical_entity_value": "anan.lalita@example.com",
+        "classification_expected": "email_address",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "email_address",
+        "exact_entity_value": "anan.lalita@example.com",
+        "filename": "screenshot_chat.jpg",
         "location": {
           "bbox": [
-            339.4,
-            141.0,
-            289.5,
+            596.2,
+            194.0,
+            234.2,
             28.0
           ],
           "bbox_space": "final",
           "case_sensitive": false,
           "entity_strategy": "atomic_line",
-          "entity_text_width": 289.5,
-          "expected_ocr_text": "พนักงาน: อนุชา พัฒนกิจ  |  อีเมล: prasert.siriporn22@example.org",
+          "entity_text_width": 234.2,
+          "expected_ocr_text": "- รัตนา ใจดี - anan.lalita@example.com",
           "fragment_count": 1,
           "fragment_index": 0,
-          "height": 430,
+          "height": 669,
           "kind": "image_ocr",
           "ocr_normalized": false,
           "rotation_applied": false,
           "source_type": "native",
           "width": 900
         },
-        "note": "synthetic organisation identity, not an annotated target entity",
+        "note": "",
         "role": "body",
         "source": "attachment",
         "source_attachment": "ATT-001",
@@ -12942,36 +11524,226 @@
       },
       {
         "annotation_id": "ENT-00003",
-        "canonical_entity_id": "canon-e1558392f179",
-        "canonical_entity_value": "ปิยะดา วงศ์ไทย",
-        "classification_expected": null,
-        "detection_expected": false,
-        "domain": "lookalike",
-        "entity_type": "document_person_name",
-        "exact_entity_value": "ปิยะดา วงศ์ไทย",
-        "filename": "screenshot_form.png",
+        "canonical_entity_id": "canon-764f38712512",
+        "canonical_entity_value": "อรทัย วิริยะ",
+        "classification_expected": "thai_name",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "thai_name",
+        "exact_entity_value": "อรทัย วิริยะ",
+        "filename": "screenshot_chat.jpg",
         "location": {
           "bbox": [
-            146.2,
-            277.0,
-            131.6,
+            38.2,
+            228.0,
+            97.5,
             28.0
           ],
           "bbox_space": "final",
           "case_sensitive": false,
           "entity_strategy": "atomic_line",
-          "entity_text_width": 131.6,
-          "expected_ocr_text": "อนุมัติโดย: ปิยะดา วงศ์ไทย",
+          "entity_text_width": 97.5,
+          "expected_ocr_text": "- อรทัย วิริยะ - naree.piyada43@example.com",
           "fragment_count": 1,
           "fragment_index": 0,
-          "height": 430,
+          "height": 669,
           "kind": "image_ocr",
           "ocr_normalized": false,
           "rotation_applied": false,
           "source_type": "native",
           "width": 900
         },
-        "note": "synthetic organisation identity, not an annotated target entity",
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00004",
+        "canonical_entity_id": "canon-3fee2bdb9cd1",
+        "canonical_entity_value": "naree.piyada43@example.com",
+        "classification_expected": "email_address",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "email_address",
+        "exact_entity_value": "naree.piyada43@example.com",
+        "filename": "screenshot_chat.jpg",
+        "location": {
+          "bbox": [
+            153.2,
+            228.0,
+            275.2,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 275.2,
+          "expected_ocr_text": "- อรทัย วิริยะ - naree.piyada43@example.com",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 669,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 900
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00005",
+        "canonical_entity_id": "canon-86bd90da1268",
+        "canonical_entity_value": "ชัยวัฒน์ ชัยมงคล",
+        "classification_expected": "thai_name",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "thai_name",
+        "exact_entity_value": "ชัยวัฒน์ ชัยมงคล",
+        "filename": "screenshot_chat.jpg",
+        "location": {
+          "bbox": [
+            403.2,
+            262.0,
+            143.4,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 143.4,
+          "expected_ocr_text": "- ชัยวัฒน์ ชัยมงคล - siriporn.prasert@example.org",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 669,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 900
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00006",
+        "canonical_entity_id": "canon-44137fe8262c",
+        "canonical_entity_value": "siriporn.prasert@example.org",
+        "classification_expected": "email_address",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "email_address",
+        "exact_entity_value": "siriporn.prasert@example.org",
+        "filename": "screenshot_chat.jpg",
+        "location": {
+          "bbox": [
+            564.0,
+            262.0,
+            266.4,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 266.4,
+          "expected_ocr_text": "- ชัยวัฒน์ ชัยมงคล - siriporn.prasert@example.org",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 669,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 900
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00007",
+        "canonical_entity_id": "canon-764f38712512",
+        "canonical_entity_value": "อรทัย วิริยะ",
+        "classification_expected": "thai_name",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "thai_name",
+        "exact_entity_value": "อรทัย วิริยะ",
+        "filename": "screenshot_chat.jpg",
+        "location": {
+          "bbox": [
+            438.5,
+            561.0,
+            97.5,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 97.5,
+          "expected_ocr_text": "- ผู้รับผิดชอบ: อรทัย วิริยะ - confirm the migration window.",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 669,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 900
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00008",
+        "canonical_entity_id": "canon-86bd90da1268",
+        "canonical_entity_value": "ชัยวัฒน์ ชัยมงคล",
+        "classification_expected": "thai_name",
+        "detection_expected": true,
+        "domain": "pii",
+        "entity_type": "thai_name",
+        "exact_entity_value": "ชัยวัฒน์ ชัยมงคล",
+        "filename": "screenshot_chat.jpg",
+        "location": {
+          "bbox": [
+            149.5,
+            595.0,
+            143.4,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 143.4,
+          "expected_ocr_text": "- ผู้รับผิดชอบ: ชัยวัฒน์ ชัยมงคล - remove the old deployment credential.",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 669,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 900
+        },
+        "note": "",
         "role": "body",
         "source": "attachment",
         "source_attachment": "ATT-001",
@@ -12979,25 +11751,28 @@
         "verification": "verified_layout"
       }
     ],
-    "entity_types": [],
+    "entity_types": [
+      "email_address",
+      "thai_name"
+    ],
     "evaluation_requirement": "ocr_required",
     "extraction_methods": [
       "ocr"
     ],
     "file_types": [
-      "png"
+      "jpg"
     ],
-    "formality": "casual",
+    "formality": "neutral",
     "generation_method": "archetype+span_first+scenario_plan+real_file_renderer",
-    "intent": "create_chart",
-    "language": "th",
+    "intent": "draft_email",
+    "language": "mixed",
     "language_coverage": {
       "attachment_languages": [
         "th"
       ],
       "by_file_type": {
-        "png": {
-          "attachments": 239,
+        "jpg": {
+          "attachments": 523,
           "declared": {
             "th": 1
           },
@@ -13008,12 +11783,12 @@
         "th"
       ],
       "matrices": [
-        "th->th"
+        "mixed->th"
       ],
       "mixed_attachments": 0,
       "mixed_script_verified": true,
-      "prompt_language": "th",
-      "routed_attachments": 0,
+      "prompt_language": "mixed",
+      "routed_attachments": 1,
       "thresholds": {
         "en": {
           "min_latin_share": 0.8
@@ -13035,114 +11810,129 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 239,
-          "extension": "png",
+          "counted_chars": 523,
+          "extension": "jpg",
           "language": "th",
-          "latin_characters": 36,
-          "latin_chars": 36,
-          "latin_share": 0.1809,
+          "latin_characters": 236,
+          "latin_chars": 236,
+          "latin_share": 0.4816,
           "matches_declared_language": true,
-          "neutral_chars": 40,
-          "neutral_share": 0.1674,
+          "neutral_chars": 33,
+          "neutral_share": 0.0631,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 184,
-            "latin_characters": 11,
-            "latin_chars": 11,
-            "latin_share": 0.0738,
-            "neutral_chars": 35,
-            "neutral_share": 0.1902,
-            "thai_characters": 138,
-            "thai_chars": 138,
-            "thai_share": 0.9262
+            "counted_chars": 385,
+            "latin_characters": 170,
+            "latin_chars": 170,
+            "latin_share": 0.4683,
+            "neutral_chars": 22,
+            "neutral_share": 0.0571,
+            "thai_characters": 193,
+            "thai_chars": 193,
+            "thai_share": 0.5317
           },
-          "thai_characters": 163,
-          "thai_chars": 163,
-          "thai_share": 0.8191
+          "thai_characters": 254,
+          "thai_chars": 254,
+          "thai_share": 0.5184
         }
       ],
       "prompt": {
         "contains_both": true,
         "contains_latin": true,
         "contains_thai": true,
-        "counted_chars": 105,
+        "counted_chars": 39,
         "latin_characters": 23,
         "latin_chars": 23,
-        "latin_share": 0.23,
+        "latin_share": 0.6216,
         "matches_declared_language": true,
-        "neutral_chars": 5,
-        "neutral_share": 0.0476,
+        "neutral_chars": 2,
+        "neutral_share": 0.0513,
         "static": {
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 105,
+          "counted_chars": 39,
           "latin_characters": 23,
           "latin_chars": 23,
-          "latin_share": 0.23,
-          "neutral_chars": 5,
-          "neutral_share": 0.0476,
-          "thai_characters": 77,
-          "thai_chars": 77,
-          "thai_share": 0.77
+          "latin_share": 0.6216,
+          "neutral_chars": 2,
+          "neutral_share": 0.0513,
+          "thai_characters": 14,
+          "thai_chars": 14,
+          "thai_share": 0.3784
         },
-        "thai_characters": 77,
-        "thai_chars": 77,
-        "thai_share": 0.77
+        "thai_characters": 14,
+        "thai_chars": 14,
+        "thai_share": 0.3784
       }
     },
-    "output_leakage_check_expected": false,
-    "persona": "sysadmin",
-    "persona_label": "system administrator",
-    "polarity": "negative",
-    "policy_decision_expected": "ALLOW",
-    "policy_rule_ids": [],
+    "output_leakage_check_expected": true,
+    "persona": "support",
+    "persona_label": "customer support agent",
+    "polarity": "positive",
+    "policy_decision_expected": "LOCAL_ONLY",
+    "policy_rule_ids": [
+      "pii.default",
+      "pii.name_redaction"
+    ],
     "policy_scenario": "no_external_transfer",
     "profile": "thai-rendering",
-    "prompt": "พี่ครับ screenshot_form.png ทำกราฟให้ที. คือเมื่อคืน deploy แล้วมันพัง; อันเก่ายังใช้ได้ปกติ. เครื่องผมรันปกตินะ",
+    "prompt": "screenshot_chat.jpg เขียนตอบลูกค้า please",
     "prompt_form": "with_attachment",
-    "prompt_language": "th",
-    "prompt_length": 112,
+    "prompt_language": "mixed",
+    "prompt_length": 41,
     "prompt_length_class": "short",
-    "prompt_style": "long",
+    "prompt_style": "short",
     "prompt_styles": [
       "short"
     ],
-    "rationale": "Archetype screenshot_form from Nimbus Lotus. Scenario SCN-00001. Task: create_chart. Sensitive values are incidental to the request.",
+    "rationale": "Archetype screenshot_chat from Lanna Systems. Scenario SCN-00013. Task: draft_email. Sensitive values are incidental to the request.",
     "routing_expected": "local",
-    "scenario_id": "SCN-00001",
+    "scenario_id": "SCN-00013",
     "schema_version": "2.1",
     "seed": 21,
-    "split": "validation",
+    "split": "train",
     "structure": "file_attachment",
     "structure_references": [],
     "tags": [
-      "archetype:screenshot_form",
+      "ambiguous",
+      "archetype:screenshot_chat",
       "attachment_lang:th",
       "bundle:single_file",
       "content_lang:th",
-      "difficulty:2",
-      "file:png",
+      "difficulty:1",
+      "email_address",
+      "file:jpg",
       "file_aware",
-      "intent:create_chart",
-      "lang:th",
-      "matrix:th>th",
-      "negative",
+      "intent:draft_email",
+      "lang:mixed",
+      "matrix:mixed>th",
       "ocr",
-      "persona:sysadmin",
+      "persona:support",
+      "pii",
       "profile:thai-rendering",
-      "split:validation"
+      "split:train",
+      "thai_name"
     ],
-    "template_family": "screenshot_form:png",
-    "template_id": "screenshot_form",
-    "test_category": "negative",
-    "test_id": "pgt2-val-00001",
-    "test_objective": "false_positive",
+    "template_family": "screenshot_chat:jpg",
+    "template_id": "screenshot_chat",
+    "test_category": "ambiguous",
+    "test_id": "pgt2-trn-00013",
+    "test_objective": "ambiguous_context",
     "token_restoration_expected": "not_applicable",
-    "transformation_expected": [],
+    "transformation_expected": [
+      {
+        "action": "LOCAL_ONLY",
+        "entity_type": "email_address"
+      },
+      {
+        "action": "LOCAL_ONLY",
+        "entity_type": "thai_name"
+      }
+    ],
     "verification": {
       "attachments_checked": 1,
       "attachments_verified": 1,
@@ -13158,14 +11948,15 @@
   },
   {
     "action_expected": {
-      "api_key": "BLOCK",
-      "jwt_token": "BLOCK",
-      "password": "BLOCK"
+      "database_endpoint": "LOCAL_ONLY",
+      "internal_hostname": "LOCAL_ONLY",
+      "internal_url": "LOCAL_ONLY",
+      "kubernetes_manifest": "LOCAL_ONLY"
     },
     "adversarial": false,
     "ambiguity": {
-      "is_ambiguous": false,
-      "rationale": "Single interpretation."
+      "is_ambiguous": true,
+      "rationale": "Mixed lookalike and contextual values; interpretation depends on context."
     },
     "archetype_categories": [
       "IT"
@@ -13173,7 +11964,7 @@
     "archetypes": [
       "screenshot_config"
     ],
-    "attachment_count": 2,
+    "attachment_count": 1,
     "attachments": [
       {
         "archetype": "screenshot_config",
@@ -13185,7 +11976,7 @@
         "expected_extraction_method": "ocr",
         "extension": "png",
         "file_type": "png",
-        "filename": "screenshot_config_v1.png",
+        "filename": "screenshot_config.png",
         "generated_seed": 21,
         "language": "th",
         "language_capability": [
@@ -13197,144 +11988,44 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 158,
-          "latin_characters": 41,
-          "latin_chars": 41,
-          "latin_share": 0.268,
+          "counted_chars": 147,
+          "latin_characters": 31,
+          "latin_chars": 31,
+          "latin_share": 0.2168,
           "matches_declared_language": true,
-          "neutral_chars": 5,
-          "neutral_share": 0.0316,
+          "neutral_chars": 4,
+          "neutral_share": 0.0272,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 158,
-            "latin_characters": 41,
-            "latin_chars": 41,
-            "latin_share": 0.268,
-            "neutral_chars": 5,
-            "neutral_share": 0.0316,
+            "counted_chars": 147,
+            "latin_characters": 31,
+            "latin_chars": 31,
+            "latin_share": 0.2168,
+            "neutral_chars": 4,
+            "neutral_share": 0.0272,
             "thai_characters": 112,
             "thai_chars": 112,
-            "thai_share": 0.732
+            "thai_share": 0.7832
           },
           "thai_characters": 112,
           "thai_chars": 112,
-          "thai_share": 0.732
-        },
-        "language_mix": "Thai business prose with English technical terms",
-        "language_mode": "th",
-        "language_requested": "mixed",
-        "language_routing": "relabelled_from_mixed",
-        "mime_type": "image/png",
-        "path": "pgt2-val-00002/screenshot_config_v1.png",
-        "render_mode": null,
-        "renderer": "png",
-        "renderer_version": "2.2",
-        "revision_changes": [],
-        "sha256": "cd7df1c4f44d5a3c6242b4375f1386f802c301860faf4baa58b3e51d23740498",
-        "size_bytes": 1036177,
-        "structure": {
-          "columns": 0,
-          "delimiter": null,
-          "headers": [],
-          "headings": [
-            "สภาพแวดล้อมโปรดักชัน"
-          ],
-          "keys": [
-            "APP_ENV",
-            "APP_PORT",
-            "LOG_LEVEL",
-            "DB_USER",
-            "DB_PASSWORD",
-            "API_KEY",
-            "JWT_SECRET",
-            "_language_note"
-          ],
-          "lines": 4349,
-          "pages": 0,
-          "renderer": "png",
-          "rows": 0,
-          "sheets": [],
-          "slide_titles": [],
-          "slides": 0,
-          "tables": []
-        },
-        "synthetic": true,
-        "text_shaping": "harfbuzz",
-        "verification": {
-          "checks": [
-            "file_nonempty",
-            "image_decoded",
-            "ocr_layout_verified"
-          ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
-          "issues": [],
-          "status": "verified_layout"
-        }
-      },
-      {
-        "archetype": "screenshot_config",
-        "archetype_category": "IT",
-        "archetype_label": "Config screenshot",
-        "attachment_id": "ATT-002",
-        "dependency_renderer": "pillow+pypdf",
-        "evaluation_requirement": "ocr_required",
-        "expected_extraction_method": "ocr",
-        "extension": "jpeg",
-        "file_type": "jpeg",
-        "filename": "screenshot_config.jpeg",
-        "generated_seed": 21,
-        "language": "th",
-        "language_capability": [
-          "th",
-          "en",
-          "mixed"
-        ],
-        "language_check": {
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 158,
-          "latin_characters": 41,
-          "latin_chars": 41,
-          "latin_share": 0.268,
-          "matches_declared_language": true,
-          "neutral_chars": 5,
-          "neutral_share": 0.0316,
-          "residual_english_labels": [],
-          "static": {
-            "contains_both": true,
-            "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 158,
-            "latin_characters": 41,
-            "latin_chars": 41,
-            "latin_share": 0.268,
-            "neutral_chars": 5,
-            "neutral_share": 0.0316,
-            "thai_characters": 112,
-            "thai_chars": 112,
-            "thai_share": 0.732
-          },
-          "thai_characters": 112,
-          "thai_chars": 112,
-          "thai_share": 0.732
+          "thai_share": 0.7832
         },
         "language_mix": "Thai business prose with English technical terms",
         "language_mode": "th",
         "language_requested": "th",
         "language_routing": null,
-        "mime_type": "image/jpeg",
-        "path": "pgt2-val-00002/screenshot_config.jpeg",
+        "mime_type": "image/png",
+        "path": "pgt2-val-00001/screenshot_config.png",
         "render_mode": null,
-        "renderer": "jpeg",
+        "renderer": "png",
         "renderer_version": "2.2",
         "revision_changes": [],
-        "sha256": "322c3796b29a72fee3ef43885cfbe5450e7cd866aa95e442db6305469f00188b",
-        "size_bytes": 260338,
+        "sha256": "fb607a1f0dba912cdfb696b7f0001351b2f2873e8fd8526ab7dcd3e72d2d706e",
+        "size_bytes": 429331,
         "structure": {
           "columns": 0,
           "delimiter": null,
@@ -13346,15 +12037,14 @@
             "APP_ENV",
             "APP_PORT",
             "LOG_LEVEL",
-            "DB_USER",
-            "DB_PASSWORD",
-            "API_KEY",
-            "JWT_SECRET",
+            "DB_HOST",
+            "REDIS_HOST",
+            "API_BASE_URL",
             "_language_note"
           ],
-          "lines": 1166,
+          "lines": 1706,
           "pages": 0,
-          "renderer": "jpeg",
+          "renderer": "png",
           "rows": 0,
           "sheets": [],
           "slide_titles": [],
@@ -13389,62 +12079,28 @@
       ]
     },
     "bundle": {
-      "bundle_id": "BND-00002",
-      "kind": "same_archetype",
+      "bundle_id": "BND-00001",
+      "kind": "single_file",
       "members": [
         {
           "archetype": "screenshot_config",
           "attachment_id": "ATT-001",
-          "filename": "screenshot_config_v1.png",
-          "role": "related"
-        },
-        {
-          "archetype": "screenshot_config",
-          "attachment_id": "ATT-002",
-          "filename": "screenshot_config.jpeg",
+          "filename": "screenshot_config.png",
           "role": "related"
         }
       ],
       "relationship": {
-        "evidence": [
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-1d3ee7f12968"
-          },
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-dac6489b9edc"
-          },
-          {
-            "attachments": [
-              "ATT-001",
-              "ATT-002"
-            ],
-            "kind": "shared_canonical_entity",
-            "reference": "canon-fc57892bf597"
-          },
-          {
-            "archetype": "screenshot_config",
-            "kind": "same_archetype"
-          }
-        ],
-        "status": "related"
+        "evidence": [],
+        "status": "intentionally_unrelated"
       },
       "revision_changes": []
     },
     "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
     "classification_expected": [
-      "api_key",
-      "jwt_token",
-      "password"
+      "database_endpoint",
+      "internal_hostname",
+      "internal_url",
+      "kubernetes_manifest"
     ],
     "consistency_checks": [
       {
@@ -13495,112 +12151,35 @@
         "attachment_id": null,
         "check": "cross_file_identifiers",
         "details": {
-          "consistent": 3,
-          "linked_attachments": 2,
-          "links": 3
+          "links": 0,
+          "reason": "no shared identifier across attachments"
         },
-        "evaluated_items": 3,
-        "passed": true,
-        "status": "passed"
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
       }
     ],
     "content_language": "th",
     "content_languages": [
       "th"
     ],
-    "context_complexity": "high",
-    "cross_file_links": [
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-1d3ee7f12968",
-        "canonical_entity_value": "sk_example_fake_6250bf1b87c4d04b3e0b9034",
-        "consistent": true,
-        "entity_type": "api_key",
-        "exact_entity_value": "sk_example_fake_6250bf1b87c4d04b3e0b9034",
-        "filenames": [
-          "screenshot_config.jpeg",
-          "screenshot_config_v1.png"
-        ],
-        "link_id": "XFL-001",
-        "occurrences": 2,
-        "representation_variants": [
-          "sk_example_fake_6250bf1b87c4d04b3e0b9034"
-        ]
-      },
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-dac6489b9edc",
-        "canonical_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-        "consistent": true,
-        "entity_type": "jwt_token",
-        "exact_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-        "filenames": [
-          "screenshot_config.jpeg",
-          "screenshot_config_v1.png"
-        ],
-        "link_id": "XFL-002",
-        "occurrences": 2,
-        "representation_variants": [
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature"
-        ]
-      },
-      {
-        "attachments": [
-          "ATT-001",
-          "ATT-002"
-        ],
-        "canonical_entity_id": "canon-fc57892bf597",
-        "canonical_entity_value": "Example-Fake-Passw0rd-3776!",
-        "consistent": true,
-        "entity_type": "password",
-        "exact_entity_value": "Example-Fake-Passw0rd-3776!",
-        "filenames": [
-          "screenshot_config.jpeg",
-          "screenshot_config_v1.png"
-        ],
-        "link_id": "XFL-003",
-        "occurrences": 2,
-        "representation_variants": [
-          "Example-Fake-Passw0rd-3776!"
-        ]
-      }
-    ],
+    "context_complexity": "low",
+    "cross_file_links": [],
     "dataset_version": "2.2.0",
     "detection_expected": true,
-    "detection_mode": "deterministic",
+    "detection_mode": "contextual",
     "difficulty": 3,
-    "document_fingerprint": "0842304e23b2d153",
+    "document_fingerprint": "0b54e3255172bf8b",
     "document_profile": [
       {
         "archetype": "screenshot_config",
         "attachment_id": "ATT-001",
         "delimiter": null,
-        "filename": "screenshot_config_v1.png",
-        "language": "th",
-        "language_routing": "relabelled_from_mixed",
-        "pages": 0,
-        "renderer": "png",
-        "rows": 0,
-        "sections": 1,
-        "sheets": 0,
-        "slides": 0,
-        "tables": 0
-      },
-      {
-        "archetype": "screenshot_config",
-        "attachment_id": "ATT-002",
-        "delimiter": null,
-        "filename": "screenshot_config.jpeg",
+        "filename": "screenshot_config.png",
         "language": "th",
         "language_routing": null,
         "pages": 0,
-        "renderer": "jpeg",
+        "renderer": "png",
         "rows": 0,
         "sections": 1,
         "sheets": 0,
@@ -13610,40 +12189,40 @@
     ],
     "domain_scope": "single_domain",
     "domains": [
-      "secrets"
+      "infrastructure"
     ],
-    "edge_case": false,
+    "edge_case": true,
     "entities": [
       {
         "annotation_id": "ENT-00001",
-        "canonical_entity_id": "canon-fc57892bf597",
-        "canonical_entity_value": "Example-Fake-Passw0rd-3776!",
-        "classification_expected": "password",
+        "canonical_entity_id": "canon-b6c0d6dafdb9",
+        "canonical_entity_value": "db-replica.siam-meridian.internal:5432",
+        "classification_expected": "database_endpoint",
         "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "password",
-        "exact_entity_value": "Example-Fake-Passw0rd-3776!",
-        "filename": "screenshot_config_v1.png",
+        "domain": "infrastructure",
+        "entity_type": "database_endpoint",
+        "exact_entity_value": "db-replica.siam-meridian.internal:5432",
+        "filename": "screenshot_config.png",
         "location": {
           "bbox": [
-            165.3,
-            269.0,
-            277.1,
+            115.6,
+            235.0,
+            354.1,
             28.0
           ],
           "bbox_space": "final",
           "case_sensitive": false,
           "entity_strategy": "atomic_line",
-          "entity_text_width": 277.1,
-          "expected_ocr_text": "DB_PASSWORD: Example-Fake-Passw0rd-3776!",
+          "entity_text_width": 354.1,
+          "expected_ocr_text": "DB_HOST: db-replica.siam-meridian.internal:5432",
           "fragment_count": 1,
           "fragment_index": 0,
-          "height": 479,
+          "height": 430,
           "kind": "image_ocr",
           "ocr_normalized": false,
           "rotation_applied": false,
           "source_type": "native",
-          "width": 2056
+          "width": 900
         },
         "note": "",
         "role": "body",
@@ -13654,34 +12233,34 @@
       },
       {
         "annotation_id": "ENT-00002",
-        "canonical_entity_id": "canon-1d3ee7f12968",
-        "canonical_entity_value": "sk_example_fake_6250bf1b87c4d04b3e0b9034",
-        "classification_expected": "api_key",
+        "canonical_entity_id": "canon-1b532777fb2b",
+        "canonical_entity_value": "notify-19.siam-meridian.internal",
+        "classification_expected": "internal_hostname",
         "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "api_key",
-        "exact_entity_value": "sk_example_fake_6250bf1b87c4d04b3e0b9034",
-        "filename": "screenshot_config_v1.png",
+        "domain": "infrastructure",
+        "entity_type": "internal_hostname",
+        "exact_entity_value": "notify-19.siam-meridian.internal",
+        "filename": "screenshot_config.png",
         "location": {
           "bbox": [
-            106.2,
-            303.0,
-            423.0,
+            144.2,
+            269.0,
+            294.3,
             28.0
           ],
           "bbox_space": "final",
           "case_sensitive": false,
           "entity_strategy": "atomic_line",
-          "entity_text_width": 423.0,
-          "expected_ocr_text": "API_KEY: sk_example_fake_6250bf1b87c4d04b3e0b9034",
+          "entity_text_width": 294.3,
+          "expected_ocr_text": "REDIS_HOST: notify-19.siam-meridian.internal",
           "fragment_count": 1,
           "fragment_index": 0,
-          "height": 479,
+          "height": 430,
           "kind": "image_ocr",
           "ocr_normalized": false,
           "rotation_applied": false,
           "source_type": "native",
-          "width": 2056
+          "width": 900
         },
         "note": "",
         "role": "body",
@@ -13692,34 +12271,34 @@
       },
       {
         "annotation_id": "ENT-00003",
-        "canonical_entity_id": "canon-dac6489b9edc",
-        "canonical_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-        "classification_expected": "jwt_token",
+        "canonical_entity_id": "canon-1788520198ad",
+        "canonical_entity_value": "https://gateway.siam-meridian.internal/internal/report",
+        "classification_expected": "internal_url",
         "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "jwt_token",
-        "exact_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-        "filename": "screenshot_config_v1.png",
+        "domain": "infrastructure",
+        "entity_type": "internal_url",
+        "exact_entity_value": "https://gateway.siam-meridian.internal/internal/report",
+        "filename": "screenshot_config.png",
         "location": {
           "bbox": [
-            22.0,
-            371.0,
-            1967.2,
+            160.5,
+            303.0,
+            501.5,
             28.0
           ],
           "bbox_space": "final",
           "case_sensitive": false,
           "entity_strategy": "atomic_line",
-          "entity_text_width": 1967.2,
-          "expected_ocr_text": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
+          "entity_text_width": 501.5,
+          "expected_ocr_text": "API_BASE_URL: https://gateway.siam-meridian.internal/internal/report",
           "fragment_count": 1,
           "fragment_index": 0,
-          "height": 479,
+          "height": 430,
           "kind": "image_ocr",
           "ocr_normalized": false,
           "rotation_applied": false,
           "source_type": "native",
-          "width": 2056
+          "width": 900
         },
         "note": "",
         "role": "body",
@@ -13730,133 +12309,19 @@
       },
       {
         "annotation_id": "ENT-00004",
-        "canonical_entity_id": "canon-fc57892bf597",
-        "canonical_entity_value": "Example-Fake-Passw0rd-3776!",
-        "classification_expected": "password",
+        "canonical_entity_id": "canon-8dfc99c93935",
+        "canonical_entity_value": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: payments-service\n  namespace: siam-meridian-prod\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - image: registry.siam-meridian.internal/platform/app:1.4.2\n        envFrom:\n        - secretRef:\n            name: example-fake-db-credentials",
+        "character_end": 361,
+        "character_start": 48,
+        "classification_expected": "kubernetes_manifest",
         "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "password",
-        "exact_entity_value": "Example-Fake-Passw0rd-3776!",
-        "filename": "screenshot_config.jpeg",
-        "location": {
-          "bbox": [
-            165.3,
-            269.0,
-            277.1,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 277.1,
-          "expected_ocr_text": "DB_PASSWORD: Example-Fake-Passw0rd-3776!",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 479,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 2056
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00005",
-        "canonical_entity_id": "canon-1d3ee7f12968",
-        "canonical_entity_value": "sk_example_fake_6250bf1b87c4d04b3e0b9034",
-        "classification_expected": "api_key",
-        "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "api_key",
-        "exact_entity_value": "sk_example_fake_6250bf1b87c4d04b3e0b9034",
-        "filename": "screenshot_config.jpeg",
-        "location": {
-          "bbox": [
-            106.2,
-            303.0,
-            423.0,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 423.0,
-          "expected_ocr_text": "API_KEY: sk_example_fake_6250bf1b87c4d04b3e0b9034",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 479,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 2056
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00006",
-        "canonical_entity_id": "canon-dac6489b9edc",
-        "canonical_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-        "classification_expected": "jwt_token",
-        "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "jwt_token",
-        "exact_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-        "filename": "screenshot_config.jpeg",
-        "location": {
-          "bbox": [
-            22.0,
-            371.0,
-            1967.2,
-            28.0
-          ],
-          "bbox_space": "final",
-          "case_sensitive": false,
-          "entity_strategy": "atomic_line",
-          "entity_text_width": 1967.2,
-          "expected_ocr_text": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
-          "fragment_count": 1,
-          "fragment_index": 0,
-          "height": 479,
-          "kind": "image_ocr",
-          "ocr_normalized": false,
-          "rotation_applied": false,
-          "source_type": "native",
-          "width": 2056
-        },
-        "note": "",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-002",
-        "valid": true,
-        "verification": "verified_layout"
-      },
-      {
-        "annotation_id": "ENT-00007",
-        "canonical_entity_id": "canon-5ca31a7b4074",
-        "canonical_entity_value": "sk_example_fake_78dc9be8ae5300e4ca396a7d",
-        "character_end": 149,
-        "character_start": 109,
-        "classification_expected": "api_key",
-        "detection_expected": true,
-        "domain": "secrets",
-        "entity_type": "api_key",
-        "exact_entity_value": "sk_example_fake_78dc9be8ae5300e4ca396a7d",
+        "domain": "infrastructure",
+        "entity_type": "kubernetes_manifest",
+        "exact_entity_value": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: payments-service\n  namespace: siam-meridian-prod\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - image: registry.siam-meridian.internal/platform/app:1.4.2\n        envFrom:\n        - secretRef:\n            name: example-fake-db-credentials",
         "filename": null,
         "location": {
-          "character_end": 149,
-          "character_start": 109,
+          "character_end": 361,
+          "character_start": 48,
           "kind": "prompt_span"
         },
         "note": "",
@@ -13868,37 +12333,29 @@
       }
     ],
     "entity_types": [
-      "api_key",
-      "jwt_token",
-      "password"
+      "database_endpoint",
+      "internal_hostname",
+      "internal_url",
+      "kubernetes_manifest"
     ],
     "evaluation_requirement": "ocr_required",
     "extraction_methods": [
       "ocr"
     ],
     "file_types": [
-      "jpeg",
       "png"
     ],
-    "formality": "neutral",
+    "formality": "casual",
     "generation_method": "archetype+span_first+scenario_plan+real_file_renderer",
-    "intent": "draft_email",
-    "language": "mixed",
+    "intent": "summarize",
+    "language": "th",
     "language_coverage": {
       "attachment_languages": [
-        "th",
         "th"
       ],
       "by_file_type": {
-        "jpeg": {
-          "attachments": 158,
-          "declared": {
-            "th": 1
-          },
-          "matches": 1
-        },
         "png": {
-          "attachments": 158,
+          "attachments": 147,
           "declared": {
             "th": 1
           },
@@ -13909,13 +12366,12 @@
         "th"
       ],
       "matrices": [
-        "mixed->th",
-        "mixed->th"
+        "th->th"
       ],
       "mixed_attachments": 0,
       "mixed_script_verified": true,
-      "prompt_language": "mixed",
-      "routed_attachments": 1,
+      "prompt_language": "th",
+      "routed_attachments": 0,
       "thresholds": {
         "en": {
           "min_latin_share": 0.8
@@ -13937,175 +12393,145 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 158,
+          "counted_chars": 147,
           "extension": "png",
           "language": "th",
-          "latin_characters": 41,
-          "latin_chars": 41,
-          "latin_share": 0.268,
+          "latin_characters": 31,
+          "latin_chars": 31,
+          "latin_share": 0.2168,
           "matches_declared_language": true,
-          "neutral_chars": 5,
-          "neutral_share": 0.0316,
+          "neutral_chars": 4,
+          "neutral_share": 0.0272,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 158,
-            "latin_characters": 41,
-            "latin_chars": 41,
-            "latin_share": 0.268,
-            "neutral_chars": 5,
-            "neutral_share": 0.0316,
+            "counted_chars": 147,
+            "latin_characters": 31,
+            "latin_chars": 31,
+            "latin_share": 0.2168,
+            "neutral_chars": 4,
+            "neutral_share": 0.0272,
             "thai_characters": 112,
             "thai_chars": 112,
-            "thai_share": 0.732
+            "thai_share": 0.7832
           },
           "thai_characters": 112,
           "thai_chars": 112,
-          "thai_share": 0.732
-        },
-        {
-          "attachment_id": "ATT-002",
-          "contains_both": true,
-          "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 158,
-          "extension": "jpeg",
-          "language": "th",
-          "latin_characters": 41,
-          "latin_chars": 41,
-          "latin_share": 0.268,
-          "matches_declared_language": true,
-          "neutral_chars": 5,
-          "neutral_share": 0.0316,
-          "residual_english_labels": [],
-          "static": {
-            "contains_both": true,
-            "contains_latin": true,
-            "contains_thai": true,
-            "counted_chars": 158,
-            "latin_characters": 41,
-            "latin_chars": 41,
-            "latin_share": 0.268,
-            "neutral_chars": 5,
-            "neutral_share": 0.0316,
-            "thai_characters": 112,
-            "thai_chars": 112,
-            "thai_share": 0.732
-          },
-          "thai_characters": 112,
-          "thai_chars": 112,
-          "thai_share": 0.732
+          "thai_share": 0.7832
         }
       ],
       "prompt": {
         "contains_both": true,
         "contains_latin": true,
         "contains_thai": true,
-        "counted_chars": 139,
-        "latin_characters": 60,
-        "latin_chars": 60,
-        "latin_share": 0.5042,
+        "counted_chars": 287,
+        "latin_characters": 222,
+        "latin_chars": 222,
+        "latin_share": 0.8916,
         "matches_declared_language": true,
-        "neutral_chars": 20,
-        "neutral_share": 0.1439,
+        "neutral_chars": 38,
+        "neutral_share": 0.1324,
         "static": {
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 99,
-          "latin_characters": 36,
-          "latin_chars": 36,
-          "latin_share": 0.3789,
-          "neutral_chars": 4,
-          "neutral_share": 0.0404,
-          "thai_characters": 59,
-          "thai_chars": 59,
-          "thai_share": 0.6211
+          "counted_chars": 48,
+          "latin_characters": 19,
+          "latin_chars": 19,
+          "latin_share": 0.413,
+          "neutral_chars": 2,
+          "neutral_share": 0.0417,
+          "thai_characters": 27,
+          "thai_chars": 27,
+          "thai_share": 0.587
         },
-        "thai_characters": 59,
-        "thai_chars": 59,
-        "thai_share": 0.4958
+        "thai_characters": 27,
+        "thai_chars": 27,
+        "thai_share": 0.1084
       }
     },
     "output_leakage_check_expected": true,
-    "persona": "support",
-    "persona_label": "customer support agent",
+    "persona": "analyst",
+    "persona_label": "data analyst",
     "polarity": "positive",
-    "policy_decision_expected": "BLOCK",
+    "policy_decision_expected": "LOCAL_ONLY",
     "policy_rule_ids": [
-      "secrets.default"
+      "infra.default"
     ],
     "policy_scenario": "external_rag",
     "profile": "thai-rendering",
-    "prompt": "เอาสองอันนี้เขียนตอบลูกค้าหน่อย. boss wants it by 5; use this one instead. เพิ่ง export มาเมื่อเช้า ส่งไปที่ sk_example_fake_78dc9be8ae5300e4ca396a7d ด้วย",
+    "prompt": "ช่วยดู screenshot_config.png สรุปให้ที ส่งไปที่ apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: payments-service\n  namespace: siam-meridian-prod\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - image: registry.siam-meridian.internal/platform/app:1.4.2\n        envFrom:\n        - secretRef:\n            name: example-fake-db-credentials ด้วย",
     "prompt_form": "with_attachment",
-    "prompt_language": "mixed",
-    "prompt_length": 154,
-    "prompt_length_class": "short",
-    "prompt_style": "long",
+    "prompt_language": "th",
+    "prompt_length": 366,
+    "prompt_length_class": "medium",
+    "prompt_style": "short",
     "prompt_styles": [
-      "short"
+      "medium"
     ],
-    "rationale": "Archetype screenshot_config from Nimbus Lotus. Scenario SCN-00002. Task: draft_email. Sensitive values are incidental to the request.",
-    "routing_expected": "blocked",
-    "scenario_id": "SCN-00002",
+    "rationale": "Archetype screenshot_config from Siam Meridian. Scenario SCN-00001. Task: summarize. Sensitive values are incidental to the request.",
+    "routing_expected": "local",
+    "scenario_id": "SCN-00001",
     "schema_version": "2.1",
     "seed": 21,
     "split": "validation",
     "structure": "file_attachment",
     "structure_references": [],
     "tags": [
-      "api_key",
+      "ambiguous",
       "archetype:screenshot_config",
       "attachment_lang:th",
-      "bundle:same_archetype",
+      "bundle:single_file",
       "content_lang:th",
-      "cross_file",
+      "database_endpoint",
       "difficulty:3",
-      "file:jpeg",
       "file:png",
       "file_aware",
-      "intent:draft_email",
-      "jwt_token",
-      "lang:mixed",
-      "matrix:mixed>th",
-      "multi_attachment",
+      "infrastructure",
+      "intent:summarize",
+      "internal_hostname",
+      "internal_url",
+      "kubernetes_manifest",
+      "lang:th",
+      "matrix:th>th",
       "ocr",
-      "password",
-      "persona:support",
+      "persona:analyst",
       "profile:thai-rendering",
-      "secrets",
       "split:validation"
     ],
-    "template_family": "screenshot_config:png:screenshot_config:jpeg",
+    "template_family": "screenshot_config:png",
     "template_id": "screenshot_config",
-    "test_category": "single_domain",
-    "test_id": "pgt2-val-00002",
-    "test_objective": "file_ingestion_and_policy",
+    "test_category": "ambiguous",
+    "test_id": "pgt2-val-00001",
+    "test_objective": "ambiguous_context",
     "token_restoration_expected": "not_applicable",
     "transformation_expected": [
       {
-        "action": "BLOCK",
-        "entity_type": "api_key"
+        "action": "LOCAL_ONLY",
+        "entity_type": "database_endpoint"
       },
       {
-        "action": "BLOCK",
-        "entity_type": "jwt_token"
+        "action": "LOCAL_ONLY",
+        "entity_type": "internal_hostname"
       },
       {
-        "action": "BLOCK",
-        "entity_type": "password"
+        "action": "LOCAL_ONLY",
+        "entity_type": "internal_url"
+      },
+      {
+        "action": "LOCAL_ONLY",
+        "entity_type": "kubernetes_manifest"
       }
     ],
     "verification": {
-      "attachments_checked": 2,
-      "attachments_verified": 2,
-      "language_checked": 2,
+      "attachments_checked": 1,
+      "attachments_verified": 1,
+      "language_checked": 1,
       "language_passed": true,
       "mixed_language_verified": true,
-      "ocr_layout_only": 2,
+      "ocr_layout_only": 1,
       "prompt_language_passed": true,
       "residual_english_labels": 0,
       "status": "verified_partial"
@@ -14114,7 +12540,12 @@
   },
   {
     "action_expected": {
-      "payment_transaction_reference": "LOCAL_ONLY"
+      "api_key": "BLOCK",
+      "database_endpoint": "LOCAL_ONLY",
+      "internal_hostname": "LOCAL_ONLY",
+      "internal_url": "LOCAL_ONLY",
+      "jwt_token": "BLOCK",
+      "password": "BLOCK"
     },
     "adversarial": false,
     "ambiguity": {
@@ -14125,21 +12556,21 @@
       "IT"
     ],
     "archetypes": [
-      "incident_report"
+      "screenshot_config"
     ],
     "attachment_count": 1,
     "attachments": [
       {
-        "archetype": "incident_report",
+        "archetype": "screenshot_config",
         "archetype_category": "IT",
-        "archetype_label": "Incident report",
+        "archetype_label": "Config screenshot",
         "attachment_id": "ATT-001",
-        "dependency_renderer": "reportlab+pillow+pypdf",
-        "evaluation_requirement": "direct_text_extraction",
-        "expected_extraction_method": "pdf_text",
-        "extension": "pdf",
-        "file_type": "pdf",
-        "filename": "incident_report.pdf",
+        "dependency_renderer": "pillow+pypdf",
+        "evaluation_requirement": "ocr_required",
+        "expected_extraction_method": "ocr",
+        "extension": "jpg",
+        "file_type": "jpg",
+        "filename": "screenshot_config.jpg",
         "generated_seed": 21,
         "language": "th",
         "language_capability": [
@@ -14151,58 +12582,67 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 584,
-          "latin_characters": 233,
-          "latin_chars": 233,
-          "latin_share": 0.4641,
+          "counted_chars": 158,
+          "latin_characters": 41,
+          "latin_chars": 41,
+          "latin_share": 0.268,
           "matches_declared_language": true,
-          "neutral_chars": 82,
-          "neutral_share": 0.1404,
+          "neutral_chars": 5,
+          "neutral_share": 0.0316,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 523,
-            "latin_characters": 205,
-            "latin_chars": 205,
-            "latin_share": 0.4457,
-            "neutral_chars": 63,
-            "neutral_share": 0.1205,
-            "thai_characters": 255,
-            "thai_chars": 255,
-            "thai_share": 0.5543
+            "counted_chars": 158,
+            "latin_characters": 41,
+            "latin_chars": 41,
+            "latin_share": 0.268,
+            "neutral_chars": 5,
+            "neutral_share": 0.0316,
+            "thai_characters": 112,
+            "thai_chars": 112,
+            "thai_share": 0.732
           },
-          "thai_characters": 269,
-          "thai_chars": 269,
-          "thai_share": 0.5359
+          "thai_characters": 112,
+          "thai_chars": 112,
+          "thai_share": 0.732
         },
         "language_mix": "Thai business prose with English technical terms",
         "language_mode": "th",
         "language_requested": "th",
         "language_routing": null,
-        "mime_type": "application/pdf",
-        "path": "pgt2-tst-00001/incident_report.pdf",
-        "render_mode": "native",
-        "renderer": "pdf_native",
+        "mime_type": "image/jpeg",
+        "path": "pgt2-val-00002/screenshot_config.jpg",
+        "render_mode": null,
+        "renderer": "jpeg",
         "renderer_version": "2.2",
         "revision_changes": [],
-        "sha256": "9c80a0ff4918e9dfa92e0c82693e9fb9e9a550b90e5757f82470c3ac92a96542",
-        "size_bytes": 25365,
+        "sha256": "23700917c6f78fff934df0e4049b995e47e8bc7641ea64d8fc8be6830c42f867",
+        "size_bytes": 318789,
         "structure": {
           "columns": 0,
           "delimiter": null,
           "headers": [],
           "headings": [
-            "รายงานเหตุการณ์ - API ยืนยันตัวตนล้มเหลว",
-            "สรุป",
-            "ไทม์ไลน์",
-            "การติดตามผล"
+            "สภาพแวดล้อมโปรดักชัน"
           ],
-          "keys": [],
-          "lines": 228,
-          "pages": 1,
-          "renderer": "pdf_native",
+          "keys": [
+            "APP_ENV",
+            "APP_PORT",
+            "LOG_LEVEL",
+            "DB_HOST",
+            "REDIS_HOST",
+            "API_BASE_URL",
+            "DB_USER",
+            "DB_PASSWORD",
+            "API_KEY",
+            "JWT_SECRET",
+            "_language_note"
+          ],
+          "lines": 1301,
+          "pages": 0,
+          "renderer": "jpeg",
           "rows": 0,
           "sheets": [],
           "slide_titles": [],
@@ -14210,17 +12650,17 @@
           "tables": []
         },
         "synthetic": true,
-        "text_shaping": null,
+        "text_shaping": "harfbuzz",
         "verification": {
           "checks": [
             "file_nonempty",
-            "pdf_parsed",
-            "pdf_text_extracted"
+            "image_decoded",
+            "ocr_layout_verified"
           ],
-          "entity_count": 3,
-          "extracted_entity_count": 3,
+          "entity_count": 6,
+          "extracted_entity_count": 6,
           "issues": [],
-          "status": "verified"
+          "status": "verified_layout"
         }
       }
     ],
@@ -14237,13 +12677,13 @@
       ]
     },
     "bundle": {
-      "bundle_id": "BND-00001",
+      "bundle_id": "BND-00002",
       "kind": "single_file",
       "members": [
         {
-          "archetype": "incident_report",
+          "archetype": "screenshot_config",
           "attachment_id": "ATT-001",
-          "filename": "incident_report.pdf",
+          "filename": "screenshot_config.jpg",
           "role": "related"
         }
       ],
@@ -14255,20 +12695,14 @@
     },
     "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
     "classification_expected": [
-      "payment_transaction_reference"
+      "api_key",
+      "database_endpoint",
+      "internal_hostname",
+      "internal_url",
+      "jwt_token",
+      "password"
     ],
     "consistency_checks": [
-      {
-        "attachment_id": "ATT-001",
-        "check": "incident_timeline",
-        "details": {
-          "end": "2026-03-18T09:43:10Z",
-          "start": "2026-03-18T09:12:00Z"
-        },
-        "evaluated_items": 1,
-        "passed": true,
-        "status": "passed"
-      },
       {
         "attachment_id": null,
         "check": "linked_amount_matches",
@@ -14334,143 +12768,287 @@
     "dataset_version": "2.2.0",
     "detection_expected": true,
     "detection_mode": "deterministic",
-    "difficulty": 4,
-    "document_fingerprint": "4a1a4258131c228e",
+    "difficulty": 3,
+    "document_fingerprint": "bcc0c3c34f61a3ae",
     "document_profile": [
       {
-        "archetype": "incident_report",
+        "archetype": "screenshot_config",
         "attachment_id": "ATT-001",
         "delimiter": null,
-        "filename": "incident_report.pdf",
+        "filename": "screenshot_config.jpg",
         "language": "th",
         "language_routing": null,
-        "pages": 1,
-        "renderer": "pdf_native",
+        "pages": 0,
+        "renderer": "jpeg",
         "rows": 0,
-        "sections": 4,
+        "sections": 1,
         "sheets": 0,
         "slides": 0,
         "tables": 0
       }
     ],
-    "domain_scope": "single_domain",
+    "domain_scope": "multi_domain",
     "domains": [
-      "payment"
+      "infrastructure",
+      "secrets"
     ],
     "edge_case": false,
     "entities": [
       {
         "annotation_id": "ENT-00001",
-        "canonical_entity_id": "canon-c51bfacef848",
-        "canonical_entity_value": "ธีรภัทร วงศ์ไทย",
-        "character_end": 59,
-        "character_start": 44,
-        "classification_expected": null,
-        "detection_expected": false,
-        "domain": "lookalike",
-        "entity_type": "document_person_name",
-        "exact_entity_value": "ธีรภัทร วงศ์ไทย",
-        "filename": "incident_report.pdf",
-        "location": {
-          "character_end": 59,
-          "character_start": 44,
-          "height": 14,
-          "kind": "pdf_text",
-          "page": 1,
-          "source_type": "native_text",
-          "width": 62.13,
-          "x": 230.11,
-          "y": 98
-        },
-        "note": "synthetic organisation identity, not an annotated target entity",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified"
-      },
-      {
-        "annotation_id": "ENT-00002",
-        "canonical_entity_id": "canon-53425db19ba1",
-        "canonical_entity_value": "piyada.kittipong67@example.org",
-        "character_end": 91,
-        "character_start": 61,
-        "classification_expected": null,
-        "detection_expected": false,
-        "domain": "lookalike",
-        "entity_type": "document_email",
-        "exact_entity_value": "piyada.kittipong67@example.org",
-        "filename": "incident_report.pdf",
-        "location": {
-          "character_end": 91,
-          "character_start": 61,
-          "height": 14,
-          "kind": "pdf_text",
-          "page": 1,
-          "source_type": "native_text",
-          "width": 142.77,
-          "x": 297.85,
-          "y": 98
-        },
-        "note": "synthetic organisation identity, not an annotated target entity",
-        "role": "body",
-        "source": "attachment",
-        "source_attachment": "ATT-001",
-        "valid": true,
-        "verification": "verified"
-      },
-      {
-        "annotation_id": "ENT-00003",
-        "canonical_entity_id": "canon-26b2dc660935",
-        "canonical_entity_value": "TXN-2026-69829060",
-        "character_end": 46,
-        "character_start": 29,
-        "classification_expected": "payment_transaction_reference",
+        "canonical_entity_id": "canon-15c1f4aac41a",
+        "canonical_entity_value": "db-primary.orchid-vector.internal:5432",
+        "classification_expected": "database_endpoint",
         "detection_expected": true,
-        "domain": "payment",
-        "entity_type": "payment_transaction_reference",
-        "exact_entity_value": "TXN-2026-69829060",
-        "filename": "incident_report.pdf",
+        "domain": "infrastructure",
+        "entity_type": "database_endpoint",
+        "exact_entity_value": "db-primary.orchid-vector.internal:5432",
+        "filename": "screenshot_config.jpg",
         "location": {
-          "character_end": 46,
-          "character_start": 29,
-          "height": 14,
-          "kind": "pdf_text",
-          "page": 1,
-          "source_type": "native_text",
-          "width": 91.25,
-          "x": 171.65,
-          "y": 186
+          "bbox": [
+            115.6,
+            235.0,
+            351.0,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 351.0,
+          "expected_ocr_text": "DB_HOST: db-primary.orchid-vector.internal:5432",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 581,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 2056
         },
         "note": "",
         "role": "body",
         "source": "attachment",
         "source_attachment": "ATT-001",
         "valid": true,
-        "verification": "verified"
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00002",
+        "canonical_entity_id": "canon-545346d8b90e",
+        "canonical_entity_value": "orders-22.orchid-vector.internal",
+        "classification_expected": "internal_hostname",
+        "detection_expected": true,
+        "domain": "infrastructure",
+        "entity_type": "internal_hostname",
+        "exact_entity_value": "orders-22.orchid-vector.internal",
+        "filename": "screenshot_config.jpg",
+        "location": {
+          "bbox": [
+            144.2,
+            269.0,
+            288.7,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 288.7,
+          "expected_ocr_text": "REDIS_HOST: orders-22.orchid-vector.internal",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 581,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 2056
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00003",
+        "canonical_entity_id": "canon-7037124d682c",
+        "canonical_entity_value": "https://billing.orchid-vector.internal/admin/metrics",
+        "classification_expected": "internal_url",
+        "detection_expected": true,
+        "domain": "infrastructure",
+        "entity_type": "internal_url",
+        "exact_entity_value": "https://billing.orchid-vector.internal/admin/metrics",
+        "filename": "screenshot_config.jpg",
+        "location": {
+          "bbox": [
+            160.5,
+            303.0,
+            469.8,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 469.8,
+          "expected_ocr_text": "API_BASE_URL: https://billing.orchid-vector.internal/admin/metrics",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 581,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 2056
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00004",
+        "canonical_entity_id": "canon-b8564da0fde5",
+        "canonical_entity_value": "Example-Fake-Passw0rd-6285!",
+        "classification_expected": "password",
+        "detection_expected": true,
+        "domain": "secrets",
+        "entity_type": "password",
+        "exact_entity_value": "Example-Fake-Passw0rd-6285!",
+        "filename": "screenshot_config.jpg",
+        "location": {
+          "bbox": [
+            165.3,
+            371.0,
+            277.1,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 277.1,
+          "expected_ocr_text": "DB_PASSWORD: Example-Fake-Passw0rd-6285!",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 581,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 2056
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00005",
+        "canonical_entity_id": "canon-0fa4feb17610",
+        "canonical_entity_value": "sk_example_fake_1d08943fe2daa1067b948db1",
+        "classification_expected": "api_key",
+        "detection_expected": true,
+        "domain": "secrets",
+        "entity_type": "api_key",
+        "exact_entity_value": "sk_example_fake_1d08943fe2daa1067b948db1",
+        "filename": "screenshot_config.jpg",
+        "location": {
+          "bbox": [
+            106.2,
+            405.0,
+            422.5,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 422.5,
+          "expected_ocr_text": "API_KEY: sk_example_fake_1d08943fe2daa1067b948db1",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 581,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 2056
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00006",
+        "canonical_entity_id": "canon-dac6489b9edc",
+        "canonical_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
+        "classification_expected": "jwt_token",
+        "detection_expected": true,
+        "domain": "secrets",
+        "entity_type": "jwt_token",
+        "exact_entity_value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
+        "filename": "screenshot_config.jpg",
+        "location": {
+          "bbox": [
+            22.0,
+            473.0,
+            1967.2,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 1967.2,
+          "expected_ocr_text": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyX2V4YW1wbGVfZmFrZSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmludmFsaWQiLCJyb2xlIjoiZGVtbyIsImV4cCI6MTg5MzQ1NjAwMH0.example-fake-signature",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 581,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 2056
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
       }
     ],
     "entity_types": [
-      "payment_transaction_reference"
+      "api_key",
+      "database_endpoint",
+      "internal_hostname",
+      "internal_url",
+      "jwt_token",
+      "password"
     ],
-    "evaluation_requirement": "direct_text_extraction",
+    "evaluation_requirement": "ocr_required",
     "extraction_methods": [
-      "pdf_text"
+      "ocr"
     ],
     "file_types": [
-      "pdf"
+      "jpg"
     ],
-    "formality": "casual",
+    "formality": "neutral",
     "generation_method": "archetype+span_first+scenario_plan+real_file_renderer",
-    "intent": "convert_format",
-    "language": "mixed",
+    "intent": "summarize",
+    "language": "en",
     "language_coverage": {
       "attachment_languages": [
         "th"
       ],
       "by_file_type": {
-        "pdf": {
-          "attachments": 584,
+        "jpg": {
+          "attachments": 158,
           "declared": {
             "th": 1
           },
@@ -14481,11 +13059,11 @@
         "th"
       ],
       "matrices": [
-        "mixed->th"
+        "en->th"
       ],
       "mixed_attachments": 0,
       "mixed_script_verified": true,
-      "prompt_language": "mixed",
+      "prompt_language": "en",
       "routed_attachments": 0,
       "thresholds": {
         "en": {
@@ -14508,119 +13086,147 @@
           "contains_both": true,
           "contains_latin": true,
           "contains_thai": true,
-          "counted_chars": 584,
-          "extension": "pdf",
+          "counted_chars": 158,
+          "extension": "jpg",
           "language": "th",
-          "latin_characters": 233,
-          "latin_chars": 233,
-          "latin_share": 0.4641,
+          "latin_characters": 41,
+          "latin_chars": 41,
+          "latin_share": 0.268,
           "matches_declared_language": true,
-          "neutral_chars": 82,
-          "neutral_share": 0.1404,
+          "neutral_chars": 5,
+          "neutral_share": 0.0316,
           "residual_english_labels": [],
           "static": {
             "contains_both": true,
             "contains_latin": true,
             "contains_thai": true,
-            "counted_chars": 523,
-            "latin_characters": 205,
-            "latin_chars": 205,
-            "latin_share": 0.4457,
-            "neutral_chars": 63,
-            "neutral_share": 0.1205,
-            "thai_characters": 255,
-            "thai_chars": 255,
-            "thai_share": 0.5543
+            "counted_chars": 158,
+            "latin_characters": 41,
+            "latin_chars": 41,
+            "latin_share": 0.268,
+            "neutral_chars": 5,
+            "neutral_share": 0.0316,
+            "thai_characters": 112,
+            "thai_chars": 112,
+            "thai_share": 0.732
           },
-          "thai_characters": 269,
-          "thai_chars": 269,
-          "thai_share": 0.5359
+          "thai_characters": 112,
+          "thai_chars": 112,
+          "thai_share": 0.732
         }
       ],
       "prompt": {
-        "contains_both": true,
+        "contains_both": false,
         "contains_latin": true,
-        "contains_thai": true,
-        "counted_chars": 44,
-        "latin_characters": 33,
-        "latin_chars": 33,
-        "latin_share": 0.7857,
+        "contains_thai": false,
+        "counted_chars": 57,
+        "latin_characters": 54,
+        "latin_chars": 54,
+        "latin_share": 1.0,
         "matches_declared_language": true,
-        "neutral_chars": 2,
-        "neutral_share": 0.0455,
+        "neutral_chars": 3,
+        "neutral_share": 0.0526,
         "static": {
-          "contains_both": true,
+          "contains_both": false,
           "contains_latin": true,
-          "contains_thai": true,
-          "counted_chars": 44,
-          "latin_characters": 33,
-          "latin_chars": 33,
-          "latin_share": 0.7857,
-          "neutral_chars": 2,
-          "neutral_share": 0.0455,
-          "thai_characters": 9,
-          "thai_chars": 9,
-          "thai_share": 0.2143
+          "contains_thai": false,
+          "counted_chars": 57,
+          "latin_characters": 54,
+          "latin_chars": 54,
+          "latin_share": 1.0,
+          "neutral_chars": 3,
+          "neutral_share": 0.0526,
+          "thai_characters": 0,
+          "thai_chars": 0,
+          "thai_share": 0.0
         },
-        "thai_characters": 9,
-        "thai_chars": 9,
-        "thai_share": 0.2143
+        "thai_characters": 0,
+        "thai_chars": 0,
+        "thai_share": 0.0
       }
     },
     "output_leakage_check_expected": true,
-    "persona": "sales",
-    "persona_label": "salesperson",
+    "persona": "support",
+    "persona_label": "customer support agent",
     "polarity": "positive",
-    "policy_decision_expected": "LOCAL_ONLY",
+    "policy_decision_expected": "BLOCK",
     "policy_rule_ids": [
-      "payment.default"
+      "infra.default",
+      "secrets.default"
     ],
-    "policy_scenario": "no_external_transfer",
+    "policy_scenario": "external_assistant",
     "profile": "thai-rendering",
-    "prompt": "ช่วยconvert this to CSV incident_report.pdf หน่อย",
+    "prompt": "could you attached screenshot_config.jpg, summarize this please",
     "prompt_form": "with_attachment",
-    "prompt_language": "mixed",
-    "prompt_length": 49,
+    "prompt_language": "en",
+    "prompt_length": 63,
     "prompt_length_class": "short",
     "prompt_style": "short",
     "prompt_styles": [
       "short"
     ],
-    "rationale": "Archetype incident_report from Nimbus Lotus. Scenario SCN-00001. Task: convert_format. Sensitive values are incidental to the request.",
-    "routing_expected": "local",
-    "scenario_id": "SCN-00001",
+    "rationale": "Archetype screenshot_config from Orchid Vector. Scenario SCN-00002. Task: summarize. Sensitive values are incidental to the request.",
+    "routing_expected": "blocked",
+    "scenario_id": "SCN-00002",
     "schema_version": "2.1",
     "seed": 21,
-    "split": "test",
+    "split": "validation",
     "structure": "file_attachment",
     "structure_references": [],
     "tags": [
-      "archetype:incident_report",
+      "api_key",
+      "archetype:screenshot_config",
       "attachment_lang:th",
       "bundle:single_file",
       "content_lang:th",
-      "difficulty:4",
-      "file:pdf",
+      "database_endpoint",
+      "difficulty:3",
+      "file:jpg",
       "file_aware",
-      "intent:convert_format",
-      "lang:mixed",
-      "matrix:mixed>th",
-      "payment",
-      "payment_transaction_reference",
-      "persona:sales",
+      "infrastructure",
+      "intent:summarize",
+      "internal_hostname",
+      "internal_url",
+      "jwt_token",
+      "lang:en",
+      "matrix:en>th",
+      "ocr",
+      "password",
+      "persona:support",
       "profile:thai-rendering",
-      "split:test"
+      "secrets",
+      "split:validation"
     ],
-    "template_family": "incident_report:pdf",
-    "template_id": "incident_report",
-    "test_category": "single_domain",
-    "test_id": "pgt2-tst-00001",
-    "test_objective": "file_ingestion_and_policy",
+    "template_family": "screenshot_config:jpg",
+    "template_id": "screenshot_config",
+    "test_category": "multi_domain",
+    "test_id": "pgt2-val-00002",
+    "test_objective": "cross_domain_policy",
     "token_restoration_expected": "not_applicable",
     "transformation_expected": [
       {
+        "action": "BLOCK",
+        "entity_type": "api_key"
+      },
+      {
         "action": "LOCAL_ONLY",
-        "entity_type": "payment_transaction_reference"
+        "entity_type": "database_endpoint"
+      },
+      {
+        "action": "LOCAL_ONLY",
+        "entity_type": "internal_hostname"
+      },
+      {
+        "action": "LOCAL_ONLY",
+        "entity_type": "internal_url"
+      },
+      {
+        "action": "BLOCK",
+        "entity_type": "jwt_token"
+      },
+      {
+        "action": "BLOCK",
+        "entity_type": "password"
       }
     ],
     "verification": {
@@ -14629,11 +13235,687 @@
       "language_checked": 1,
       "language_passed": true,
       "mixed_language_verified": true,
-      "ocr_layout_only": 0,
+      "ocr_layout_only": 1,
       "prompt_language_passed": true,
       "residual_english_labels": 0,
-      "status": "verified"
+      "status": "verified_partial"
     },
-    "verification_status": "verified"
+    "verification_status": "verified_partial"
+  },
+  {
+    "action_expected": {
+      "card_expiry_date": "TOKENIZE",
+      "payment_authorization_code": "TOKENIZE",
+      "payment_card_number": "TOKENIZE"
+    },
+    "adversarial": false,
+    "ambiguity": {
+      "is_ambiguous": false,
+      "rationale": "Single interpretation."
+    },
+    "archetype_categories": [
+      "Finance"
+    ],
+    "archetypes": [
+      "screenshot_receipt"
+    ],
+    "attachment_count": 1,
+    "attachments": [
+      {
+        "archetype": "screenshot_receipt",
+        "archetype_category": "Finance",
+        "archetype_label": "Receipt screenshot",
+        "attachment_id": "ATT-001",
+        "dependency_renderer": "pillow+pypdf",
+        "evaluation_requirement": "ocr_required",
+        "expected_extraction_method": "ocr",
+        "extension": "jpg",
+        "file_type": "jpg",
+        "filename": "screenshot_receipt.jpg",
+        "generated_seed": 21,
+        "language": "th",
+        "language_capability": [
+          "th",
+          "en",
+          "mixed"
+        ],
+        "language_check": {
+          "contains_both": true,
+          "contains_latin": true,
+          "contains_thai": true,
+          "counted_chars": 662,
+          "latin_characters": 133,
+          "latin_chars": 133,
+          "latin_share": 0.335,
+          "matches_declared_language": true,
+          "neutral_chars": 265,
+          "neutral_share": 0.4003,
+          "residual_english_labels": [],
+          "static": {
+            "contains_both": true,
+            "contains_latin": true,
+            "contains_thai": true,
+            "counted_chars": 586,
+            "latin_characters": 99,
+            "latin_chars": 99,
+            "latin_share": 0.2821,
+            "neutral_chars": 235,
+            "neutral_share": 0.401,
+            "thai_characters": 252,
+            "thai_chars": 252,
+            "thai_share": 0.7179
+          },
+          "thai_characters": 264,
+          "thai_chars": 264,
+          "thai_share": 0.665
+        },
+        "language_mix": "Thai business prose with English technical terms",
+        "language_mode": "th",
+        "language_requested": "th",
+        "language_routing": null,
+        "mime_type": "image/jpeg",
+        "path": "pgt2-tst-00001/screenshot_receipt.jpg",
+        "render_mode": null,
+        "renderer": "jpeg",
+        "renderer_version": "2.2",
+        "revision_changes": [],
+        "sha256": "7a0ef3bcc4a99e3d13334ae3206bf91504429fa93bfc16c5dd8fdb612239db82",
+        "size_bytes": 102122,
+        "structure": {
+          "columns": 4,
+          "delimiter": null,
+          "headers": [
+            "รายการ",
+            "จำนวน",
+            "ราคาต่อหน่วย",
+            "ยอดรวมรายการ"
+          ],
+          "headings": [
+            "ใบแจ้งหนี้"
+          ],
+          "keys": [],
+          "lines": 367,
+          "pages": 0,
+          "renderer": "jpeg",
+          "rows": 10,
+          "sheets": [],
+          "slide_titles": [],
+          "slides": 0,
+          "tables": [
+            {
+              "columns": 4,
+              "rows": 6,
+              "title": "Items"
+            },
+            {
+              "columns": 2,
+              "rows": 4,
+              "title": "สรุป"
+            }
+          ]
+        },
+        "synthetic": true,
+        "text_shaping": "harfbuzz",
+        "verification": {
+          "checks": [
+            "file_nonempty",
+            "image_decoded",
+            "ocr_layout_verified"
+          ],
+          "entity_count": 5,
+          "extracted_entity_count": 5,
+          "issues": [],
+          "status": "verified_layout"
+        }
+      }
+    ],
+    "audit_log_expected": {
+      "forbidden_fields": [
+        "exact_entity_value"
+      ],
+      "record_fields": [
+        "test_id",
+        "policy_scenario",
+        "entity_types",
+        "actions",
+        "attachments"
+      ]
+    },
+    "bundle": {
+      "bundle_id": "BND-00001",
+      "kind": "single_file",
+      "members": [
+        {
+          "archetype": "screenshot_receipt",
+          "attachment_id": "ATT-001",
+          "filename": "screenshot_receipt.jpg",
+          "role": "related"
+        }
+      ],
+      "relationship": {
+        "evidence": [],
+        "status": "intentionally_unrelated"
+      },
+      "revision_changes": []
+    },
+    "char_offset_convention": "unicode_codepoints_0_based_end_exclusive",
+    "classification_expected": [
+      "card_expiry_date",
+      "payment_authorization_code",
+      "payment_card_number"
+    ],
+    "consistency_checks": [
+      {
+        "attachment_id": "ATT-001",
+        "check": "invoice_arithmetic",
+        "details": {
+          "line_items": 6,
+          "subtotal": 237673,
+          "tax": 16637,
+          "total": 254310
+        },
+        "evaluated_items": 6,
+        "passed": true,
+        "status": "passed"
+      },
+      {
+        "attachment_id": "ATT-001",
+        "check": "invoice_due_date",
+        "details": {
+          "due_date": "2026-04-02",
+          "issue_date": "2026-03-18",
+          "terms_days": 15
+        },
+        "evaluated_items": 1,
+        "passed": true,
+        "status": "passed"
+      },
+      {
+        "attachment_id": null,
+        "check": "linked_amount_matches",
+        "details": {
+          "observed_values": [
+            254310
+          ],
+          "reason": "fewer than two rendered amounts in this bundle"
+        },
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
+      },
+      {
+        "attachment_id": null,
+        "check": "linked_currency_matches",
+        "details": {
+          "observed_values": [
+            "THB"
+          ],
+          "reason": "fewer than two rendered currencies in this bundle"
+        },
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
+      },
+      {
+        "attachment_id": null,
+        "check": "linked_transaction_reference_matches",
+        "details": {
+          "observed_values": [
+            "TXN-2026-48062262"
+          ],
+          "reason": "fewer than two rendered references in this bundle"
+        },
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
+      },
+      {
+        "attachment_id": null,
+        "check": "structure_reference_resolution",
+        "details": {
+          "reason": "the prompt cites no structure",
+          "references": 0
+        },
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
+      },
+      {
+        "attachment_id": null,
+        "check": "cross_file_identifiers",
+        "details": {
+          "links": 0,
+          "reason": "no shared identifier across attachments"
+        },
+        "evaluated_items": 0,
+        "passed": false,
+        "status": "not_applicable"
+      }
+    ],
+    "content_language": "th",
+    "content_languages": [
+      "th"
+    ],
+    "context_complexity": "high",
+    "cross_file_links": [],
+    "dataset_version": "2.2.0",
+    "detection_expected": true,
+    "detection_mode": "deterministic",
+    "difficulty": 4,
+    "document_fingerprint": "3b4867d30d6c52d5",
+    "document_profile": [
+      {
+        "archetype": "screenshot_receipt",
+        "attachment_id": "ATT-001",
+        "delimiter": null,
+        "filename": "screenshot_receipt.jpg",
+        "language": "th",
+        "language_routing": null,
+        "pages": 0,
+        "renderer": "jpeg",
+        "rows": 10,
+        "sections": 1,
+        "sheets": 0,
+        "slides": 0,
+        "tables": 2
+      }
+    ],
+    "domain_scope": "single_domain",
+    "domains": [
+      "payment"
+    ],
+    "edge_case": false,
+    "entities": [
+      {
+        "annotation_id": "ENT-00001",
+        "canonical_entity_id": "canon-b5c4d00b9c46",
+        "canonical_entity_value": "อนุชา วงศ์ไทย",
+        "classification_expected": null,
+        "detection_expected": false,
+        "domain": "lookalike",
+        "entity_type": "document_person_name",
+        "exact_entity_value": "อนุชา วงศ์ไทย",
+        "filename": "screenshot_receipt.jpg",
+        "location": {
+          "bbox": [
+            174.7,
+            187.0,
+            120.6,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 120.6,
+          "expected_ocr_text": "เรียกเก็บเงินจาก: อนุชา วงศ์ไทย |",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 1051,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 460
+        },
+        "note": "synthetic organisation identity, not an annotated target entity",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00002",
+        "canonical_entity_id": "canon-abeb4144523f",
+        "canonical_entity_value": "lalita.thiraphat46@example.org",
+        "classification_expected": null,
+        "detection_expected": false,
+        "domain": "lookalike",
+        "entity_type": "document_email",
+        "exact_entity_value": "lalita.thiraphat46@example.org",
+        "filename": "screenshot_receipt.jpg",
+        "location": {
+          "bbox": [
+            28.0,
+            221.0,
+            288.0,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 288.0,
+          "expected_ocr_text": "lalita.thiraphat46@example.org",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 1051,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 460
+        },
+        "note": "synthetic organisation identity, not an annotated target entity",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00003",
+        "canonical_entity_id": "canon-d40b19e22d33",
+        "canonical_entity_value": "5555555137956174",
+        "classification_expected": "payment_card_number",
+        "detection_expected": true,
+        "domain": "payment",
+        "entity_type": "payment_card_number",
+        "exact_entity_value": "5555555137956174",
+        "filename": "screenshot_receipt.jpg",
+        "location": {
+          "bbox": [
+            160.4,
+            855.0,
+            184.8,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 184.8,
+          "expected_ocr_text": "บัตรที่บันทึกไว้: 5555555137956174 ",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 1051,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 460
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00004",
+        "canonical_entity_id": "canon-2c7477f1fcf6",
+        "canonical_entity_value": "10/2027",
+        "classification_expected": "card_expiry_date",
+        "detection_expected": true,
+        "domain": "payment",
+        "entity_type": "card_expiry_date",
+        "exact_entity_value": "10/2027",
+        "filename": "screenshot_receipt.jpg",
+        "location": {
+          "bbox": [
+            135.8,
+            889.0,
+            78.0,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 78.0,
+          "expected_ocr_text": "วันหมดอายุ: 10/2027  การอนุมัติ:",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 1051,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 460
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      },
+      {
+        "annotation_id": "ENT-00005",
+        "canonical_entity_id": "canon-d091e1055d7b",
+        "canonical_entity_value": "AUTH-R1EQCF",
+        "classification_expected": "payment_authorization_code",
+        "detection_expected": true,
+        "domain": "payment",
+        "entity_type": "payment_authorization_code",
+        "exact_entity_value": "AUTH-R1EQCF",
+        "filename": "screenshot_receipt.jpg",
+        "location": {
+          "bbox": [
+            28.0,
+            923.0,
+            131.2,
+            28.0
+          ],
+          "bbox_space": "final",
+          "case_sensitive": false,
+          "entity_strategy": "atomic_line",
+          "entity_text_width": 131.2,
+          "expected_ocr_text": "AUTH-R1EQCF",
+          "fragment_count": 1,
+          "fragment_index": 0,
+          "height": 1051,
+          "kind": "image_ocr",
+          "ocr_normalized": false,
+          "rotation_applied": false,
+          "source_type": "native",
+          "width": 460
+        },
+        "note": "",
+        "role": "body",
+        "source": "attachment",
+        "source_attachment": "ATT-001",
+        "valid": true,
+        "verification": "verified_layout"
+      }
+    ],
+    "entity_types": [
+      "card_expiry_date",
+      "payment_authorization_code",
+      "payment_card_number"
+    ],
+    "evaluation_requirement": "ocr_required",
+    "extraction_methods": [
+      "ocr"
+    ],
+    "file_types": [
+      "jpg"
+    ],
+    "formality": "neutral",
+    "generation_method": "archetype+span_first+scenario_plan+real_file_renderer",
+    "intent": "review_document",
+    "language": "th",
+    "language_coverage": {
+      "attachment_languages": [
+        "th"
+      ],
+      "by_file_type": {
+        "jpg": {
+          "attachments": 662,
+          "declared": {
+            "th": 1
+          },
+          "matches": 1
+        }
+      },
+      "content_languages": [
+        "th"
+      ],
+      "matrices": [
+        "th->th"
+      ],
+      "mixed_attachments": 0,
+      "mixed_script_verified": true,
+      "prompt_language": "th",
+      "routed_attachments": 0,
+      "thresholds": {
+        "en": {
+          "min_latin_share": 0.8
+        },
+        "mixed": {
+          "min_latin_share": 0.1,
+          "min_thai_share": 0.1
+        },
+        "th": {
+          "min_thai_share": 0.3
+        }
+      }
+    },
+    "language_mode": "th",
+    "language_stats": {
+      "attachments": [
+        {
+          "attachment_id": "ATT-001",
+          "contains_both": true,
+          "contains_latin": true,
+          "contains_thai": true,
+          "counted_chars": 662,
+          "extension": "jpg",
+          "language": "th",
+          "latin_characters": 133,
+          "latin_chars": 133,
+          "latin_share": 0.335,
+          "matches_declared_language": true,
+          "neutral_chars": 265,
+          "neutral_share": 0.4003,
+          "residual_english_labels": [],
+          "static": {
+            "contains_both": true,
+            "contains_latin": true,
+            "contains_thai": true,
+            "counted_chars": 586,
+            "latin_characters": 99,
+            "latin_chars": 99,
+            "latin_share": 0.2821,
+            "neutral_chars": 235,
+            "neutral_share": 0.401,
+            "thai_characters": 252,
+            "thai_chars": 252,
+            "thai_share": 0.7179
+          },
+          "thai_characters": 264,
+          "thai_chars": 264,
+          "thai_share": 0.665
+        }
+      ],
+      "prompt": {
+        "contains_both": false,
+        "contains_latin": false,
+        "contains_thai": true,
+        "counted_chars": 72,
+        "latin_characters": 0,
+        "latin_chars": 0,
+        "latin_share": 0.0,
+        "matches_declared_language": true,
+        "neutral_chars": 2,
+        "neutral_share": 0.0278,
+        "static": {
+          "contains_both": false,
+          "contains_latin": false,
+          "contains_thai": true,
+          "counted_chars": 72,
+          "latin_characters": 0,
+          "latin_chars": 0,
+          "latin_share": 0.0,
+          "neutral_chars": 2,
+          "neutral_share": 0.0278,
+          "thai_characters": 70,
+          "thai_chars": 70,
+          "thai_share": 1.0
+        },
+        "thai_characters": 70,
+        "thai_chars": 70,
+        "thai_share": 1.0
+      }
+    },
+    "output_leakage_check_expected": true,
+    "persona": "hr",
+    "persona_label": "HR staff",
+    "polarity": "positive",
+    "policy_decision_expected": "TOKENIZE",
+    "policy_rule_ids": [
+      "payment.card",
+      "payment.default"
+    ],
+    "policy_scenario": "external_rag",
+    "profile": "thai-rendering",
+    "prompt": "รบกวนช่วย ใช้ไฟล์นี้แทนอันเก่า. ข้อมูลเมื่อวานนะ; พี่เขาบอกให้ส่งก่อนเที่ยง",
+    "prompt_form": "with_attachment",
+    "prompt_language": "th",
+    "prompt_length": 75,
+    "prompt_length_class": "short",
+    "prompt_style": "long",
+    "prompt_styles": [
+      "short"
+    ],
+    "rationale": "Archetype screenshot_receipt from Kata Cloudworks. Scenario SCN-00001. Task: review_document. Sensitive values are incidental to the request.",
+    "routing_expected": "external",
+    "scenario_id": "SCN-00001",
+    "schema_version": "2.1",
+    "seed": 21,
+    "split": "test",
+    "structure": "file_attachment",
+    "structure_references": [],
+    "tags": [
+      "archetype:screenshot_receipt",
+      "attachment_lang:th",
+      "bundle:single_file",
+      "card_expiry_date",
+      "content_lang:th",
+      "destination_context",
+      "difficulty:4",
+      "file:jpg",
+      "file_aware",
+      "intent:review_document",
+      "lang:th",
+      "matrix:th>th",
+      "ocr",
+      "payment",
+      "payment_authorization_code",
+      "payment_card_number",
+      "persona:hr",
+      "profile:thai-rendering",
+      "split:test"
+    ],
+    "template_family": "screenshot_receipt:jpg",
+    "template_id": "screenshot_receipt",
+    "test_category": "single_domain",
+    "test_id": "pgt2-tst-00001",
+    "test_objective": "file_ingestion_and_policy",
+    "token_restoration_expected": "authorized_context_only",
+    "transformation_expected": [
+      {
+        "action": "TOKENIZE",
+        "entity_type": "card_expiry_date"
+      },
+      {
+        "action": "TOKENIZE",
+        "entity_type": "payment_authorization_code"
+      },
+      {
+        "action": "TOKENIZE",
+        "entity_type": "payment_card_number"
+      }
+    ],
+    "verification": {
+      "attachments_checked": 1,
+      "attachments_verified": 1,
+      "language_checked": 1,
+      "language_passed": true,
+      "mixed_language_verified": true,
+      "ocr_layout_only": 1,
+      "prompt_language_passed": true,
+      "residual_english_labels": 0,
+      "status": "verified_partial"
+    },
+    "verification_status": "verified_partial"
   }
 ]

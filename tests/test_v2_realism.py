@@ -25,6 +25,24 @@ class RealismTests(unittest.TestCase):
         self.assertGreaterEqual(changed, 15)
         self.assertEqual(imperfect(random.Random(1), text, 0.0, "en"), text)
 
+    def test_prompts_never_ask_for_two_files_with_fewer(self):
+        import re
+
+        pattern = re.compile(r"\btwo\b|\bboth\b|\bthese\b|สอง", re.IGNORECASE)
+        files = [{"filename": "invoice.xlsx", "archetype": "invoice"}]
+        for language in ("th", "en", "mixed"):
+            for seed in range(40):
+                result = build_prompt(
+                    random.Random(seed), persona="analyst", intent="compare",
+                    language=language, formality="neutral", files=files, length="short")
+                self.assertFalse(pattern.search(result["prompt"]),
+                                 f"{language}/{seed}: {result['prompt']}")
+                empty = build_prompt(
+                    random.Random(seed), persona="analyst", intent="classify",
+                    language=language, formality="neutral", files=[], length="short")
+                self.assertFalse(pattern.search(empty["prompt"]),
+                                 f"{language}/{seed}: {empty['prompt']}")
+
     def test_prompts_are_diverse_and_human(self):
         prompts = []
         rng = random.Random(42)

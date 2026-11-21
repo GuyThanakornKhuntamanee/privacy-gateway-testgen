@@ -1,0 +1,13 @@
+Employee directory
+
+Export from the people system. Internal use only.
+
+Employees
+name | email | phone | bank_account
+-----------------------------------
+Piyada Suksawat | naree.naree@example.net | 064-263-5072 | ORD-2026-330018
+Kittipong Suksawat | siriporn.siriporn3@example.net | 063-276-5540 | ORD-2026-640763
+Somchai Chaichana | somchai.wichai96@example.net | 094-694-2224 | ORD-2026-492483
+Anan Wongthai | chanida.somchai@example.net | 091-345-9989 | ORD-2026-948372
+Prepared for internal review.
+

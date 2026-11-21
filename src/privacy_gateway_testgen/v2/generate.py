@@ -133,7 +133,10 @@ def _replace_entities(text: str, placements) -> str:
 
 
 def _doc_fingerprint(doc: Doc) -> str:
-    parts: List[str] = [doc.archetype, doc.title, doc.language]
+    # Language is not part of the identity: the same text labelled `th` in one
+    # case and `mixed` in another is still one document, and shipping it twice
+    # wastes a case.
+    parts: List[str] = [doc.archetype, doc.title]
     for block in doc.blocks:
         parts.append(block.kind)
         parts.append(_replace_entities(block.text, block.placements))
@@ -148,6 +151,13 @@ def _doc_fingerprint(doc: Doc) -> str:
         for block in slide.blocks:
             parts.append(block.kind)
             parts.append(_replace_entities(block.text, block.placements))
+            if block.headers:
+                parts.append("|".join(block.headers))
+            if block.rows:
+                parts.append(f"{len(block.rows)}x{len(block.rows[0])}")
+                for row in block.rows:
+                    parts.append("|".join(_replace_entities(cell.text, cell.placements)
+                                          for cell in row))
     if doc.record is not None:
         def walk(value):
             if isinstance(value, Entity):
@@ -343,7 +353,37 @@ def _reference_exists(ref: dict, attachments: Sequence[dict]) -> bool:
     return False
 
 
-def _revise_doc(doc: Doc, rng: random.Random) -> List[dict]:
+TABLE_ONLY_RENDERERS = {"csv", "xlsx"}
+PROSE_ONLY_RENDERERS = {"txt", "md", "log", "pptx", "py", "js", "ts", "java", "go",
+                        "sql", "tf", "png", "jpg", "jpeg"}
+RECORD_ONLY_RENDERERS = {"json", "yaml", "yml", "xml", "env", "ini", "conf", "toml"}
+
+
+def _revise_doc(doc: Doc, rng: random.Random, renderer: str = "pdf") -> List[dict]:
+    """Pick a revision the target renderer can actually show.
+
+    A change written into a block that the renderer never emits produces two
+    byte-identical "old" and "new" files, which cannot test change detection.
+    Record-only formats (JSON/YAML/XML/config) have no controlled revision
+    source, so they fall back to a related render instead of a fake revision.
+    """
+    if renderer in RECORD_ONLY_RENDERERS:
+        return []
+    before = list(doc.blocks)
+    if renderer in TABLE_ONLY_RENDERERS:
+        doc.blocks = [block for block in before if block.kind == "table"]
+    elif renderer in PROSE_ONLY_RENDERERS:
+        doc.blocks = [block for block in before if block.kind != "table"]
+    else:
+        doc.blocks = before
+    try:
+        return _revise_doc_any(doc, rng)
+    finally:
+        kept = {id(block) for block in before}
+        doc.blocks = before + [block for block in doc.blocks if id(block) not in kept]
+
+
+def _revise_doc_any(doc: Doc, rng: random.Random) -> List[dict]:
     """Make a meaningful, traceable old/new pair.
 
     The revision always changes a value a reviewer could act on: a status, a
@@ -519,6 +559,7 @@ class V2Generator:
         self.usage: Counter = Counter()
         self.seen_prompts = set()
         self.seen_shingles: List[set] = []
+        self.seen_file_hashes: set = set()
         self.seen_skeletons: Counter = Counter()
         self.seen_documents: Counter = Counter()
 
@@ -527,6 +568,7 @@ class V2Generator:
         self.usage = Counter()
         self.seen_prompts = set()
         self.seen_shingles = []
+        self.seen_file_hashes = set()
         self.seen_skeletons = Counter()
         self.seen_documents = Counter()
         families = _families(self.config.get("_profile_spec", {}))
@@ -781,12 +823,13 @@ class V2Generator:
         used_names = set()
         fingerprints: List[str] = []
         previous_doc: Optional[Doc] = None
+        previous_data: Optional[bytes] = None
         for index, (archetype, renderer, role) in enumerate(plan, start=1):
             revision_changes: List[dict] = []
             revision_source = role == "revised" and previous_doc is not None
             if revision_source:
                 candidate = copy.deepcopy(previous_doc)
-                revision_changes = _revise_doc(candidate, self.rng)
+                revision_changes = _revise_doc(candidate, self.rng, renderer)
                 if not revision_changes:
                     # No meaningful controlled change exists for this document:
                     # ship a related render instead of a fake "revised" copy.
@@ -835,6 +878,7 @@ class V2Generator:
                 )
             if measured_language != attachment_language:
                 routing = f"relabelled_from_{attachment_language}"
+                previous_language = attachment_language
                 attachment_language = measured_language
                 doc.language = attachment_language
                 if attachment_language in ("th", "mixed"):
@@ -846,6 +890,30 @@ class V2Generator:
                     static_stats = script_counts(document_static_text(doc))
                     language_check = script_counts(text)
                     language_check["static"] = static_stats
+                elif previous_language in ("th", "mixed"):
+                    # Localization is one-way: relabelling a Thai/Mixed document
+                    # to English would leave Thai headings in an `en` file.
+                    # Rebuild it in English instead of shipping a mislabelled file.
+                    if revision_source:
+                        raise GenerationError(
+                            f"{archetype.id}:{renderer} revision cannot be rebuilt in English")
+                    ctx.doc_language = "en"
+                    doc = archetype.builder(ctx)
+                    previous_doc = doc
+                    doc.language = "en"
+                    doc.filename = f"{archetype.id}.{renderer}"
+                    doc.metadata.setdefault("ocr_difficulty", target.ocr_difficulty)
+                    doc.metadata["disclosure"] = self.disclosure
+                    localize_doc(doc, "en", localize_headers=renderer not in MACHINE_KEY_RENDERERS)
+                    text = document_text(doc)
+                    static_stats = script_counts(document_static_text(doc))
+                    language_check = script_counts(text)
+                    language_check["static"] = static_stats
+                    measured_language = classify_language(static_stats, thresholds)
+                    if measured_language != "en":
+                        raise GenerationError(
+                            f"{archetype.id}:{renderer} cannot be rendered as English "
+                            f"(measured {measured_language})")
             if attachment_language == "th":
                 language_check["residual_english_labels"] = residual_english_labels(text)
             language_check["matches_declared_language"] = language_matches(
@@ -869,6 +937,19 @@ class V2Generator:
                 rendered = render(doc, renderer, filename)
             except ValueError as exc:
                 raise GenerationError(f"{archetype.id} renderer refused content: {exc}") from exc
+            if revision_source and previous_data is not None and rendered.data == previous_data:
+                # A revision the renderer does not show is a fake revision: the
+                # old/new pair would be two identical files.  Skip the case rather
+                # than ship a bundle that cannot test change detection.
+                raise GenerationError(
+                    f"{archetype.id}:{renderer} revision is not visible in the rendered file")
+            file_hash = hashlib.sha256(rendered.data).hexdigest()
+            if file_hash in self.seen_file_hashes:
+                raise GenerationError(
+                    f"{filename} duplicates an attachment already emitted; "
+                    "regenerate the case with different content")
+            self.seen_file_hashes.add(file_hash)
+            previous_data = rendered.data
             verification = verify_attachment(rendered.data, renderer, rendered.mime_type,
                                               rendered.entity_locations, rendered.meta)
             if verification["issues"]:

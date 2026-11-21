@@ -79,7 +79,6 @@
       "requirement": ">= 4 types",
       "value": [
         "docx",
-        "jpeg",
         "jpg",
         "md",
         "pdf",
@@ -90,19 +89,19 @@
       "name": "archetype_coverage",
       "passed": true,
       "requirement": ">= 4",
-      "value": 12
+      "value": 9
     },
     {
       "name": "persona_coverage",
       "passed": true,
       "requirement": ">= 3",
-      "value": 10
+      "value": 11
     },
     {
       "name": "intent_coverage",
       "passed": true,
       "requirement": ">= 4",
-      "value": 13
+      "value": 10
     },
     {
       "name": "language_coverage",
@@ -119,8 +118,8 @@
       "passed": true,
       "requirement": ">= 2 languages",
       "value": {
-        "en": 2,
-        "mixed": 3,
+        "en": 1,
+        "mixed": 1,
         "th": 19
       }
     },
@@ -130,10 +129,10 @@
       "requirement": ">= 4 prompt/attachment pairs",
       "value": {
         "en->en": 1,
-        "mixed->en": 1,
-        "mixed->th": 8,
-        "th->mixed": 3,
-        "th->th": 11
+        "en->th": 1,
+        "mixed->th": 5,
+        "th->mixed": 1,
+        "th->th": 13
       }
     },
     {
@@ -152,25 +151,25 @@
       "name": "structure_reference_share",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.25
+      "value": 0.3125
     },
     {
       "name": "multi_file_share",
       "passed": true,
       "requirement": ">= 0.05",
-      "value": 0.5
+      "value": 0.3125
     },
     {
       "name": "cross_file_link_coverage",
       "passed": true,
       "requirement": ">= 1 cases",
-      "value": 8
+      "value": 5
     },
     {
       "name": "same_archetype_bundle_coverage",
       "passed": true,
       "requirement": ">= 1 cases",
-      "value": 5
+      "value": 3
     },
     {
       "name": "cross_file_consistency",
@@ -183,8 +182,8 @@
       "passed": true,
       "requirement": "0 failed, 0 not_evaluated (not_applicable allowed)",
       "value": {
-        "not_applicable": 68,
-        "passed": 19
+        "not_applicable": 70,
+        "passed": 16
       }
     },
     {
@@ -209,13 +208,13 @@
       "name": "thai_file_render_rate",
       "passed": true,
       "requirement": "every Thai or mixed PDF/image attachment is render-verified",
-      "value": "19/19"
+      "value": "18/18"
     },
     {
       "name": "raster_text_shaping",
       "passed": true,
       "requirement": "every raster attachment records HarfBuzz shaping",
-      "value": "17/17"
+      "value": "15/15"
     },
     {
       "name": "native_pdf_text_extraction",
@@ -234,6 +233,7 @@
       "passed": true,
       "requirement": ">= 2",
       "value": [
+        "infrastructure",
         "payment",
         "pii",
         "secrets"
@@ -243,13 +243,13 @@
       "name": "negative_share",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.1875
+      "value": 0.125
     },
     {
       "name": "multi_domain_share",
       "passed": true,
       "requirement": ">= 0.08",
-      "value": 0.125
+      "value": 0.1875
     },
     {
       "name": "attachment_share",
@@ -267,19 +267,19 @@
       "name": "opening_repetition",
       "passed": true,
       "requirement": "<= 0.35",
-      "value": 0.125
+      "value": 0.0625
     },
     {
       "name": "repeated_phrase_rate",
       "passed": true,
       "requirement": "<= 0.2",
-      "value": 0.1875
+      "value": 0.125
     },
     {
       "name": "archetype_concentration",
       "passed": true,
       "requirement": "<= 0.3",
-      "value": 0.1875
+      "value": 0.25
     },
     {
       "name": "synthetic_safety",
@@ -314,70 +314,69 @@
     "schema_version": "2.1",
     "seed": 21,
     "total_cases": 16,
-    "total_files": 24
+    "total_files": 21
   },
   "metrics": {
     "action_counts": {
-      "ALLOW": 3,
-      "BLOCK": 4,
-      "LOCAL_ONLY": 3,
-      "REDACT": 5,
-      "TOKENIZE": 1
+      "ALLOW": 2,
+      "BLOCK": 5,
+      "LOCAL_ONLY": 4,
+      "REDACT": 3,
+      "TOKENIZE": 2
     },
-    "ambiguous_ratio": 0.0,
-    "archetype_concentration": 0.1875,
+    "ambiguous_ratio": 0.125,
+    "archetype_concentration": 0.25,
     "archetype_shares": {
-      "architecture_notes": 0.0625,
-      "incident_report": 0.0625,
+      "architecture_notes": 0.125,
       "meeting_minutes": 0.125,
       "scanned_invoice": 0.125,
-      "screenshot_chat": 0.1875,
+      "screenshot_chat": 0.25,
       "screenshot_code": 0.0625,
-      "screenshot_config": 0.0625,
+      "screenshot_config": 0.125,
       "screenshot_dashboard": 0.1875,
-      "screenshot_email": 0.0625,
-      "screenshot_form": 0.0625,
       "screenshot_receipt": 0.0625,
-      "support_ticket": 0.125
+      "support_ticket": 0.0625
     },
     "attachment_count_distribution": {
-      "1": 8,
-      "2": 8
+      "1": 11,
+      "2": 5
     },
     "attachment_language_shares": {
-      "en": 0.0833,
-      "mixed": 0.125,
-      "th": 0.7917
+      "en": 0.0476,
+      "mixed": 0.0476,
+      "th": 0.9048
     },
     "attachment_share": 1.0,
     "bundle_kinds": {
-      "multi_file": 3,
-      "old_new": 2,
-      "same_archetype": 3,
-      "single_file": 8
+      "multi_file": 2,
+      "old_new": 1,
+      "same_archetype": 2,
+      "single_file": 11
     },
-    "consistency_checks": 87,
-    "consistency_passed": 19,
+    "consistency_checks": 86,
+    "consistency_passed": 16,
     "consistency_rate": 1.0,
     "consistency_status": {
-      "not_applicable": 68,
-      "passed": 19
+      "not_applicable": 70,
+      "passed": 16
     },
-    "cross_file_link_cases": 8,
-    "cross_file_links": 35,
+    "cross_file_link_cases": 5,
+    "cross_file_links": 26,
     "detection_evaluated": false,
     "detection_note": "No detector or gateway was run; these metrics cover file ingestion and annotation provenance only.",
     "difficulty_shares": {
-      "2": 0.3125,
-      "3": 0.375,
+      "1": 0.0625,
+      "2": 0.125,
+      "3": 0.4375,
       "4": 0.25,
-      "5": 0.0625
+      "5": 0.125
     },
     "document_duplicate_rate": 0.0,
     "domain_shares": {
+      "infrastructure": 0.125,
       "payment": 0.25,
-      "pii": 0.4375,
-      "secrets": 0.25
+      "pii": 0.375,
+      "secrets": 0.3125
     },
     "duplicates": {
       "cross_split_examples": [],
@@ -391,67 +390,55 @@
       "threshold": 0.96
     },
     "entity_density_distribution": {
-      "1-3": 5,
-      "4-6": 2,
+      "1-3": 4,
+      "4-6": 3,
       "7+": 9
     },
     "entity_location_accuracy": 1.0,
     "evaluation_requirements": {
-      "direct_text_extraction": 8,
-      "ocr_required": 16
+      "direct_text_extraction": 7,
+      "ocr_required": 14
     },
     "extraction_accuracy": 1.0,
     "extraction_failures": 0,
     "extraction_methods": {
       "direct_text": 1,
       "ocr": 13,
-      "office_parser": 2,
+      "office_parser": 1,
       "pdf_text": 4
     },
     "file_open_rate": 1.0,
     "file_type_counts": {
-      "docx": 2,
-      "jpeg": 1,
-      "jpg": 4,
+      "docx": 1,
+      "jpg": 7,
       "md": 1,
       "pdf": 7,
-      "png": 9
+      "png": 5
     },
     "file_type_shares": {
-      "docx": 0.125,
-      "jpeg": 0.0625,
-      "jpg": 0.25,
+      "docx": 0.0625,
+      "jpg": 0.4375,
       "md": 0.0625,
       "pdf": 0.375,
-      "png": 0.5
+      "png": 0.3125
     },
     "hybrid_pdf_attachments": 1,
     "intent_shares": {
-      "analyze": 0.0625,
+      "analyze": 0.125,
       "calculate": 0.0625,
       "classify": 0.0625,
-      "convert_format": 0.0625,
-      "create_chart": 0.0625,
       "draft_email": 0.0625,
       "extract_fields": 0.0625,
       "find_anomalies": 0.125,
-      "modify_document": 0.0625,
       "prepare_report": 0.125,
       "review_document": 0.0625,
-      "summarize": 0.125,
+      "summarize": 0.25,
       "troubleshoot": 0.0625
     },
     "language_by_file_type": {
       "docx": {
         "declared": {
-          "mixed": 2
-        },
-        "files": 2,
-        "mismatches": 0
-      },
-      "jpeg": {
-        "declared": {
-          "th": 1
+          "mixed": 1
         },
         "files": 1,
         "mismatches": 0
@@ -459,9 +446,9 @@
       "jpg": {
         "declared": {
           "en": 1,
-          "th": 3
+          "th": 6
         },
-        "files": 4,
+        "files": 7,
         "mismatches": 0
       },
       "md": {
@@ -480,57 +467,63 @@
       },
       "png": {
         "declared": {
-          "en": 1,
-          "mixed": 1,
-          "th": 7
+          "th": 5
         },
-        "files": 9,
+        "files": 5,
         "mismatches": 0
       }
     },
     "language_matrix": {
       "en->en": 1,
-      "mixed->en": 1,
-      "mixed->th": 8,
-      "th->mixed": 3,
-      "th->th": 11
+      "en->th": 1,
+      "mixed->th": 5,
+      "th->mixed": 1,
+      "th->th": 13
     },
     "language_matrix_combinations": 5,
     "language_mismatches": 0,
     "language_share_means": {
       "en": 0.0,
-      "mixed": 0.5044,
-      "th": 0.8626
+      "mixed": 0.5112,
+      "th": 0.7832
     },
     "language_share_samples": {
-      "en": 1,
-      "mixed": 6,
-      "th": 9
+      "en": 2,
+      "mixed": 4,
+      "th": 10
     },
     "language_shares": {
-      "en": 0.0625,
-      "mixed": 0.375,
-      "th": 0.5625
+      "en": 0.125,
+      "mixed": 0.25,
+      "th": 0.625
     },
-    "mixed_attachments": 3,
-    "mixed_attachments_verified": 3,
+    "mixed_attachments": 1,
+    "mixed_attachments_verified": 1,
     "mixed_script_rate": 1.0,
-    "multi_domain_share": 0.125,
-    "multi_file_cases": 8,
-    "multi_file_share": 0.5,
+    "multi_domain_share": 0.1875,
+    "multi_file_cases": 5,
+    "multi_file_share": 0.3125,
     "native_pdf_attachments": 4,
     "native_pdf_attachments_verified": 4,
-    "negative_ratio": 0.1875,
+    "negative_ratio": 0.125,
     "ocr_cases": 13,
     "openings": {
       "top": [
         {
-          "count": 2,
-          "opening": "อันนี้มัน error ตรงไหนอะ."
+          "count": 1,
+          "opening": "architecture_notes.pdf วิเคราะห์ให้ที. ไม่แน่ใจว่าใช่ไฟล์เดียวกันไหม."
         },
         {
           "count": 1,
-          "opening": "please this came"
+          "opening": "could you attached"
+        },
+        {
+          "count": 1,
+          "opening": "screenshot_chat.jpg เขียนตอบลูกค้า please"
+        },
+        {
+          "count": 1,
+          "opening": "this is broken,"
         },
         {
           "count": 1,
@@ -542,7 +535,7 @@
         },
         {
           "count": 1,
-          "opening": "ช่วยconvert this to"
+          "opening": "ช่วยดู screenshot_config.png สรุปให้ที"
         },
         {
           "count": 1,
@@ -554,87 +547,72 @@
         },
         {
           "count": 1,
-          "opening": "พี่ครับ screenshot_form.png ทำกราฟให้ที."
-        },
-        {
-          "count": 1,
           "opening": "พี่ครับ ไฟล์นี้ วิเคราะห์ให้ที."
-        },
-        {
-          "count": 1,
-          "opening": "รบกวนช่วย สองไฟล์นี้ช่วยทำรายงานหน่อย. เพิ่ง"
         }
       ],
-      "top_share": 0.125,
-      "unique": 15
+      "top_share": 0.0625,
+      "unique": 16
     },
     "persona_shares": {
-      "analyst": 0.0625,
+      "analyst": 0.125,
       "devops": 0.0625,
-      "executive_assistant": 0.125,
+      "executive_assistant": 0.0625,
       "finance": 0.0625,
       "healthcare_admin": 0.125,
+      "hr": 0.0625,
       "intern": 0.0625,
-      "manager": 0.1875,
-      "sales": 0.1875,
-      "support": 0.0625,
-      "sysadmin": 0.0625
+      "manager": 0.125,
+      "operations": 0.0625,
+      "sales": 0.125,
+      "support": 0.125
     },
     "prompt_form_top_share": 0.0,
     "prompt_forms": {
       "with_attachment": 16
     },
     "prompt_length": {
-      "max": 154,
-      "mean": 83.75,
-      "min": 31,
-      "stdev": 32.69
+      "max": 366,
+      "mean": 90.44,
+      "min": 29,
+      "stdev": 75.83
     },
     "prompt_only_forms": {},
     "prompt_span_accuracy": 1.0,
-    "raster_attachments": 17,
-    "raster_attachments_verified": 17,
-    "raster_text_shaping_ok": 17,
+    "raster_attachments": 15,
+    "raster_attachments_verified": 15,
+    "raster_text_shaping_ok": 15,
     "repeated_phrases": {
       "top": [
         {
-          "count": 3,
-          "phrase": "use this one instead."
-        },
-        {
           "count": 2,
-          "phrase": "one instead. เพิ่ง export"
-        },
-        {
-          "count": 2,
-          "phrase": "this one instead. เพิ่ง"
+          "phrase": "ดู หน้า 1 หน่อย"
         }
       ],
-      "top_share": 0.1875
+      "top_share": 0.125
     },
     "replacement_glyphs": 0,
     "reproducible": true,
     "residual_english_labels": 0,
-    "routed_attachments": 11,
+    "routed_attachments": 8,
     "safety": {
       "issue_count": 0,
       "issues": [],
       "passed": true
     },
-    "same_archetype_bundle_cases": 5,
+    "same_archetype_bundle_cases": 3,
     "schema_validity": 1.0,
     "split_counts": {
       "test": 1,
       "train": 13,
       "validation": 2
     },
-    "structure_reference_cases": 4,
-    "structure_reference_share": 0.25,
-    "structure_references_resolved": 4,
-    "structure_references_total": 4,
+    "structure_reference_cases": 5,
+    "structure_reference_share": 0.3125,
+    "structure_references_resolved": 5,
+    "structure_references_total": 5,
     "structure_resolution_rate": 1.0,
-    "thai_file_attachments": 19,
-    "thai_file_attachments_verified": 19,
+    "thai_file_attachments": 18,
+    "thai_file_attachments_verified": 18,
     "validation_issue_cases": 0,
     "validation_issues": [],
     "verification_status": {
@@ -653,19 +631,19 @@
   "schema_version": "2.1",
   "seed": 21,
   "total_cases": 16,
-  "total_files": 24,
+  "total_files": 21,
   "verification": {
     "cases": 16,
     "dataset_dir": "D:\\Chula\\CEDT\\Capstone_Project_I\\privacy-gateway-testgen\\datasets\\v2-thai-sample",
     "file_open_rate": 1.0,
-    "files": 24,
+    "files": 21,
     "issues": [],
-    "manifest_checks": 36,
+    "manifest_checks": 33,
     "passed": true,
     "statuses": {
-      "verified": 7,
-      "verified_layout": 17
+      "verified": 6,
+      "verified_layout": 15
     },
-    "verified_files": 24
+    "verified_files": 21
   }
 }

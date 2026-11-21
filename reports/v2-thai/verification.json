@@ -201,48 +201,24 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "image_decoded",
-        "ocr_layout_verified"
+        "pdf_parsed",
+        "pdf_text_extracted"
       ],
       "issue_count": 0,
-      "path": "pgt2-trn-00012/screenshot_receipt_v1.png",
-      "status": "verified_layout",
-      "test_id": "pgt2-trn-00012"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "image_decoded",
-        "ocr_layout_verified"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00012/screenshot_receipt_v2.png",
-      "status": "verified_layout",
-      "test_id": "pgt2-trn-00012"
-    },
-    {
-      "attachment_id": "ATT-001",
-      "checks": [
-        "file_nonempty",
-        "image_decoded",
-        "ocr_layout_verified"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00013/screenshot_email.png",
-      "status": "verified_layout",
-      "test_id": "pgt2-trn-00013"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "zip_opened",
-        "ooxml_parsed"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-trn-00013/support_ticket.docx",
+      "path": "pgt2-trn-00012/architecture_notes.pdf",
       "status": "verified",
+      "test_id": "pgt2-trn-00012"
+    },
+    {
+      "attachment_id": "ATT-001",
+      "checks": [
+        "file_nonempty",
+        "image_decoded",
+        "ocr_layout_verified"
+      ],
+      "issue_count": 0,
+      "path": "pgt2-trn-00013/screenshot_chat.jpg",
+      "status": "verified_layout",
       "test_id": "pgt2-trn-00013"
     },
     {
@@ -253,7 +229,7 @@
         "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00001/screenshot_form.png",
+      "path": "pgt2-val-00001/screenshot_config.png",
       "status": "verified_layout",
       "test_id": "pgt2-val-00001"
     },
@@ -265,19 +241,7 @@
         "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-val-00002/screenshot_config_v1.png",
-      "status": "verified_layout",
-      "test_id": "pgt2-val-00002"
-    },
-    {
-      "attachment_id": "ATT-002",
-      "checks": [
-        "file_nonempty",
-        "image_decoded",
-        "ocr_layout_verified"
-      ],
-      "issue_count": 0,
-      "path": "pgt2-val-00002/screenshot_config.jpeg",
+      "path": "pgt2-val-00002/screenshot_config.jpg",
       "status": "verified_layout",
       "test_id": "pgt2-val-00002"
     },
@@ -285,22 +249,22 @@
       "attachment_id": "ATT-001",
       "checks": [
         "file_nonempty",
-        "pdf_parsed",
-        "pdf_text_extracted"
+        "image_decoded",
+        "ocr_layout_verified"
       ],
       "issue_count": 0,
-      "path": "pgt2-tst-00001/incident_report.pdf",
-      "status": "verified",
+      "path": "pgt2-tst-00001/screenshot_receipt.jpg",
+      "status": "verified_layout",
       "test_id": "pgt2-tst-00001"
     }
   ],
-  "files": 24,
+  "files": 21,
   "issues": [],
-  "manifest_checks": 36,
+  "manifest_checks": 33,
   "passed": true,
   "statuses": {
-    "verified": 7,
-    "verified_layout": 17
+    "verified": 6,
+    "verified_layout": 15
   },
-  "verified_files": 24
+  "verified_files": 21
 }

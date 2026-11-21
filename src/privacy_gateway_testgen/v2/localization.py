@@ -624,6 +624,8 @@ def ensure_language_content(doc: Doc, language: str) -> None:
 
 def document_text(doc: Doc) -> str:
     parts: List[str] = [doc.title]
+    for slide in doc.slides:
+        parts.append(slide.title)
     for block in doc.all_blocks():
         parts.append(block.text)
         parts.append(block.title)
@@ -649,6 +651,8 @@ def document_static_text(doc: Doc) -> str:
     Thai; the language label describes the document, not its identifiers.
     """
     parts: List[str] = [doc.title]
+    for slide in doc.slides:
+        parts.append(slide.title)
     for block in doc.all_blocks():
         parts.append(_strip_placements(block.text, block.placements))
         parts.append(block.title)

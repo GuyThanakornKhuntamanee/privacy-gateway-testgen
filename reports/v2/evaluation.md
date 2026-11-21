@@ -4,9 +4,9 @@
 - Profile: `benchmark-balanced`
 - Seed: `21`
 - Cases: `72`
-- Files: `75`
+- Files: `76`
 - Overall: **PASS**
-- Benchmark ready: **YES** (72 safe cases: 66 text, 6 OCR-required; 0 excluded)
+- Benchmark ready: **YES** (72 safe cases: 63 text, 9 OCR-required; 0 excluded)
 
 ## Benchmark readiness
 
@@ -25,94 +25,94 @@
 | exact_duplicate_rate | PASS | 0.0 | <= 0.0 |
 | near_duplicate_rate | PASS | 0.0 | <= 0.05 |
 | document_duplicate_rate | PASS | 0.0 | <= 0.05 |
-| file_type_coverage | PASS | ['csv', 'docx', 'env', 'java', 'jpeg', 'json', 'log', 'md', 'pdf', 'png', 'pptx', 'sql', 'tf', 'toml', 'ts', 'txt', 'xlsx', 'yaml', 'yml'] | >= 8 types |
-| archetype_coverage | PASS | 37 | >= 8 |
-| persona_coverage | PASS | 16 | >= 6 |
-| intent_coverage | PASS | 19 | >= 8 |
+| file_type_coverage | PASS | ['csv', 'docx', 'env', 'ini', 'jpg', 'json', 'log', 'md', 'pdf', 'png', 'pptx', 'toml', 'txt', 'xlsx', 'xml', 'yaml', 'yml'] | >= 8 types |
+| archetype_coverage | PASS | 36 | >= 8 |
+| persona_coverage | PASS | 15 | >= 6 |
+| intent_coverage | PASS | 21 | >= 8 |
 | language_coverage | PASS | ['en', 'mixed', 'th'] | >= 2 |
-| attachment_language_coverage | PASS | {'en': 44, 'mixed': 3, 'th': 28} | >= 2 languages |
-| language_matrix_coverage | PASS | {'en->en': 9, 'en->mixed': 1, 'en->prompt_only': 5, 'en->th': 9, 'mixed->en': 16, 'mixed->mixed': 1, 'mixed->prompt_only': 6, 'mixed->th': 7, 'th->en': 19, 'th->mixed': 1, 'th->prompt_only': 3, 'th->th': 12} | >= 4 prompt/attachment pairs |
+| attachment_language_coverage | PASS | {'en': 34, 'mixed': 7, 'th': 35} | >= 2 languages |
+| language_matrix_coverage | PASS | {'en->en': 14, 'en->mixed': 6, 'en->prompt_only': 5, 'en->th': 20, 'mixed->en': 8, 'mixed->prompt_only': 3, 'mixed->th': 6, 'th->en': 12, 'th->mixed': 1, 'th->prompt_only': 6, 'th->th': 9} | >= 4 prompt/attachment pairs |
 | mixed_language_script | PASS | 1.0 | all mixed attachments contain Thai and English script |
 | structure_reference_resolution | PASS | 1.0 | all structure references resolve |
-| structure_reference_share | PASS | 0.3194 | >= 0.05 |
-| multi_file_share | PASS | 0.1806 | >= 0.05 |
-| cross_file_link_coverage | PASS | 13 | >= 1 cases |
-| same_archetype_bundle_coverage | PASS | 5 | >= 1 cases |
+| structure_reference_share | PASS | 0.3611 | >= 0.05 |
+| multi_file_share | PASS | 0.2083 | >= 0.05 |
+| cross_file_link_coverage | PASS | 14 | >= 1 cases |
+| same_archetype_bundle_coverage | PASS | 9 | >= 1 cases |
 | cross_file_consistency | PASS | 1.0 | >= 1.0 |
-| consistency_evaluated | PASS | {'not_applicable': 282, 'passed': 66} | 0 failed, 0 not_evaluated (not_applicable allowed) |
+| consistency_evaluated | PASS | {'not_applicable': 278, 'passed': 73} | 0 failed, 0 not_evaluated (not_applicable allowed) |
 | language_share_check | PASS | 0 | 0 attachments below their declared script-share thresholds |
 | localization_residual_labels | PASS | 0 | 0 untranslated static labels in Thai documents |
 | prompt_form_concentration | PASS | 0.2857 | <= 0.45 |
-| thai_file_render_rate | PASS | 5/5 | every Thai or mixed PDF/image attachment is render-verified |
-| raster_text_shaping | PASS | 9/9 | every raster attachment records HarfBuzz shaping |
-| native_pdf_text_extraction | PASS | 6/6 | every native PDF extracts its canonical text back |
+| thai_file_render_rate | PASS | 9/9 | every Thai or mixed PDF/image attachment is render-verified |
+| raster_text_shaping | PASS | 11/11 | every raster attachment records HarfBuzz shaping |
+| native_pdf_text_extraction | PASS | 8/8 | every native PDF extracts its canonical text back |
 | no_replacement_glyphs | PASS | 0 | 0 replacement characters in canonical render text |
 | domain_coverage | PASS | ['infrastructure', 'payment', 'pii', 'secrets'] | >= 3 |
-| negative_share | PASS | 0.2917 | >= 0.08 |
-| multi_domain_share | PASS | 0.1944 | >= 0.08 |
+| negative_share | PASS | 0.2222 | >= 0.08 |
+| multi_domain_share | PASS | 0.1806 | >= 0.08 |
 | attachment_share | PASS | 0.8056 | >= 0.35 |
-| ocr_case_coverage | PASS | 6 | >= 1 |
-| opening_repetition | PASS | 0.0278 | <= 0.35 |
+| ocr_case_coverage | PASS | 9 | >= 1 |
+| opening_repetition | PASS | 0.0417 | <= 0.35 |
 | repeated_phrase_rate | PASS | 0.0694 | <= 0.2 |
-| archetype_concentration | PASS | 0.0972 | <= 0.3 |
+| archetype_concentration | PASS | 0.0833 | <= 0.3 |
 | synthetic_safety | PASS | 0 | 0 safety issues |
 | attachment_verification | PASS | 1.0 | == 1.0 |
 
 ## Coverage
 
-- File types: `{'csv': 0.0694, 'docx': 0.0972, 'env': 0.0139, 'java': 0.0139, 'jpeg': 0.0139, 'json': 0.0417, 'log': 0.1389, 'md': 0.0278, 'pdf': 0.0833, 'png': 0.0694, 'pptx': 0.0694, 'sql': 0.0139, 'tf': 0.0139, 'toml': 0.0278, 'ts': 0.0139, 'txt': 0.125, 'xlsx': 0.0833, 'yaml': 0.0417, 'yml': 0.0139}`
-- File counts: `{'csv': 5, 'docx': 7, 'env': 1, 'java': 1, 'jpeg': 1, 'json': 3, 'log': 10, 'md': 2, 'pdf': 8, 'png': 6, 'pptx': 5, 'sql': 1, 'tf': 1, 'toml': 2, 'ts': 1, 'txt': 11, 'xlsx': 6, 'yaml': 3, 'yml': 1}`
-- Archetypes: `{'access_records': 0.0417, 'api_gateway_log': 0.0417, 'api_payload': 0.0139, 'app_log': 0.0972, 'application_config': 0.0417, 'application_environment_config': 0.0139, 'architecture_deck': 0.0139, 'architecture_notes': 0.0278, 'auth_log': 0.0417, 'customer_complaint': 0.0139, 'customer_contract': 0.0139, 'database_config': 0.0139, 'deployment_log': 0.0417, 'docker_compose': 0.0417, 'employee_list': 0.0278, 'employment_contract': 0.0417, 'expense_report': 0.0139, 'incident_report': 0.0139, 'incident_review_deck': 0.0278, 'internal_memo': 0.0139, 'invoice': 0.0139, 'management_deck': 0.0278, 'meeting_minutes': 0.0556, 'patient_list': 0.0139, 'payroll': 0.0417, 'purchase_order': 0.0139, 'sales_pipeline': 0.0139, 'screenshot_config': 0.0139, 'screenshot_email': 0.0139, 'service_account_config': 0.0139, 'source_code': 0.0139, 'source_code_java': 0.0139, 'source_code_js': 0.0278, 'sql_export': 0.0139, 'support_ticket': 0.0556, 'terraform_config': 0.0139, 'xml_export': 0.0139}`
-- Domains: `{'infrastructure': 0.25, 'payment': 0.1111, 'pii': 0.2639, 'secrets': 0.2778}`
-- Languages (prompt): `{'en': 0.2361, 'mixed': 0.3472, 'th': 0.4167}`
-- Languages (attachment): `{'en': 0.5867, 'mixed': 0.04, 'th': 0.3733}`
-- Prompt/attachment language matrix: `{'en->en': 9, 'en->mixed': 1, 'en->prompt_only': 5, 'en->th': 9, 'mixed->en': 16, 'mixed->mixed': 1, 'mixed->prompt_only': 6, 'mixed->th': 7, 'th->en': 19, 'th->mixed': 1, 'th->prompt_only': 3, 'th->th': 12}`
-- Mixed attachments verified: `3/3`
-- Routed attachments (English-only renderer): `43`
-- Evaluation requirement: `{'direct_text_extraction': 68, 'ocr_required': 7}`
-- Native PDF text extraction verified: `6/6`
-- Raster attachments verified (layout): `9/9`
-- Raster text shaping (HarfBuzz): `9/9`
-- Hybrid PDF attachments: `2`
-- Thai / mixed PDF and image attachments verified: `5/5`
+- File types: `{'csv': 0.0417, 'docx': 0.1667, 'env': 0.0139, 'ini': 0.0139, 'jpg': 0.0139, 'json': 0.0694, 'log': 0.1111, 'md': 0.0417, 'pdf': 0.1389, 'png': 0.0833, 'pptx': 0.0417, 'toml': 0.0139, 'txt': 0.1111, 'xlsx': 0.0556, 'xml': 0.0139, 'yaml': 0.0139, 'yml': 0.0278}`
+- File counts: `{'csv': 3, 'docx': 12, 'env': 1, 'ini': 1, 'jpg': 1, 'json': 5, 'log': 8, 'md': 3, 'pdf': 11, 'png': 7, 'pptx': 3, 'toml': 1, 'txt': 11, 'xlsx': 5, 'xml': 1, 'yaml': 1, 'yml': 2}`
+- Archetypes: `{'access_records': 0.0278, 'api_gateway_log': 0.0417, 'app_log': 0.0278, 'application_config': 0.0278, 'architecture_deck': 0.0139, 'auth_log': 0.0417, 'bank_statement': 0.0139, 'cv': 0.0417, 'database_config': 0.0278, 'deployment_log': 0.0278, 'docker_compose': 0.0278, 'employee_list': 0.0694, 'employment_contract': 0.0278, 'incident_report': 0.0139, 'incident_review_deck': 0.0139, 'internal_memo': 0.0139, 'invoice': 0.0417, 'meeting_minutes': 0.0833, 'patient_list': 0.0139, 'payroll': 0.0139, 'purchase_order': 0.0139, 'risk_report': 0.0139, 'sales_pipeline': 0.0139, 'sales_report_deck': 0.0139, 'scanned_invoice': 0.0139, 'scanned_medical_report': 0.0139, 'screenshot_config': 0.0139, 'screenshot_dashboard': 0.0139, 'screenshot_receipt': 0.0139, 'source_code': 0.0139, 'sql_export': 0.0139, 'strategy_report': 0.0556, 'supplier_agreement': 0.0139, 'support_ticket': 0.0417, 'transaction_export': 0.0139, 'xml_export': 0.0417}`
+- Domains: `{'infrastructure': 0.1806, 'payment': 0.2222, 'pii': 0.2639, 'secrets': 0.2917}`
+- Languages (prompt): `{'en': 0.4722, 'mixed': 0.2083, 'th': 0.3194}`
+- Languages (attachment): `{'en': 0.4474, 'mixed': 0.0921, 'th': 0.4605}`
+- Prompt/attachment language matrix: `{'en->en': 14, 'en->mixed': 6, 'en->prompt_only': 5, 'en->th': 20, 'mixed->en': 8, 'mixed->prompt_only': 3, 'mixed->th': 6, 'th->en': 12, 'th->mixed': 1, 'th->prompt_only': 6, 'th->th': 9}`
+- Mixed attachments verified: `7/7`
+- Routed attachments (English-only renderer): `30`
+- Evaluation requirement: `{'direct_text_extraction': 66, 'ocr_required': 10}`
+- Native PDF text extraction verified: `8/8`
+- Raster attachments verified (layout): `11/11`
+- Raster text shaping (HarfBuzz): `11/11`
+- Hybrid PDF attachments: `1`
+- Thai / mixed PDF and image attachments verified: `9/9`
 - Replacement glyphs in canonical render text: `0`
-- Personas: `{'accountant': 0.0139, 'analyst': 0.0556, 'compliance': 0.0417, 'developer': 0.0833, 'devops': 0.0278, 'executive_assistant': 0.0556, 'finance': 0.0833, 'healthcare_admin': 0.0278, 'hr': 0.0833, 'intern': 0.0694, 'manager': 0.0694, 'operations': 0.125, 'sales': 0.0833, 'security_engineer': 0.0278, 'support': 0.0694, 'sysadmin': 0.0833}`
-- Intents: `{'analyze': 0.0417, 'answer_questions': 0.0139, 'calculate': 0.0556, 'check_code': 0.0556, 'classify': 0.0278, 'compare': 0.0833, 'create_chart': 0.0139, 'explain_error': 0.0417, 'extract_fields': 0.0694, 'find_anomalies': 0.125, 'find_missing': 0.0139, 'inspect_config': 0.0833, 'modify_document': 0.0278, 'prepare_report': 0.0694, 'review_document': 0.0139, 'rewrite': 0.0139, 'summarize': 0.125, 'translate': 0.0417, 'troubleshoot': 0.0833}`
-- Difficulties: `{'1': 0.1667, '2': 0.1528, '3': 0.3056, '4': 0.2361, '5': 0.1389}`
-- Attachment counts: `{'0': 14, '1': 45, '2': 9, '3': 4}`
-- Entity density: `{'0': 2, '1-3': 28, '4-6': 13, '7+': 29}`
-- Extraction methods: `{'direct_text': 26, 'ocr': 6, 'office_parser': 16, 'pdf_text': 6, 'structured_parser': 12}`
-- Negative ratio: `0.2917`
+- Personas: `{'accountant': 0.0278, 'analyst': 0.125, 'compliance': 0.0694, 'developer': 0.0417, 'devops': 0.0278, 'executive_assistant': 0.1111, 'finance': 0.1111, 'healthcare_admin': 0.0833, 'hr': 0.0972, 'intern': 0.0694, 'manager': 0.0694, 'operations': 0.0278, 'sales': 0.0694, 'support': 0.0417, 'sysadmin': 0.0278}`
+- Intents: `{'analyze': 0.0278, 'answer_questions': 0.0833, 'calculate': 0.0417, 'check_code': 0.0139, 'classify': 0.0139, 'compare': 0.1111, 'create_chart': 0.0417, 'draft_email': 0.0556, 'explain_error': 0.0278, 'extract_fields': 0.0556, 'find_anomalies': 0.0278, 'find_missing': 0.0417, 'generate_docs': 0.0278, 'inspect_config': 0.0278, 'modify_document': 0.0417, 'prepare_report': 0.1389, 'review_document': 0.0417, 'rewrite': 0.0278, 'summarize': 0.0556, 'translate': 0.0556, 'troubleshoot': 0.0417}`
+- Difficulties: `{'1': 0.0972, '2': 0.1111, '3': 0.2778, '4': 0.25, '5': 0.2639}`
+- Attachment counts: `{'0': 14, '1': 43, '2': 12, '3': 3}`
+- Entity density: `{'0': 2, '1-3': 28, '4-6': 9, '7+': 33}`
+- Extraction methods: `{'direct_text': 21, 'ocr': 9, 'office_parser': 18, 'pdf_text': 8, 'structured_parser': 11}`
+- Negative ratio: `0.2222`
 - Ambiguous ratio: `0.0278`
-- Multi-domain share: `0.1944`
-- Multi-file share: `0.1806`
-- Same-archetype bundle cases: `5`
-- Structure-reference cases: `23` (`24/24` resolved)
-- Cross-file link cases: `13` (`61` links)
-- Consistency checks: `66/348` passed; status `{'not_applicable': 282, 'passed': 66}`
-- Prompt forms: `{'copied_chat': 3, 'copied_ticket': 1, 'log_fragment': 1, 'pasted_email': 4, 'pasted_file': 1, 'pasted_table': 1, 'short_no_paste': 3, 'with_attachment': 58}` (top share `0.2857`)
-- Mean Thai script share by prompt language: `{'th': 0.7875, 'en': 0.0392, 'mixed': 0.4688}`
+- Multi-domain share: `0.1806`
+- Multi-file share: `0.2083`
+- Same-archetype bundle cases: `9`
+- Structure-reference cases: `26` (`27/27` resolved)
+- Cross-file link cases: `14` (`62` links)
+- Consistency checks: `73/351` passed; status `{'not_applicable': 278, 'passed': 73}`
+- Prompt forms: `{'copied_chat': 1, 'copied_ticket': 3, 'log_fragment': 4, 'report_excerpt': 2, 'short_no_paste': 4, 'with_attachment': 58}` (top share `0.2857`)
+- Mean Thai script share by prompt language: `{'th': 0.7538, 'en': 0.0139, 'mixed': 0.5527}`
 - Language mismatches: `0`
-- Language coverage by file type: `{'csv': {'files': 5, 'declared': {'en': 1, 'th': 4}, 'mismatches': 0}, 'docx': {'files': 7, 'declared': {'en': 3, 'th': 4}, 'mismatches': 0}, 'env': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'java': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'jpeg': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'json': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'log': {'files': 10, 'declared': {'en': 10}, 'mismatches': 0}, 'md': {'files': 2, 'declared': {'en': 1, 'th': 1}, 'mismatches': 0}, 'pdf': {'files': 8, 'declared': {'en': 4, 'mixed': 1, 'th': 3}, 'mismatches': 0}, 'png': {'files': 6, 'declared': {'en': 5, 'th': 1}, 'mismatches': 0}, 'pptx': {'files': 5, 'declared': {'en': 5}, 'mismatches': 0}, 'sql': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'tf': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'toml': {'files': 2, 'declared': {'th': 2}, 'mismatches': 0}, 'ts': {'files': 1, 'declared': {'mixed': 1}, 'mismatches': 0}, 'txt': {'files': 11, 'declared': {'en': 5, 'mixed': 1, 'th': 5}, 'mismatches': 0}, 'xlsx': {'files': 6, 'declared': {'en': 4, 'th': 2}, 'mismatches': 0}, 'yaml': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'yml': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}}`
+- Language coverage by file type: `{'csv': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'docx': {'files': 12, 'declared': {'en': 4, 'mixed': 3, 'th': 5}, 'mismatches': 0}, 'env': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'ini': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'jpg': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'json': {'files': 5, 'declared': {'en': 2, 'mixed': 1, 'th': 2}, 'mismatches': 0}, 'log': {'files': 8, 'declared': {'en': 8}, 'mismatches': 0}, 'md': {'files': 3, 'declared': {'en': 1, 'mixed': 1, 'th': 1}, 'mismatches': 0}, 'pdf': {'files': 11, 'declared': {'en': 5, 'mixed': 2, 'th': 4}, 'mismatches': 0}, 'png': {'files': 7, 'declared': {'en': 5, 'th': 2}, 'mismatches': 0}, 'pptx': {'files': 3, 'declared': {'en': 2, 'th': 1}, 'mismatches': 0}, 'toml': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'txt': {'files': 11, 'declared': {'en': 4, 'th': 7}, 'mismatches': 0}, 'xlsx': {'files': 5, 'declared': {'th': 5}, 'mismatches': 0}, 'xml': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'yaml': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'yml': {'files': 2, 'declared': {'en': 1, 'th': 1}, 'mismatches': 0}}`
 - Residual English labels in Thai documents: `0`
-- OCR cases: `6`
+- OCR cases: `9`
 
 ## Verification
 
 - File open rate: `1.0`
 - Extraction accuracy: `1.0` (failures `0`)
 - Entity location accuracy: `1.0`
-- Verification status: `{'verified': 64, 'verified_partial': 8}`
+- Verification status: `{'verified': 62, 'verified_partial': 10}`
 - Validation issue cases: `0`
 
 ## Realism diagnostics
 
-- Top prompt openings: `[{'opening': 'could you help', 'count': 2}, {'opening': 'could you take', 'count': 2}, {'opening': 'ส่งไปที่ contact@example.com -', 'count': 2}, {'opening': 'app_log.log ช่วยสรุปหน่อย. หัวหน้าขอภายในวันนี้;', 'count': 1}, {'opening': 'application_config.env เตรียมสรุปสำหรับหัวหน้า please', 'count': 1}, {'opening': 'compare these two', 'count': 1}, {'opening': 'comprae sales_pipeline_v1.csv, sales_pipeline.xlsx', 'count': 1}, {'opening': 'could you check', 'count': 1}, {'opening': 'employment_contract_v1.pdf, employment_contract_v2.pdf attached,', 'count': 1}, {'opening': 'help me out,', 'count': 1}]`
-- Top opening share: `0.0278`
-- Repeated 4-grams: `[{'phrase': 'after the latest release', 'count': 5}, {'phrase': 'an error. the customer', 'count': 5}, {'phrase': 'and is waiting for', 'count': 5}, {'phrase': 'and review the gateway', 'count': 5}, {'phrase': 'checkout page shows an', 'count': 5}, {'phrase': 'confirm the service health', 'count': 5}, {'phrase': 'customer tried twice and', 'count': 5}, {'phrase': 'dashboard and review the', 'count': 5}, {'phrase': 'error. the customer tried', 'count': 5}, {'phrase': 'health dashboard and review', 'count': 5}]`
+- Top prompt openings: `[{'opening': 'send it to', 'count': 3}, {'opening': 'can you check', 'count': 2}, {'opening': 'could you attached', 'count': 2}, {'opening': "not sure what's", 'count': 2}, {'opening': 'these two attached,', 'count': 2}, {'opening': 'use this one', 'count': 2}, {'opening': 'อันนี้มัน error ตรงไหนอะ', 'count': 2}, {'opening': 'access_records.log สรุป ให้ที.', 'count': 1}, {'opening': 'attahced the attached', 'count': 1}, {'opening': 'can you prepare', 'count': 1}]`
+- Top opening share: `0.0417`
+- Repeated 4-grams: `[{'phrase': '- confirm the migration', 'count': 5}, {'phrase': '- remove the old', 'count': 5}, {'phrase': 'confirm the migration window.', 'count': 5}, {'phrase': 'location: internal video call', 'count': 5}, {'phrase': 'remove the old deployment', 'count': 5}, {'phrase': 'the migration window. -', 'count': 5}, {'phrase': 'the old deployment credential.', 'count': 5}, {'phrase': '| location: internal video', 'count': 5}, {'phrase': 'boss wants it by', 'count': 4}, {'phrase': 'need it before the', 'count': 4}]`
 - Repeated phrase share: `0.0694`
-- Archetype concentration: `0.0972`
-- Prompt length: `{'min': 24, 'max': 816, 'mean': 153.92, 'stdev': 178.39}`
+- Archetype concentration: `0.0833`
+- Prompt length: `{'min': 24, 'max': 1564, 'mean': 185.75, 'stdev': 251.09}`
 - Document duplicate rate: `0.0`
 
 ## Duplicate analysis
