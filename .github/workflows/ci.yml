@@ -100,8 +100,42 @@ jobs:
 
           failures = []
           for path in ("datasets/v2-sample/cases.jsonl", "datasets/v2-thai-sample/cases.jsonl"):
-              if strip(committed(path)) != strip([json.loads(line) for line in open(path, encoding="utf-8") if line.strip()]):
+              old = strip(committed(path))
+              new = strip([json.loads(line) for line in open(path, encoding="utf-8") if line.strip()])
+
+              def walk(a, b, prefix=""):
+                  if type(a) is not type(b):
+                      return [prefix + f": type {type(a).__name__} != {type(b).__name__}"]
+                  if isinstance(a, dict):
+                      out = []
+                      for key in sorted(set(a) | set(b)):
+                          if key not in a or key not in b:
+                              out.append(prefix + "/" + key + ": missing on one side")
+                          else:
+                              out.extend(walk(a[key], b[key], prefix + "/" + key))
+                          if len(out) > 3:
+                              break
+                      return out
+                  if isinstance(a, list):
+                      if len(a) != len(b):
+                          return [prefix + f": length {len(a)} != {len(b)}"]
+                      out = []
+                      for index, (left, right) in enumerate(zip(a, b)):
+                          out.extend(walk(left, right, prefix + f"[{index}]"))
+                          if len(out) > 3:
+                              break
+                      return out
+                  return [] if a == b else [prefix + f": {a!r} != {b!r}"]
+
+              if old != new:
                   failures.append(path)
+                  for index, (left, right) in enumerate(zip(old, new)):
+                      difference = walk(left, right, f"case[{index}]")
+                      if difference:
+                          print("DIFF", path, *difference[:3])
+                          break
+                  if len(old) != len(new):
+                      print("DIFF", path, f"case count {len(old)} != {len(new)}")
 
           for path in ("stats.json", "NOTICE.md"):
               for dataset in ("datasets/v2-sample", "datasets/v2-thai-sample"):
