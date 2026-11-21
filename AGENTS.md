@@ -71,11 +71,15 @@ PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 --dataset datasets/
 - Skill behaviour evals → `evals/README.md`
 - Module relationships → graphify (below), not a hand-written map
 
-## Architecture questions
+## Architecture questions (optional tooling)
 
-`graphify-out/graph.json` indexes `src/`, `tests/` and `docs/`. Refresh it when
-`git rev-parse --short HEAD` differs from `Built from commit` in
-`graphify-out/GRAPH_REPORT.md`:
+The commands below are optional. They help when the tool is installed; when it is
+not, read the modules and use `grep`/`git grep` instead — nothing in the gate
+depends on them.
+
+`graphify-out/graph.json` indexes `src/`, `tests/` and `docs/`. If graphify is
+available, refresh it when `git rev-parse --short HEAD` differs from
+`Built from commit` in `graphify-out/GRAPH_REPORT.md`:
 
 ```bash
 graphify update .            # ~3 s, no API cost
@@ -85,5 +89,6 @@ graphify affected "<symbol>" # what breaks if it changes
 graphify query "<question>"  # orientation across files
 ```
 
-For exact call sites use Serena's `lsp.find_referencing_symbols`; the graph is
-for structure and relationships.
+If Serena is available, its `lsp.find_referencing_symbols` finds exact call
+sites; otherwise use `grep -rn "<symbol>" src tests`. Neither `graphify-out/`
+nor `.serena/` is committed, so another machine is never required to have them.

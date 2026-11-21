@@ -1,6 +1,6 @@
 {
   "cases": 72,
-  "dataset_dir": "D:\\Chula\\CEDT\\Capstone_Project_I\\privacy-gateway-testgen\\datasets\\v2-sample",
+  "dataset_dir": "v2-sample",
   "file_open_rate": 1.0,
   "file_results": [
     {

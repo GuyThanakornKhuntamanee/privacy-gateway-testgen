@@ -57,6 +57,16 @@ jobs:
           --dataset build/v2-dataset --out reports/v2 --check-reproducible
       - name: Check v1 sample and report regeneration drift
         run: git diff --exit-code -- datasets/sample reports/evaluation.json reports/evaluation.md
+      - name: Regenerate the committed v2 samples and reports
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m privacy_gateway_testgen generate-v2 --config configs/v2/default.json --profile benchmark-balanced --out datasets/v2-sample
+          python -m privacy_gateway_testgen generate-v2 --config configs/v2/default.json --profile thai-rendering --count 16 --out datasets/v2-thai-sample
+          python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-sample --out reports/v2 --check-reproducible
+          python -m privacy_gateway_testgen report-v2 --dataset datasets/v2-thai-sample --out reports/v2-thai --check-reproducible
+      - name: Check v2 samples and reports regeneration drift
+        run: git diff --exit-code -- datasets/v2-sample datasets/v2-thai-sample reports/v2 reports/v2-thai
       - name: Reports are byte-identical under a different PYTHONHASHSEED
         env:
           PYTHONPATH: src

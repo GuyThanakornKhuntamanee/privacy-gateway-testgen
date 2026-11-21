@@ -352,9 +352,10 @@ These are deliberate and documented rather than hidden:
   rather than the text subset.
 - Cross-file consistency is checked against generated annotations and the
   scenario plan; no downstream gateway is executed.
-- `verification.json` records the absolute dataset path, so reports are
-  byte-identical for the same dataset location and `PYTHONHASHSEED`, not across
-  machines. `evaluation.json` and `evaluation.md` exclude timestamps and paths.
+- `verification.json` records only the dataset folder name (no absolute path), so
+  committed reports carry no machine-specific path. Byte identity still holds
+  only for one pinned dependency set on one platform; across machines the
+  case JSON, spans and report numbers are the comparable artifacts.
 - Synthetic phone numbers, national-ID-shaped values and bank account numbers
   are shape/checksum valid so detectors can be tested against realistic input.
   A random value can resemble a real identifier; treat published datasets as

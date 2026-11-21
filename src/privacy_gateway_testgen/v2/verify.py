@@ -86,7 +86,9 @@ def verify_dataset_directory(dataset_dir: str) -> dict:
                 issues.append({"test_id": case["test_id"], "file": attachment["path"], **issue})
     verified_files = statuses.get("verified", 0) + statuses.get("verified_layout", 0)
     return {
-        "dataset_dir": os.path.abspath(dataset_dir),
+        # Folder name only: an absolute path would make the committed report
+        # machine-specific and leak the developer's filesystem layout.
+        "dataset_dir": os.path.basename(os.path.normpath(dataset_dir)),
         "cases": len(cases),
         "files": len(file_results),
         "verified_files": verified_files,

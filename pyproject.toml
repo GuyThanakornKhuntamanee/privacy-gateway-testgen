@@ -30,7 +30,9 @@ dependencies = [
 privacy-gateway-testgen = "privacy_gateway_testgen.cli:main"
 
 [project.urls]
-Homepage = "https://example.invalid/privacy-gateway-testgen"
+Homepage = "https://github.com/GuyThanakornKhuntamanee/privacy-gateway-testgen"
+Repository = "https://github.com/GuyThanakornKhuntamanee/privacy-gateway-testgen.git"
+Issues = "https://github.com/GuyThanakornKhuntamanee/privacy-gateway-testgen/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

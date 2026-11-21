@@ -47,6 +47,11 @@ semantic versioning.
   moved to `attachments[].synthetic`, `manifest.json` (`synthetic`, `disclosure`,
   `synthetic_notice`) and a new `NOTICE.md` in every dataset directory.
   `disclosure: banner` restores the previous visible notices.
+- `verification.json` records the dataset folder name instead of an absolute
+  path, so committed reports carry no machine-specific path; the project URLs in
+  `pyproject.toml` point at the real repository.
+- CI regenerates the committed v2 samples and reports and fails on drift, and the
+  gate runs on `feat/**`/`fix/**` pushes as well as `main`.
 - PDF text verification uses pypdf instead of a regex over the content stream,
   and compares collapsed-whitespace text so `exam ple.com` still fails against
   `example.com`.
