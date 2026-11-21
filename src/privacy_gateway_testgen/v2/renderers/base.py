@@ -62,3 +62,16 @@ class RenderedFile:
 
 def location(entity: Entity, loc: dict, role: str = "body") -> dict:
     return {"entity": entity, "location": loc, "role": role}
+
+
+# Where the "this is synthetic" statement lives.  ``metadata`` (default) keeps
+# every generated artifact free of in-band disclosure text, so a detector under
+# test never reads a hint that could suppress a detection.  ``banner`` restores
+# visible notices for artifacts that are shared with humans outside the team.
+DISCLOSURE_MODES = ("metadata", "banner")
+DEFAULT_DISCLOSURE = "metadata"
+
+
+def disclosure_mode(doc: Doc) -> str:
+    mode = str(doc.metadata.get("disclosure", DEFAULT_DISCLOSURE))
+    return mode if mode in DISCLOSURE_MODES else DEFAULT_DISCLOSURE

@@ -132,8 +132,8 @@
       "passed": true,
       "requirement": ">= 2 languages",
       "value": {
-        "en": 40,
-        "mixed": 7,
+        "en": 44,
+        "mixed": 3,
         "th": 28
       }
     },
@@ -146,12 +146,12 @@
         "en->mixed": 1,
         "en->prompt_only": 5,
         "en->th": 9,
-        "mixed->en": 15,
-        "mixed->mixed": 2,
+        "mixed->en": 16,
+        "mixed->mixed": 1,
         "mixed->prompt_only": 6,
         "mixed->th": 7,
-        "th->en": 16,
-        "th->mixed": 4,
+        "th->en": 19,
+        "th->mixed": 1,
         "th->prompt_only": 3,
         "th->th": 12
       }
@@ -229,7 +229,7 @@
       "name": "thai_file_render_rate",
       "passed": true,
       "requirement": "every Thai or mixed PDF/image attachment is render-verified",
-      "value": "6/6"
+      "value": "5/5"
     },
     {
       "name": "raster_text_shaping",
@@ -394,8 +394,8 @@
       "3": 4
     },
     "attachment_language_shares": {
-      "en": 0.5333,
-      "mixed": 0.0933,
+      "en": 0.5867,
+      "mixed": 0.04,
       "th": 0.3733
     },
     "attachment_share": 0.8056,
@@ -590,8 +590,8 @@
       },
       "pdf": {
         "declared": {
-          "en": 3,
-          "mixed": 2,
+          "en": 4,
+          "mixed": 1,
           "th": 3
         },
         "files": 8,
@@ -607,8 +607,7 @@
       },
       "pptx": {
         "declared": {
-          "en": 2,
-          "mixed": 3
+          "en": 5
         },
         "files": 5,
         "mismatches": 0
@@ -679,12 +678,12 @@
       "en->mixed": 1,
       "en->prompt_only": 5,
       "en->th": 9,
-      "mixed->en": 15,
-      "mixed->mixed": 2,
+      "mixed->en": 16,
+      "mixed->mixed": 1,
       "mixed->prompt_only": 6,
       "mixed->th": 7,
-      "th->en": 16,
-      "th->mixed": 4,
+      "th->en": 19,
+      "th->mixed": 1,
       "th->prompt_only": 3,
       "th->th": 12
     },
@@ -693,7 +692,7 @@
     "language_share_means": {
       "en": 0.0392,
       "mixed": 0.4688,
-      "th": 0.7892
+      "th": 0.7875
     },
     "language_share_samples": {
       "en": 17,
@@ -705,8 +704,8 @@
       "mixed": 0.3472,
       "th": 0.4167
     },
-    "mixed_attachments": 7,
-    "mixed_attachments_verified": 7,
+    "mixed_attachments": 3,
+    "mixed_attachments_verified": 3,
     "mixed_script_rate": 1.0,
     "multi_domain_share": 0.1944,
     "multi_file_cases": 13,
@@ -791,10 +790,10 @@
       "with_attachment": 58
     },
     "prompt_length": {
-      "max": 851,
-      "mean": 154.62,
+      "max": 816,
+      "mean": 153.92,
       "min": 24,
-      "stdev": 181.03
+      "stdev": 178.39
     },
     "prompt_only_forms": {
       "copied_chat": 3,
@@ -857,7 +856,7 @@
     "replacement_glyphs": 0,
     "reproducible": true,
     "residual_english_labels": 0,
-    "routed_attachments": 40,
+    "routed_attachments": 43,
     "safety": {
       "issue_count": 0,
       "issues": [],
@@ -875,8 +874,8 @@
     "structure_references_resolved": 24,
     "structure_references_total": 24,
     "structure_resolution_rate": 1.0,
-    "thai_file_attachments": 6,
-    "thai_file_attachments_verified": 6,
+    "thai_file_attachments": 5,
+    "thai_file_attachments_verified": 5,
     "validation_issue_cases": 0,
     "validation_issues": [],
     "verification_status": {
@@ -902,7 +901,7 @@
     "file_open_rate": 1.0,
     "files": 75,
     "issues": [],
-    "manifest_checks": 86,
+    "manifest_checks": 87,
     "passed": true,
     "statuses": {
       "verified": 66,

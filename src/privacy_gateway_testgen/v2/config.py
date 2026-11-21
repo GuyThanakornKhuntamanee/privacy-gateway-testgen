@@ -45,7 +45,6 @@ def _read_json(path: str) -> dict:
     with open(path, "r", encoding="utf-8-sig") as handle:
         return json.load(handle)
 
-
 def load_profiles(path: str) -> dict:
     return _read_json(path)
 
@@ -86,6 +85,7 @@ def load_v2_config(path: str, profile: Optional[str] = None) -> dict:
     config.setdefault("splits", {"train": 0.8, "validation": 0.1, "test": 0.1})
     config.setdefault("dataset_epoch", "2026-01-01T00:00:00Z")
     config.setdefault("schema_version", "2.1")
+    config.setdefault("disclosure", "metadata")
     config.setdefault("realism", dict(DEFAULT_REALISM))
     config.setdefault("localization", dict(DEFAULT_LOCALIZATION))
     config.setdefault("language_thresholds", dict(DEFAULT_LANGUAGE_THRESHOLDS))
@@ -152,6 +152,8 @@ def validate_v2_config(config: dict) -> None:
         value = realism.get(name, DEFAULT_REALISM[name])
         if not isinstance(value, (int, float)) or not 0 <= value <= 1:
             raise ValueError(f"realism.{name} must be between 0 and 1")
+    if config.get("disclosure", "metadata") not in ("metadata", "banner"):
+        raise ValueError("disclosure must be 'metadata' or 'banner'")
     localization = config.get("localization", {})
     if localization.get("thai_date_mode", "be") not in ("be", "ce", "mixed"):
         raise ValueError("localization.thai_date_mode must be be, ce or mixed")

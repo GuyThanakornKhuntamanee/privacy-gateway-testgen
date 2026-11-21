@@ -58,7 +58,7 @@ def _core_props(title: str, subject: str, author: str = "Privacy Gateway Testgen
     return xml.encode("utf-8")
 
 
-def _app_props(application: str, company: str = "Synthetic Example Organisation") -> bytes:
+def _app_props(application: str, company: str = "Internal") -> bytes:
     xml = (
         f'{XML_HEAD}<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">'
         f"<Application>{_x(application)}</Application><Company>{_x(company)}</Company>"
@@ -276,7 +276,7 @@ def _render_docx(doc: Doc, filename: str) -> RenderedFile:
         "word/document.xml": document,
         "word/styles.xml": _docx_styles(),
         "word/_rels/document.xml.rels": _docx_relationships(bool(header_xml), bool(footer_xml), links),
-        "docProps/core.xml": _core_props(doc.title, "Synthetic business document"),
+        "docProps/core.xml": _core_props(doc.title, "Business document"),
         "docProps/app.xml": _app_props("privacy-gateway-testgen DOCX renderer"),
     }
     if header_xml:
@@ -431,7 +431,7 @@ def _render_xlsx(doc: Doc, filename: str) -> RenderedFile:
         "xl/workbook.xml": workbook,
         "xl/_rels/workbook.xml.rels": relations,
         "xl/styles.xml": _xlsx_styles(),
-        "docProps/core.xml": _core_props(doc.title, "Synthetic workbook"),
+        "docProps/core.xml": _core_props(doc.title, "Workbook"),
         "docProps/app.xml": _app_props("privacy-gateway-testgen XLSX renderer"),
     })
     data = _zip(files)
@@ -555,8 +555,8 @@ def _render_pptx(doc: Doc, filename: str) -> RenderedFile:
         '<p:notesSz cx="6858000" cy="9144000"/></p:presentation>'
     ).encode("utf-8")
     theme = (
-        f'{XML_HEAD}<a:theme xmlns:a="{A_NS}" name="Synthetic">'
-        '<a:themeElements><a:clrScheme name="Synthetic">'
+        f'{XML_HEAD}<a:theme xmlns:a="{A_NS}" name="Standard">'
+        '<a:themeElements><a:clrScheme name="Standard">'
         '<a:dk1><a:sysClr val="windowText" lastClr="000000"/></a:dk1>'
         '<a:lt1><a:sysClr val="window" lastClr="FFFFFF"/></a:lt1>'
         '<a:dk2><a:srgbClr val="1F2937"/></a:dk2><a:lt2><a:srgbClr val="F3F4F6"/></a:lt2>'
@@ -564,10 +564,10 @@ def _render_pptx(doc: Doc, filename: str) -> RenderedFile:
         '<a:accent3><a:srgbClr val="059669"/></a:accent3><a:accent4><a:srgbClr val="D97706"/></a:accent4>'
         '<a:accent5><a:srgbClr val="DC2626"/></a:accent5><a:accent6><a:srgbClr val="0891B2"/></a:accent6>'
         '<a:hlink><a:srgbClr val="1D4ED8"/></a:hlink><a:folHlink><a:srgbClr val="7E22CE"/></a:folHlink>'
-        '</a:clrScheme><a:fontScheme name="Synthetic">'
+        '</a:clrScheme><a:fontScheme name="Standard">'
         '<a:majorFont><a:latin typeface="Calibri"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont>'
         '<a:minorFont><a:latin typeface="Calibri"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont>'
-        '</a:fontScheme><a:fmtScheme name="Synthetic">'
+        '</a:fontScheme><a:fmtScheme name="Standard">'
         '<a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst>'
         '<a:lnStyleLst><a:ln w="9525"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln w="25400"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln w="38100"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln></a:lnStyleLst>'
         '<a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst>'
@@ -642,7 +642,7 @@ def _render_pptx(doc: Doc, filename: str) -> RenderedFile:
         "ppt/presProps.xml": f'{XML_HEAD}<p:presentationPr xmlns:a="{A_NS}" xmlns:r="{R_NS}" xmlns:p="{P_NS}"/>'.encode("utf-8"),
         "ppt/viewProps.xml": f'{XML_HEAD}<p:viewPr xmlns:a="{A_NS}" xmlns:r="{R_NS}" xmlns:p="{P_NS}"/>'.encode("utf-8"),
         "ppt/tableStyles.xml": f'{XML_HEAD}<a:tblStyleLst xmlns:a="{A_NS}" def="{{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}}"/>'.encode("utf-8"),
-        "docProps/core.xml": _core_props(doc.title, "Synthetic presentation"),
+        "docProps/core.xml": _core_props(doc.title, "Presentation"),
         "docProps/app.xml": _app_props("privacy-gateway-testgen PPTX renderer"),
     })
     data = _zip(files)

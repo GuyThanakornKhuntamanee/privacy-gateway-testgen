@@ -30,7 +30,10 @@ PYTHONPATH=src python -m privacy_gateway_testgen validate-v2 --dataset datasets/
 - **Verified files.** A renderer returning bytes is not success. Every v2
   attachment is reopened with a parser and every location is resolved.
 - **Synthetic only.** Reserved example domains, `example`/`fake` markers, and
-  nothing that could behave as a live credential.
+  nothing that could behave as a live credential. The "this is synthetic"
+  statement is **out-of-band** (`attachments[].synthetic`, `manifest.json`,
+  `NOTICE.md`); generated files carry no such notice unless the config sets
+  `disclosure: banner`.
 - **Declared metadata is truth.** A template/archetype's domains, length class,
   difficulty, renderers and flags must match what its builder emits.
 - **Config over code.** Weights, distributions, policy actions and thresholds

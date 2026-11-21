@@ -15,5 +15,5 @@
       "image": "example/orders-worker:1.4.2"
     }
   },
-  "_language_note": "เอกสารตัวอย่างสังเคราะห์สำหรับทดสอบ privacy gateway เท่านั้น"
+  "_language_note": "เอกสารนี้ใช้ภายในองค์กรเท่านั้น"
 }

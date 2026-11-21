@@ -511,6 +511,7 @@ class V2Generator:
         self.config = config
         self.policy = policy
         self.seed = int(config["seed"])
+        self.disclosure = config.get("disclosure", "metadata")
         self.distributions = config["distributions"]
         self.near_threshold = float(config.get("near_duplicate_threshold", 0.96))
         self.rng = random.Random(self.seed)
@@ -818,6 +819,7 @@ class V2Generator:
             doc.language = attachment_language
             doc.filename = f"{archetype.id}.{renderer}"
             doc.metadata.setdefault("ocr_difficulty", target.ocr_difficulty)
+            doc.metadata["disclosure"] = self.disclosure
             localize_doc(doc, attachment_language,
                          localize_headers=renderer not in MACHINE_KEY_RENDERERS)
             text = document_text(doc)
@@ -856,6 +858,11 @@ class V2Generator:
                 filename = f"{stem}_{index}.{renderer}"
             used_names.add(filename)
             doc.filename = filename
+            if self.disclosure == "banner":
+                # Visible notice for artifacts shared with people.  Appended
+                # only in banner mode; the default metadata mode keeps files free
+                # of hints a detector could read.
+                doc.blocks.append(Block("note", text="Synthetic sample - not real data."))
             fingerprints.append(_doc_fingerprint(doc))
             self._maybe_hybrid(renderer, doc, sequence)
             try:
@@ -1554,6 +1561,53 @@ def _write_jsonl(path: str, rows: Iterable[dict]) -> None:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def _write_text(path: str, text: str) -> None:
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(text)
+
+
+def _notice_markdown(disclosure: str) -> str:
+    """Dataset-level synthetic notice: the out-of-band disclosure channel."""
+    visible = disclosure == "banner"
+    lines = [
+        "# NOTICE — synthetic test data",
+        "",
+        "Every prompt, entity value and attachment in this directory is synthetic.",
+        "It was produced deterministically from a seed by `privacy-gateway-testgen`.",
+        "No value describes a real person, account, credential, host or payment card.",
+        "",
+        "## Where the synthetic marking lives (out-of-band)",
+        "",
+        "- every attachment record in `cases.jsonl` carries `\"synthetic\": true`;",
+        "- `manifest.json` carries `\"synthetic\": true` and this notice's hash;",
+        "- reserved example domains, `.internal` hosts, test-BIN card numbers and "
+        "`example`/`fake` credential markers stay in the content for detector realism.",
+        "",
+        "## In-band disclosure",
+        "",
+        f"- `disclosure` mode: `{disclosure}`",
+    ]
+    if visible:
+        lines.append("- visible notices are added to document bodies, images and configuration comments (shared-artifact mode).")
+    else:
+        lines += [
+            "- generated files contain no \"synthetic\" notice: a detector under test must",
+            "  not read a hint that could suppress a real detection. Use this notice and",
+            "  `cases.jsonl` when the dataset is shared with people.",
+        ]
+    lines += [
+        "",
+        "## Ground truth",
+        "",
+        "- canonical text and layout are authoritative; no OCR engine was run;",
+        "- `ground_truth/entities.jsonl` lists every expected detection with its location;",
+        "- raster cases require OCR from the system under test and are listed separately",
+        "  in `benchmark_safe_ocr_cases.jsonl`.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def benchmark_safe_reasons(case: dict) -> List[str]:
     """Why a case may not enter a benchmark-safe subset (empty means safe).
 
@@ -1598,7 +1652,7 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
         for name in ("cases.jsonl", "all.json", "stats.json", "train.jsonl",
                      "validation.jsonl", "test.jsonl", "benchmark_safe_cases.jsonl",
                      "benchmark_safe_text_cases.jsonl", "benchmark_safe_ocr_cases.jsonl",
-                     "benchmark_excluded_cases.jsonl"):
+                     "benchmark_excluded_cases.jsonl", "NOTICE.md"):
             path = os.path.join(out_dir, name)
             if os.path.exists(path):
                 os.remove(path)
@@ -1656,12 +1710,14 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
     _write_jsonl(os.path.join(out_dir, "benchmark_safe_text_cases.jsonl"), safe_text_cases)
     _write_jsonl(os.path.join(out_dir, "benchmark_safe_ocr_cases.jsonl"), safe_ocr_cases)
     _write_jsonl(os.path.join(out_dir, "benchmark_excluded_cases.jsonl"), excluded_rows)
+    disclosure = config.get("disclosure", "metadata")
+    _write_text(os.path.join(out_dir, "NOTICE.md"), _notice_markdown(disclosure))
 
     config_for_hash = {key: value for key, value in config.items() if not key.startswith("_")}
     generated_names = ["cases.jsonl", "train.jsonl", "validation.jsonl", "test.jsonl", "all.json", "stats.json",
                        "ground_truth/entities.jsonl", "benchmark_safe_cases.jsonl",
                        "benchmark_safe_text_cases.jsonl", "benchmark_safe_ocr_cases.jsonl",
-                       "benchmark_excluded_cases.jsonl"]
+                       "benchmark_excluded_cases.jsonl", "NOTICE.md"]
     file_hashes = {}
     for name in generated_names:
         with open(os.path.join(out_dir, name), "rb") as handle:
@@ -1712,7 +1768,10 @@ def export_v2_dataset(dataset: dict, out_dir: str, config: dict, policy: dict) -
         "files": file_hashes,
         "attachments_sha256": attachment_hashes,
         "reproducible": True,
-        "notes": "Synthetic only. Attachment hashes and case JSON are deterministic for this seed and config.",
+        "synthetic": True,
+        "disclosure": disclosure,
+        "synthetic_notice": "NOTICE.md",
+        "notes": "Synthetic only (see NOTICE.md). Attachment hashes and case JSON are deterministic for this seed and config.",
     }
     _write_json(os.path.join(out_dir, "manifest.json"), manifest)
     return manifest

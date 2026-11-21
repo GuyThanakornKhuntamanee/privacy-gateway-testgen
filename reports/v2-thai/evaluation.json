@@ -660,7 +660,7 @@
     "file_open_rate": 1.0,
     "files": 24,
     "issues": [],
-    "manifest_checks": 35,
+    "manifest_checks": 36,
     "passed": true,
     "statuses": {
       "verified": 7,

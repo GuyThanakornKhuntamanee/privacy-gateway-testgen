@@ -62,7 +62,7 @@ class PdfWriter:
                                        invariant=1, pageCompression=1)
         self.canvas.setTitle(title)
         self.canvas.setAuthor(author)
-        self.canvas.setSubject("synthetic privacy-gateway test document")
+        self.canvas.setSubject("internal document")
         self.canvas.setCreator("privacy-gateway-testgen")
         self.canvas.setProducer("privacy-gateway-testgen")
         self.pages = 1

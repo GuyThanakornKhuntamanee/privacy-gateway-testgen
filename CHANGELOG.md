@@ -41,6 +41,12 @@ semantic versioning.
 
 - Runtime dependencies are declared and pinned: `Pillow`, `reportlab`, `pypdf`
   (package version 0.4.0, dataset version 2.2.0).
+- Synthetic disclosure is out-of-band by default (`disclosure: metadata`):
+  generated prompts and files carry no "synthetic"/"fictional" notice, so a
+  detector under test cannot read a hint that suppresses a detection. The marking
+  moved to `attachments[].synthetic`, `manifest.json` (`synthetic`, `disclosure`,
+  `synthetic_notice`) and a new `NOTICE.md` in every dataset directory.
+  `disclosure: banner` restores the previous visible notices.
 - PDF text verification uses pypdf instead of a regex over the content stream,
   and compares collapsed-whitespace text so `exam ple.com` still fails against
   `example.com`.

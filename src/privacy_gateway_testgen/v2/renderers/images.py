@@ -19,7 +19,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 from ...models import Entity
 from ..docmodel import Doc, Placement
-from .base import RenderedFile
+from .base import RenderedFile, disclosure_mode
 from .fonts import font_path, require_text_shaping
 from .textlayout import cluster_spans, wrap_ranges
 
@@ -225,10 +225,17 @@ def _chrome_metrics(doc: Doc, style: str) -> dict:
 
 def _draw_chrome(canvas: Image.Image, doc: Doc, style: str, width: int,
                  metrics: dict) -> Tuple[int, int, Tuple[int, int, int]]:
-    """Background, header bars and footer; returns (start_y, left_x, text_color)."""
+    """Background, header bars and footer; returns (start_y, left_x, text_color).
+
+    With ``disclosure == "metadata"`` (the default) nothing in the image claims
+    the content is synthetic: a detector under test must not read a hint that
+    could suppress a detection.  ``disclosure == "banner"`` draws the visible
+    notice instead, for artifacts shared with people.
+    """
     draw = ImageDraw.Draw(canvas)
     title_font = _font("bold", HEADING_SIZE)
     footer = _font("regular", max(14, CODE_SIZE - 3))
+    banner = disclosure_mode(doc) == "banner"
     left = metrics["left"]
     start_y = metrics["start_y"]
     if doc.metadata.get("compact"):
@@ -246,44 +253,51 @@ def _draw_chrome(canvas: Image.Image, doc: Doc, style: str, width: int,
         draw.rectangle([0, 0, width, 34], fill=(42, 46, 54))
         for index, color in enumerate((COLORS["red"], (220, 170, 50), COLORS["green"])):
             draw.ellipse([14 + index * 18, 12, 24 + index * 18, 22], fill=color)
-        draw.text((76, 7), "synthetic-terminal", font=footer, fill=COLORS["gray"])
+        draw.text((76, 7), "synthetic-terminal" if banner else "terminal", font=footer,
+                  fill=COLORS["gray"])
         text_color = (210, 220, 210)
     elif style == "dashboard":
         draw.rectangle([0, 0, width, 62], fill=(35, 55, 90))
-        draw.text((24, 14), "Synthetic Operations Dashboard", font=title_font,
-                  fill=COLORS["white"])
+        draw.text((24, 14), "Synthetic Operations Dashboard" if banner else "Operations Dashboard",
+                  font=title_font, fill=COLORS["white"])
         draw.rectangle([0, 62, width, 70], fill=(70, 120, 190))
     elif style == "chat":
         canvas.paste((232, 238, 244), (0, 0, width, canvas.height))
         draw.rectangle([0, 0, width, 50], fill=(245, 247, 250))
-        draw.text((18, 10), "Internal Chat - Synthetic", font=_font("bold", BODY_SIZE + 2),
-                  fill=COLORS["black"])
+        draw.text((18, 10), "Internal Chat - Synthetic" if banner else "Internal Chat",
+                  font=_font("bold", BODY_SIZE + 2), fill=COLORS["black"])
     elif style == "email":
         draw.rectangle([0, 0, width, 88], fill=(245, 247, 250))
-        draw.text((26, 16), "Inbox - synthetic example", font=title_font, fill=COLORS["black"])
+        draw.text((26, 16), "Inbox - synthetic example" if banner else "Inbox",
+                  font=title_font, fill=COLORS["black"])
         draw.line([0, 88, width, 88], fill=COLORS["gray"], width=1)
     elif style == "form":
         draw.text((MARGIN, 30), doc.title, font=title_font, fill=COLORS["black"])
         draw.line([MARGIN, 74, width - MARGIN, 74], fill=COLORS["black"], width=2)
-        draw.text((MARGIN, canvas.height - 34), "SYNTHETIC SAMPLE - NOT A REAL DOCUMENT",
-                  font=footer, fill=COLORS["gray"])
+        if banner:
+            draw.text((MARGIN, canvas.height - 34), "SYNTHETIC SAMPLE - NOT A REAL DOCUMENT",
+                      font=footer, fill=COLORS["gray"])
     elif style == "id_card":
         draw.rectangle([0, 0, width, 104], fill=(35, 70, 120))
-        draw.text((30, 18), "SYNTHETIC ID SAMPLE", font=title_font, fill=COLORS["white"])
-        draw.text((30, 62), "FICTIONAL - NOT A REAL IDENTITY DOCUMENT", font=footer,
-                  fill=(210, 225, 240))
+        draw.text((30, 18), "SYNTHETIC ID SAMPLE" if banner else "EMPLOYEE ID",
+                  font=title_font, fill=COLORS["white"])
+        draw.text((30, 62),
+                  "FICTIONAL - NOT A REAL IDENTITY DOCUMENT" if banner else "Internal use only",
+                  font=footer, fill=(210, 225, 240))
         draw.rectangle([16, 118, width - 16, canvas.height - 34], outline=(35, 70, 120), width=2)
     elif style == "receipt":
         draw.text((28, 22), doc.title, font=_font("bold", BODY_SIZE + 3), fill=COLORS["black"])
         draw.line([28, 56, width - 28, 56], fill=COLORS["black"], width=2)
-        draw.text((28, canvas.height - 28), "SYNTHETIC RECEIPT - NOT A REAL TRANSACTION",
-                  font=footer, fill=COLORS["gray"])
+        if banner:
+            draw.text((28, canvas.height - 28), "SYNTHETIC RECEIPT - NOT A REAL TRANSACTION",
+                      font=footer, fill=COLORS["gray"])
     else:
         draw.rectangle([0, 0, width, canvas.height], fill=COLORS["white"])
         draw.text((MARGIN, 30), doc.title, font=title_font, fill=COLORS["black"])
         draw.line([MARGIN, 74, width - MARGIN, 74], fill=COLORS["black"], width=2)
-        draw.text((MARGIN, canvas.height - 34), "SYNTHETIC SAMPLE - NOT REAL COMPANY DATA",
-                  font=footer, fill=COLORS["gray"])
+        if banner:
+            draw.text((MARGIN, canvas.height - 34), "SYNTHETIC SAMPLE - NOT REAL COMPANY DATA",
+                      font=footer, fill=COLORS["gray"])
     return start_y, left, text_color
 
 

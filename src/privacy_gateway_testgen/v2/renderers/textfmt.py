@@ -17,7 +17,7 @@ from xml.sax.saxutils import escape as xml_escape
 from ...models import Entity
 from ..docmodel import Block, Cell, Doc, entity_cell, record_placements, table_records
 from ..localization import THAI_NOTE
-from .base import EXTRACTION_METHODS, MIME_TYPES, RenderedFile, location
+from .base import EXTRACTION_METHODS, MIME_TYPES, RenderedFile, disclosure_mode, location
 
 CELL_TEXT = "text_span"
 
@@ -142,7 +142,9 @@ def _yaml_emit(value: Any, path: str, indent: int, lines: List[str], locations: 
 
 
 def _render_yaml(doc: Doc, filename: str) -> RenderedFile:
-    lines: List[str] = ["# synthetic example - not real data"]
+    lines: List[str] = []
+    if disclosure_mode(doc) == "banner":
+        lines.append("# synthetic example - not real data")
     locations: List[dict] = []
     record = _derive_record(doc)
     if isinstance(record, dict):
@@ -270,7 +272,8 @@ def _render_config(doc: Doc, filename: str, ext: str) -> RenderedFile:
     lines: List[str] = []
     locations: List[dict] = []
     if ext == "env":
-        lines.append("# synthetic example environment - values are non-functional")
+        if disclosure_mode(doc) == "banner":
+            lines.append("# synthetic example environment - values are non-functional")
         for key, _section, value in _flatten_config(record):
             key_name = re.sub(r"[^A-Za-z0-9_]", "_", key).upper()
             text = value.text if isinstance(value, Cell) else str(value)
@@ -287,7 +290,8 @@ def _render_config(doc: Doc, filename: str, ext: str) -> RenderedFile:
                     })
             lines.append(f"{key_name}={text}")
     elif ext == "toml":
-        lines.append("# synthetic example configuration")
+        if disclosure_mode(doc) == "banner":
+            lines.append("# synthetic example configuration")
         section = ""
         for key, pair_section, value in _flatten_config(record):
             if pair_section and pair_section != section:
@@ -309,7 +313,8 @@ def _render_config(doc: Doc, filename: str, ext: str) -> RenderedFile:
                     })
             lines.append(f"{leaf} = {json.dumps(text, ensure_ascii=False)}")
     else:  # ini / conf
-        lines.append("; synthetic example configuration")
+        if disclosure_mode(doc) == "banner":
+            lines.append("; synthetic example configuration")
         section = ""
         for key, pair_section, value in _flatten_config(record):
             if pair_section and pair_section != section:

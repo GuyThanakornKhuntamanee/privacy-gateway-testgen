@@ -206,7 +206,7 @@ def _people_rows(ctx: BuildContext, people: Sequence[Person], fields: Sequence[s
 def _employee_list(ctx: BuildContext) -> Doc:
     builder = DocBuilder("employee_list", "Employee list", "employee_list.xlsx", ctx.doc_language)
     builder.heading("Employee directory")
-    builder.para("Synthetic export from the people system. Internal use only.")
+    builder.para("Export from the people system. Internal use only.")
     fields = ["name", "email", "phone"]
     headers = ["name", "email", "phone"]
     if ctx.wants("pii"):
@@ -222,9 +222,9 @@ def _employee_list(ctx: BuildContext) -> Doc:
                  ctx.shared("infrastructure", "internal_ipv4", f"ip_{index}"),
                  ctx.person_email(ctx.org.employees[index], index)] for index in range(4)]
         builder.table(["hostname", "private_ip", "owner_email"], rows, title="Asset assignment")
-    builder.note("Generated test document. Values are synthetic and non-functional.")
+    builder.note("Prepared for internal review.")
     return builder.build(header=cell(f"{ctx.org.name} - People Operations"),
-                         footer=cell("Synthetic example - not real personal data"),
+                         footer=cell("HR - internal use only"),
                          hidden_sheets=["Asset assignment"] if ctx.wants("infrastructure") else [])
 
 
@@ -261,7 +261,7 @@ def _payroll(ctx: BuildContext) -> Doc:
         builder.para("Bank transfer integration credential: ",
                      ctx.shared("secrets", "api_key", "payroll_api_key"))
     return builder.build(header=cell(f"{ctx.org.name} - Finance"),
-                         footer=cell("Synthetic payroll - not real employee data"))
+                         footer=cell("Payroll - internal use only"))
 
 
 def _customer_export(ctx: BuildContext) -> Doc:
@@ -277,7 +277,7 @@ def _customer_export(ctx: BuildContext) -> Doc:
     for index, row in enumerate(rows):
         row.insert(0, f"CUS-{1000 + index}")
     builder.table(["customer_id"] + headers, rows, title="Customers")
-    builder.note("Exported for a synthetic customer-success review.")
+    builder.note("Exported for a customer-success review.")
     return builder.build(delimiter=ctx.csv_delimiter())
 
 
@@ -334,7 +334,7 @@ def _transaction_export(ctx: BuildContext) -> Doc:
 
 def _patient_list(ctx: BuildContext) -> Doc:
     builder = DocBuilder("patient_list", "Patient appointment list", "patient_list.xlsx", ctx.doc_language)
-    builder.heading("Clinic appointment list - synthetic")
+    builder.heading("Clinic appointment list")
     rows = []
     for index in range(6):
         person = ctx.org.customers[index % len(ctx.org.customers)]
@@ -347,7 +347,7 @@ def _patient_list(ctx: BuildContext) -> Doc:
             f"2026-03-{12 + index:02d} 09:{30 + index:02d}",
         ])
     builder.table(["HN", "patient", "dob", "phone", "diagnosis", "appointment"], rows, title="Appointments")
-    builder.note("Fictional clinic data for privacy-filter testing. No real patient records.")
+    builder.note("Clinic appointment data for internal review.")
     return builder.build()
 
 
@@ -430,7 +430,7 @@ def _vendor_list(ctx: BuildContext) -> Doc:
 
 def _bank_statement(ctx: BuildContext) -> Doc:
     builder = DocBuilder("bank_statement", "Bank statement", "bank_statement_2026-03.pdf", ctx.doc_language)
-    builder.heading("Synthetic bank statement")
+    builder.heading("Bank statement")
     opening = ctx.rng.randrange(80000, 220000, 100)
     holder = ctx.person_name(ctx.org.employees[0])
     account = (ctx.shared("payment", "bank_account_number", "statement_account")
@@ -472,8 +472,8 @@ def _bank_statement(ctx: BuildContext) -> Doc:
         "opening_balance": opening, "closing_balance": balance,
         "movements": len(movements),
     })
-    builder.para("Statement generated for synthetic testing. Not a real bank document.")
-    return builder.build(header=cell("Synthetic Bank - Example Only"))
+    builder.para("Statement generated from the core banking export.")
+    return builder.build(header=cell("Bank statement - internal"))
 
 
 def _expense_report(ctx: BuildContext) -> Doc:
@@ -536,7 +536,7 @@ def _finance_document(ctx: BuildContext, kind: str) -> Doc:
     else:  # prompt-level builders always carry a scenario in the generator
         finance = {
             "invoice_number": f"{kind[:3].upper()}-2026-1000", "currency": "THB",
-            "items": [{"description": "Synthetic item", "quantity": 1, "unit_price": 1000,
+            "items": [{"description": "Item", "quantity": 1, "unit_price": 1000,
                        "line_total": 1000}],
             "subtotal": 1000, "tax": 70, "total": 1070, "invoice_date": "2026-03-18",
             "due_date": "2026-04-17", "payment_date": "2026-03-18",
@@ -591,9 +591,9 @@ def _finance_document(ctx: BuildContext, kind: str) -> Doc:
     if ctx.wants("infrastructure"):
         builder.para(ctx.label("Billing service endpoint"), ": ",
                      ctx.shared("infrastructure", "internal_url", "url"))
-    builder.para("Synthetic example document. Not a real invoice or payment instruction.")
+    builder.para("Invoice document.")
     return builder.build(header=cell(f"{ctx.org.name} - Finance"),
-                         footer=cell("Synthetic example - all values are fictional"))
+                         footer=cell("Finance - internal use only"))
 
 
 def _contract(ctx: BuildContext, kind: str) -> Doc:
@@ -608,7 +608,7 @@ def _contract(ctx: BuildContext, kind: str) -> Doc:
         builder.para("Address: ", ctx.person_field(employee, "address", "pii", ["thai_address"]),
                      "  National ID: ", ctx.person_field(employee, "national_id", "pii", ["thai_national_id"]))
     builder.heading("1. Scope")
-    builder.para("This synthetic agreement covers services for ", ctx.rng.choice(ctx.org.projects),
+    builder.para("This agreement covers services for ", ctx.rng.choice(ctx.org.projects),
                  " and is provided only as a test document.")
     builder.heading("2. Confidentiality")
     builder.para("The parties shall protect confidential information and may disclose it only to authorised staff.")
@@ -622,7 +622,7 @@ def _contract(ctx: BuildContext, kind: str) -> Doc:
         builder.para("Internal service: ", ctx.shared("infrastructure", "internal_url", "url"))
     builder.heading("3. Signatures")
     builder.para("Signed for ", ctx.org.name, " by ", ctx.person_name(ctx.org.employees[1]), " on 2026-03-18.")
-    return builder.build(header=cell("Confidential - synthetic example"))
+    return builder.build(header=cell("Confidential"))
 
 
 def _cv(ctx: BuildContext) -> Doc:
@@ -635,11 +635,11 @@ def _cv(ctx: BuildContext) -> Doc:
         builder.para(ctx.person_field(candidate, "address", "pii", ["thai_address"]),
                      " | DOB: ", ctx.person_field(candidate, "dob", "pii", ["date_of_birth"]))
     builder.heading("Experience")
-    builder.bullet("Senior analyst at a synthetic logistics company, 2021-2026.")
+    builder.bullet("Senior analyst at a logistics company, 2021-2026.")
     builder.bullet("Built reporting pipelines and reviewed vendor contracts.")
     builder.heading("Skills")
     builder.para("SQL, Python, spreadsheet modelling, stakeholder communication.")
-    return builder.build(header=cell("Candidate CV - synthetic"))
+    return builder.build(header=cell("Candidate CV"))
 
 
 def _incident_report(ctx: BuildContext) -> Doc:
@@ -680,7 +680,7 @@ def _incident_report(ctx: BuildContext) -> Doc:
     builder.para("Rotate the exposed credential, review deployment logging, and add a config check.")
     ctx.check("incident_timeline", True, {"start": ctx.scenario.timestamp(0) if ctx.scenario else "2026-03-18T09:12:00Z",
                                           "end": ctx.scenario.timestamp(10) if ctx.scenario else "2026-03-18T09:42:00Z"})
-    return builder.build(header=cell("Internal - synthetic incident"))
+    return builder.build(header=cell("Internal"))
 
 
 def _meeting_minutes(ctx: BuildContext) -> Doc:
@@ -709,7 +709,7 @@ def _meeting_minutes(ctx: BuildContext) -> Doc:
     builder.heading("Action items")
     builder.bullet("Owner: ", ctx.person_name(attendees[1]), " - confirm the migration window.")
     builder.bullet("Owner: ", ctx.person_name(attendees[2]), " - remove the old deployment credential.")
-    return builder.build(header=cell("Internal meeting notes - synthetic"))
+    return builder.build(header=cell("Internal meeting notes"))
 
 
 def _memo(ctx: BuildContext) -> Doc:
@@ -725,7 +725,7 @@ def _memo(ctx: BuildContext) -> Doc:
                      ctx.shared("secrets", "password", "review_password"))
     if ctx.wants("infrastructure"):
         builder.para("Review scope: ", ctx.shared("infrastructure", "private_network", "network"))
-    builder.para("Synthetic memo for policy testing.")
+    builder.para("Memo.")
     return builder.build(header=cell("Internal memo"))
 
 
@@ -746,7 +746,7 @@ def _strategy_report(ctx: BuildContext) -> Doc:
         builder.para("Platform capacity: ", ctx.entity("infrastructure", ["system_architecture"]))
     builder.heading("Risks")
     builder.para("Dependency on a single vendor and limited local support capacity remain the top risks.")
-    return builder.build(header=cell("Confidential strategy - synthetic"))
+    return builder.build(header=cell("Confidential strategy"))
 
 
 def _risk_report(ctx: BuildContext) -> Doc:
@@ -765,7 +765,7 @@ def _risk_report(ctx: BuildContext) -> Doc:
                      ctx.shared("infrastructure", "database_endpoint", "db_endpoint"))
     if ctx.wants("pii"):
         builder.para("Risk owner: ", ctx.person_name(ctx.org.employees[2]), " - ", ctx.person_email(ctx.org.employees[2]))
-    return builder.build(header=cell("Risk committee - synthetic"))
+    return builder.build(header=cell("Risk committee"))
 
 
 def _support_ticket(ctx: BuildContext) -> Doc:
@@ -789,7 +789,7 @@ def _support_ticket(ctx: BuildContext) -> Doc:
         builder.para("Failed order reference: ",
                      ctx.shared("payment", "payment_transaction_reference", "txn_0"))
     builder.para("Suggested next step: confirm the service health dashboard and review the gateway log.")
-    return builder.build(header=cell("Synthetic support queue"))
+    return builder.build(header=cell("Support queue"))
 
 
 def _customer_complaint(ctx: BuildContext) -> Doc:
@@ -818,7 +818,7 @@ def _leave_request(ctx: BuildContext) -> Doc:
                  ctx.date("2026-04-10"), "  |  Days: 5")
     builder.para("Reason: family trip. Coverage arranged with the platform team.")
     builder.para("Approved by: ", ctx.person_name(ctx.org.employees[0]))
-    return builder.build(header=cell("HR - synthetic form"))
+    return builder.build(header=cell("HR form"))
 
 
 def _candidate_evaluation(ctx: BuildContext) -> Doc:
@@ -832,13 +832,13 @@ def _candidate_evaluation(ctx: BuildContext) -> Doc:
         ["Stakeholder communication", "good", "structured examples"],
         ["Domain knowledge", "developing", "needs support"],
     ], title="Scorecard")
-    return builder.build(header=cell("Hiring - confidential synthetic"))
+    return builder.build(header=cell("Hiring - confidential"))
 
 
 def _medical_report(ctx: BuildContext) -> Doc:
     patient = ctx.org.customers[3]
     builder = DocBuilder("medical_report", "Medical report", "medical_report.docx", ctx.doc_language)
-    builder.heading("Visit summary - synthetic clinic")
+    builder.heading("Visit summary")
     builder.para("Patient: ", ctx.person_name(patient), "  |  HN: ", ctx.entity("pii", ["patient_id"]))
     if ctx.wants("pii"):
         builder.para("DOB: ", ctx.person_field(patient, "dob", "pii", ["date_of_birth"]),
@@ -846,34 +846,34 @@ def _medical_report(ctx: BuildContext) -> Doc:
         builder.para("Diagnosis: ", ctx.entity("pii", ["health_condition"]))
     builder.para("Plan: routine follow-up in four weeks. No real medical advice is provided.")
     builder.para("Clinician: ", ctx.person_name(ctx.org.employees[4 % len(ctx.org.employees)]))
-    return builder.build(header=cell("Synthetic medical record - not a real patient"))
+    return builder.build(header=cell("Medical record"))
 
 
 def _lab_result(ctx: BuildContext) -> Doc:
     patient = ctx.org.customers[2]
     builder = DocBuilder("lab_result", "Laboratory result", "lab_result.pdf", ctx.doc_language)
-    builder.heading("Laboratory result - synthetic")
+    builder.heading("Laboratory result")
     builder.para("Patient: ", ctx.person_name(patient), "  |  HN: ", ctx.entity("pii", ["patient_id"]))
     builder.table(["test", "result", "reference"], [
         ["Haemoglobin", "13.2 g/dL", "12.0-16.0"],
         ["Fasting glucose", "98 mg/dL", "70-99"],
         ["Creatinine", "0.9 mg/dL", "0.6-1.1"],
     ], title="Results")
-    builder.para("Synthetic result for filter testing. Not a real diagnosis.")
-    return builder.build(header=cell("Synthetic laboratory"))
+    builder.para("Laboratory result for internal review.")
+    return builder.build(header=cell("Laboratory"))
 
 
 def _prescription(ctx: BuildContext) -> Doc:
     patient = ctx.org.customers[1]
     builder = DocBuilder("prescription", "Prescription", "prescription.pdf", ctx.doc_language)
-    builder.heading("Prescription - synthetic")
+    builder.heading("Prescription")
     builder.para("Patient: ", ctx.person_name(patient), "  |  HN: ", ctx.entity("pii", ["patient_id"]))
     builder.table(["medication", "dose", "duration"], [
         ["Example medication A", "1 tablet daily", "7 days"],
         ["Example medication B", "as needed", "14 days"],
     ], title="Prescription")
-    builder.para("Fictional medication names for testing only.")
-    return builder.build(header=cell("Synthetic prescription"))
+    builder.para("Prescription for internal review.")
+    return builder.build(header=cell("Prescription"))
 
 
 def _visit_summary(ctx: BuildContext) -> Doc:
@@ -895,7 +895,7 @@ def _architecture_notes(ctx: BuildContext) -> Doc:
                      ctx.shared("secrets", "api_key", "api_key"))
     if ctx.wants("pii"):
         builder.para("Platform owner: ", ctx.person_name(ctx.org.employees[0]), " (", ctx.person_email(ctx.org.employees[0]), ")")
-    return builder.build(header=cell("Engineering notes - synthetic"))
+    return builder.build(header=cell("Engineering notes"))
 
 
 def _troubleshooting_notes(ctx: BuildContext) -> Doc:
@@ -1180,7 +1180,7 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
             "}",
         ]
     else:
-        lines = ["# synthetic source file", "API_KEY=example"]
+        lines = ["# source file", "API_KEY=example"]
     if not any(isinstance(part, Entity) for line in lines
                for part in (line if isinstance(line, (list, tuple)) else [line])):
         # A code screenshot without any entity would carry no OCR ground truth;
@@ -1192,7 +1192,7 @@ def _source_code(ctx: BuildContext, language: str = "py") -> Doc:
 
 def _log_lines(ctx: BuildContext, kind: str) -> Doc:
     builder = DocBuilder(kind, "Application log", f"{kind}.log", ctx.doc_language)
-    builder.heading(f"{kind} - synthetic")
+    builder.heading(f"{kind}")
     log_format = ctx.rng.choice(("iso", "iso", "bracket", "json"))
 
     def infra(types: Sequence[str], key: str, fallback: str) -> Any:
@@ -1270,7 +1270,7 @@ def _slide_deck(ctx: BuildContext, kind: str) -> Doc:
     }.get(kind, ["Overview", "Details", "Risks", "Next steps"])
     for index, title in enumerate(titles):
         if index == 0:
-            builder.slide(title, "Synthetic management presentation. All data is fictional.")
+            builder.slide(title, "Management presentation.")
         elif index == 1:
             parts: List[Any] = ["The team reviewed operational performance and customer feedback."]
             if ctx.wants("pii"):
@@ -1326,13 +1326,13 @@ def _screenshot_doc(ctx: BuildContext, kind: str) -> Doc:
 
 def _id_card_doc(ctx: BuildContext) -> Doc:
     person = ctx.org.employees[0]
-    builder = DocBuilder("screenshot_id", "Synthetic ID sample", "synthetic_id.png", ctx.doc_language)
-    builder.heading("Synthetic identity sample")
+    builder = DocBuilder("screenshot_id", "Employee ID sample", "employee_id.png", ctx.doc_language)
+    builder.heading("Employee identity sample")
     builder.para("Name: ", ctx.person_name(person))
     builder.para("ID: ", ctx.entity("pii", ["thai_national_id"]))
     builder.para("DOB: ", ctx.person_field(person, "dob", "pii", ["date_of_birth"]))
     builder.para("Address: ", ctx.person_field(person, "address", "pii", ["thai_address"]))
-    builder.para("This is a fictional sample, not a real identity document.")
+    builder.para("Internal employee identity record.")
     return builder.build()
 
 

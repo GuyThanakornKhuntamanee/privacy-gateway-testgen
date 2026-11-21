@@ -75,8 +75,8 @@
     "yml": 1
   },
   "by_attachment_language": {
-    "en": 40,
-    "mixed": 7,
+    "en": 44,
+    "mixed": 3,
     "th": 28
   },
   "by_bundle_kind": {
@@ -252,12 +252,12 @@
     "en->mixed": 1,
     "en->prompt_only": 5,
     "en->th": 9,
-    "mixed->en": 15,
-    "mixed->mixed": 2,
+    "mixed->en": 16,
+    "mixed->mixed": 1,
     "mixed->prompt_only": 6,
     "mixed->th": 7,
-    "th->en": 16,
-    "th->mixed": 4,
+    "th->en": 19,
+    "th->mixed": 1,
     "th->prompt_only": 3,
     "th->th": 12
   },
@@ -269,8 +269,8 @@
   "ocr_cases": 6,
   "positive_cases": 51,
   "prompt_length": {
-    "max": 851,
-    "mean": 154.625,
+    "max": 816,
+    "mean": 153.917,
     "min": 24
   },
   "same_archetype_bundle_cases": 5,

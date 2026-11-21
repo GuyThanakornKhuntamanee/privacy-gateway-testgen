@@ -12,6 +12,7 @@
     "test": 0.1
   },
   "dataset_epoch": "2026-01-01T00:00:00Z",
+  "disclosure": "metadata",
   "near_duplicate_threshold": 0.96,
   "localization": {
     "thai_date_mode": "be",

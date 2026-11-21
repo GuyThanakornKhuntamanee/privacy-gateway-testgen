@@ -249,6 +249,7 @@ endpoint) and record before/after values with a location in both documents.
 ```
 datasets/v2-sample/
 ├── manifest.json
+├── NOTICE.md
 ├── cases.jsonl
 ├── all.json
 ├── stats.json
@@ -266,6 +267,12 @@ profile, file/domain/language/persona/difficulty distributions, verification
 status, config/policy hashes and SHA-256 for every generated artifact and
 attachment. There is no wall-clock timestamp, so the same config + seed
 reproduces the case JSON and attachment bytes.
+
+`NOTICE.md` is the out-of-band synthetic statement. By default
+(`disclosure: metadata`) generated files contain **no** "synthetic" or
+"fictional" text: a detector under test must not read a hint that could suppress
+a detection. `disclosure: banner` restores visible notices in documents and
+images for artifacts shared with people; the setting is recorded in the manifest.
 
 ### v2 measured sample
 

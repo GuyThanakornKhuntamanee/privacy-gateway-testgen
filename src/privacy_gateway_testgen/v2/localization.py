@@ -86,8 +86,8 @@ LABELS: Dict[str, str] = {
     "vendors": "ผู้ขาย", "appointments": "นัดหมาย", "pipeline": "ไปป์ไลน์",
     "risks": "ความเสี่ยง", "results": "ผลตรวจ", "prescription": "ใบสั่งยา",
     "Asset assignment": "การมอบหมายทรัพย์สิน",
-    "Revised version: one field was corrected for this synthetic scenario.":
-        "ฉบับแก้ไข: มีการแก้ไขหนึ่งฟิลด์สำหรับสถานการณ์สังเคราะห์นี้",
+    "Revised version: one field was corrected for this scenario.":
+        "ฉบับแก้ไข: มีการแก้ไขหนึ่งฟิลด์สำหรับสถานการณ์นี้",
     "scorecard": "แบบประเมิน",
     # status values
     "settled": "ชำระแล้ว", "pending": "รอดำเนินการ", "refunded": "คืนเงินแล้ว",
@@ -162,16 +162,16 @@ TEXT_TH: Dict[str, str] = {
     "SQL export": "ข้อมูล SQL",
     "Application source": "ซอร์สโค้ดแอปพลิเคชัน",
     "Application log": "บันทึกแอปพลิเคชัน",
-    "Synthetic ID sample": "ตัวอย่างบัตรประชาชนสังเคราะห์",
+    "Employee ID sample": "ตัวอย่างบัตรพนักงาน",
     # headings
     "Employee directory": "รายชื่อพนักงาน",
     "Payroll register - March 2026": "ทะเบียนเงินเดือน - มีนาคม 2026",
     "Transaction export - March 2026": "รายการธุรกรรม - มีนาคม 2026",
-    "Clinic appointment list - synthetic": "รายการนัดคลินิก - ข้อมูลสังเคราะห์",
+    "Clinic appointment list": "รายการนัดคลินิก",
     "Sales pipeline - Q1 2026": "ไปป์ไลน์การขาย - ไตรมาส 1/2026",
     "Access log export": "ส่งออกบันทึกการเข้าถึง",
     "Approved vendor list": "รายชื่อผู้ขายที่อนุมัติแล้ว",
-    "Synthetic bank statement": "รายการเดินบัญชีสังเคราะห์",
+    "Bank statement": "รายการเดินบัญชี",
     "Incident report - API authentication failures": "รายงานเหตุการณ์ - API ยืนยันตัวตนล้มเหลว",
     "Platform weekly - meeting minutes": "ประชุมแพลตฟอร์มรายสัปดาห์",
     "Internal memo - access review": "บันทึกข้อความภายใน - ตรวจสอบสิทธิ์",
@@ -181,9 +181,9 @@ TEXT_TH: Dict[str, str] = {
     "Customer complaint - delayed delivery": "ข้อร้องเรียนลูกค้า - ส่งของล่าช้า",
     "Leave request form": "แบบฟอร์มขอลา",
     "Candidate evaluation": "แบบประเมินผู้สมัคร",
-    "Visit summary - synthetic clinic": "สรุปการเข้ารับบริการ - คลินิกสังเคราะห์",
-    "Laboratory result - synthetic": "ผลตรวจทางห้องปฏิบัติการ - ข้อมูลสังเคราะห์",
-    "Prescription - synthetic": "ใบสั่งยา - ข้อมูลสังเคราะห์",
+    "Visit summary": "สรุปการเข้ารับบริการ",
+    "Laboratory result": "ผลตรวจทางห้องปฏิบัติการ",
+    "Prescription": "ใบสั่งยา",
     "Order platform architecture": "สถาปัตยกรรมระบบคำสั่งซื้อ",
     "Troubleshooting notes - prod database": "บันทึกการแก้ปัญหา - ฐานข้อมูลโปรดักชัน",
     "Production environment": "สภาพแวดล้อมโปรดักชัน",
@@ -225,46 +225,50 @@ TEXT_TH: Dict[str, str] = {
     "Impact": "ผลกระทบ", "Risks": "ความเสี่ยง",
     "1. Scope": "1. ขอบเขต", "2. Confidentiality": "2. การรักษาความลับ",
     "3. Signatures": "3. ลายเซ็น",
-    # notes / footers
-    "Generated test document. Values are synthetic and non-functional.":
-        "เอกสารทดสอบที่สร้างขึ้น ค่าเป็นข้อมูลสังเคราะห์และใช้งานจริงไม่ได้",
-    "Synthetic payroll - not real employee data": "เงินเดือนสังเคราะห์ - ไม่ใช่ข้อมูลพนักงานจริง",
-    "Synthetic example - not real personal data": "ตัวอย่างสังเคราะห์ - ไม่ใช่ข้อมูลส่วนบุคคลจริง",
-    "Exported for a synthetic customer-success review.":
-        "ส่งออกเพื่อการทบทวนลูกค้าสัมพันธ์แบบสังเคราะห์",
-    "Fictional clinic data for privacy-filter testing. No real patient records.":
-        "ข้อมูลคลินิกสมมติสำหรับทดสอบตัวกรองความเป็นส่วนตัว ไม่มีเวชระเบียนจริง",
-    "Statement generated for synthetic testing. Not a real bank document.":
-        "รายการเดินบัญชีนี้สร้างเพื่อการทดสอบสังเคราะห์ ไม่ใช่เอกสารธนาคารจริง",
-    "Synthetic example document. Not a real invoice or payment instruction.":
-        "เอกสารตัวอย่างสังเคราะห์ ไม่ใช่ใบแจ้งหนี้หรือคำสั่งชำระเงินจริง",
-    "Synthetic memo for policy testing.": "บันทึกสังเคราะห์สำหรับทดสอบนโยบาย",
-    "Synthetic result for filter testing. Not a real diagnosis.":
-        "ผลตรวจสังเคราะห์สำหรับทดสอบตัวกรอง ไม่ใช่การวินิจฉัยจริง",
-    "Fictional medication names for testing only.":
-        "ชื่อยาสมมติสำหรับการทดสอบเท่านั้น",
-    "Synthetic management presentation. All data is fictional.":
-        "งานนำเสนอผู้บริหารแบบสังเคราะห์ ข้อมูลทั้งหมดเป็นข้อมูลสมมติ",
-    "Synthetic example - all values are fictional": "ตัวอย่างสังเคราะห์ - ค่าทั้งหมดเป็นข้อมูลสมมติ",
-    "Confidential - synthetic example": "เป็นความลับ - ตัวอย่างสังเคราะห์",
-    "Candidate CV - synthetic": "ประวัติย่อผู้สมัคร - ข้อมูลสังเคราะห์",
-    "Internal - synthetic incident": "ภายใน - เหตุการณ์สังเคราะห์",
-    "Internal meeting notes - synthetic": "บันทึกการประชุมภายใน - ข้อมูลสังเคราะห์",
+    # notes / footers (neutral: no in-band "synthetic" claim)
+    "Prepared for internal review.": "จัดทำเพื่อการตรวจสอบภายใน",
+    "Payroll - internal use only": "เงินเดือน - ใช้ภายในเท่านั้น",
+    "HR - internal use only": "HR - ใช้ภายในเท่านั้น",
+    "Exported for a customer-success review.":
+        "ส่งออกเพื่อการทบทวนลูกค้าสัมพันธ์",
+    "Clinic appointment data for internal review.":
+        "ข้อมูลการนัดคลินิกเพื่อการตรวจสอบภายใน",
+    "Statement generated from the core banking export.":
+        "รายการเดินบัญชีสร้างจากข้อมูลระบบธนาคารกลาง",
+    "Invoice document.": "เอกสารใบแจ้งหนี้",
+    "Memo.": "บันทึกข้อความ",
+    "Laboratory result for internal review.":
+        "ผลตรวจทางห้องปฏิบัติการเพื่อการตรวจสอบภายใน",
+    "Prescription for internal review.": "ใบสั่งยาสำหรับการตรวจสอบภายใน",
+    "Management presentation.": "งานนำเสนอผู้บริหาร",
+    "Finance - internal use only": "การเงิน - ใช้ภายในเท่านั้น",
+    "Internal": "ภายใน",
+    "Internal Chat": "แชทภายใน",
+    "Confidential": "เอกสารลับ",
+    "Candidate CV": "ประวัติย่อผู้สมัคร",
+    "Internal meeting notes": "บันทึกการประชุมภายใน",
     "Internal memo": "บันทึกข้อความภายใน",
-    "Confidential strategy - synthetic": "กลยุทธ์ที่เป็นความลับ - ข้อมูลสังเคราะห์",
-    "Risk committee - synthetic": "คณะกรรมการความเสี่ยง - ข้อมูลสังเคราะห์",
-    "Synthetic support queue": "คิวสนับสนุนสังเคราะห์",
-    "HR - synthetic form": "HR - แบบฟอร์มสังเคราะห์",
-    "Hiring - confidential synthetic": "การสรรหา - ข้อมูลสังเคราะห์ที่เป็นความลับ",
-    "Synthetic medical record - not a real patient": "เวชระเบียนสังเคราะห์ - ไม่ใช่ผู้ป่วยจริง",
-    "Synthetic laboratory": "ห้องปฏิบัติการสังเคราะห์",
-    "Synthetic prescription": "ใบสั่งยาสังเคราะห์",
-    "Engineering notes - synthetic": "บันทึกวิศวกรรม - ข้อมูลสังเคราะห์",
-    "Synthetic Bank - Example Only": "ธนาคารสมมติ - ตัวอย่างเท่านั้น",
+    "Confidential strategy": "กลยุทธ์ที่เป็นความลับ",
+    "Risk committee": "คณะกรรมการความเสี่ยง",
+    "Support queue": "คิวสนับสนุน",
+    "HR form": "แบบฟอร์ม HR",
+    "Hiring - confidential": "การสรรหา - ข้อมูลลับ",
+    "Medical record": "เวชระเบียน",
+    "Laboratory result": "ผลตรวจทางห้องปฏิบัติการ",
+    "Laboratory": "ห้องปฏิบัติการ",
+    "Prescription": "ใบสั่งยา",
+    "Engineering notes": "บันทึกวิศวกรรม",
+    "Bank statement": "รายการเดินบัญชี",
+    "Bank statement - internal": "รายการเดินบัญชี - ภายใน",
+    "Clinic appointment list": "รายการนัดคลินิก",
+    "Visit summary": "สรุปการเข้ารับบริการ",
+    "Employee ID sample": "ตัวอย่างบัตรพนักงาน",
+    "Employee identity sample": "ตัวอย่างข้อมูลพนักงาน",
+    "Internal employee identity record.": "บันทึกข้อมูลพนักงานภายใน",
     "Platform weekly - meeting minutes": "ประชุมแพลตฟอร์มรายสัปดาห์",
     # prose
-    "Synthetic export from the people system. Internal use only.":
-        "ข้อมูลส่งออกสังเคราะห์จากระบบบุคคล ใช้ภายในเท่านั้น",
+    "Export from the people system. Internal use only.":
+        "ข้อมูลส่งออกจากระบบบุคคล ใช้ภายในเท่านั้น",
     "Never commit real environment files. This example is non-functional.":
         "ห้าม commit ไฟล์ environment จริง ตัวอย่างนี้ใช้งานจริงไม่ได้",
     "The application could not connect to the database after the previous deployment.":
@@ -364,9 +368,9 @@ TEXT_TH: Dict[str, str] = {
     "Scorecard": "แบบประเมิน",
     # mixed-only footer; also used as a guaranteed Thai sentence
 }
-MIXED_FOOTER = "Synthetic example / เอกสารตัวอย่างสังเคราะห์ - ห้ามใช้กับข้อมูลจริง"
-THAI_NOTE = "เอกสารตัวอย่างสังเคราะห์สำหรับทดสอบ privacy gateway เท่านั้น"
-EN_NOTE = "Synthetic example for privacy-gateway testing only."
+MIXED_FOOTER = "Internal use only / ใช้ภายในเท่านั้น"
+THAI_NOTE = "เอกสารนี้ใช้ภายในองค์กรเท่านั้น"
+EN_NOTE = "Internal use only."
 
 STATUS_VALUES = {
     "settled", "pending", "refunded", "packed", "shipped", "delivered",

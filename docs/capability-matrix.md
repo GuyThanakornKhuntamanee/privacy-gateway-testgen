@@ -75,6 +75,9 @@ written separately, so an OCR benchmark never mixes in direct-text cases.
   ordered.
 - No OCR accuracy, detector accuracy, gateway benchmark or latency claim is
   made.
+- Synthetic disclosure is out-of-band: files carry no "synthetic" notice in the
+  default `metadata` mode, so a detector cannot read a hint that suppresses a
+  detection. `disclosure: banner` is available for artifacts shared with people.
 - Runtime dependencies: `Pillow`, `reportlab`, `pypdf`. The font asset
   (Sarabun, SIL OFL 1.1) ships inside the package; no system font is discovered.
 

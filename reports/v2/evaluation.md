@@ -30,8 +30,8 @@
 | persona_coverage | PASS | 16 | >= 6 |
 | intent_coverage | PASS | 19 | >= 8 |
 | language_coverage | PASS | ['en', 'mixed', 'th'] | >= 2 |
-| attachment_language_coverage | PASS | {'en': 40, 'mixed': 7, 'th': 28} | >= 2 languages |
-| language_matrix_coverage | PASS | {'en->en': 9, 'en->mixed': 1, 'en->prompt_only': 5, 'en->th': 9, 'mixed->en': 15, 'mixed->mixed': 2, 'mixed->prompt_only': 6, 'mixed->th': 7, 'th->en': 16, 'th->mixed': 4, 'th->prompt_only': 3, 'th->th': 12} | >= 4 prompt/attachment pairs |
+| attachment_language_coverage | PASS | {'en': 44, 'mixed': 3, 'th': 28} | >= 2 languages |
+| language_matrix_coverage | PASS | {'en->en': 9, 'en->mixed': 1, 'en->prompt_only': 5, 'en->th': 9, 'mixed->en': 16, 'mixed->mixed': 1, 'mixed->prompt_only': 6, 'mixed->th': 7, 'th->en': 19, 'th->mixed': 1, 'th->prompt_only': 3, 'th->th': 12} | >= 4 prompt/attachment pairs |
 | mixed_language_script | PASS | 1.0 | all mixed attachments contain Thai and English script |
 | structure_reference_resolution | PASS | 1.0 | all structure references resolve |
 | structure_reference_share | PASS | 0.3194 | >= 0.05 |
@@ -43,7 +43,7 @@
 | language_share_check | PASS | 0 | 0 attachments below their declared script-share thresholds |
 | localization_residual_labels | PASS | 0 | 0 untranslated static labels in Thai documents |
 | prompt_form_concentration | PASS | 0.2857 | <= 0.45 |
-| thai_file_render_rate | PASS | 6/6 | every Thai or mixed PDF/image attachment is render-verified |
+| thai_file_render_rate | PASS | 5/5 | every Thai or mixed PDF/image attachment is render-verified |
 | raster_text_shaping | PASS | 9/9 | every raster attachment records HarfBuzz shaping |
 | native_pdf_text_extraction | PASS | 6/6 | every native PDF extracts its canonical text back |
 | no_replacement_glyphs | PASS | 0 | 0 replacement characters in canonical render text |
@@ -65,16 +65,16 @@
 - Archetypes: `{'access_records': 0.0417, 'api_gateway_log': 0.0417, 'api_payload': 0.0139, 'app_log': 0.0972, 'application_config': 0.0417, 'application_environment_config': 0.0139, 'architecture_deck': 0.0139, 'architecture_notes': 0.0278, 'auth_log': 0.0417, 'customer_complaint': 0.0139, 'customer_contract': 0.0139, 'database_config': 0.0139, 'deployment_log': 0.0417, 'docker_compose': 0.0417, 'employee_list': 0.0278, 'employment_contract': 0.0417, 'expense_report': 0.0139, 'incident_report': 0.0139, 'incident_review_deck': 0.0278, 'internal_memo': 0.0139, 'invoice': 0.0139, 'management_deck': 0.0278, 'meeting_minutes': 0.0556, 'patient_list': 0.0139, 'payroll': 0.0417, 'purchase_order': 0.0139, 'sales_pipeline': 0.0139, 'screenshot_config': 0.0139, 'screenshot_email': 0.0139, 'service_account_config': 0.0139, 'source_code': 0.0139, 'source_code_java': 0.0139, 'source_code_js': 0.0278, 'sql_export': 0.0139, 'support_ticket': 0.0556, 'terraform_config': 0.0139, 'xml_export': 0.0139}`
 - Domains: `{'infrastructure': 0.25, 'payment': 0.1111, 'pii': 0.2639, 'secrets': 0.2778}`
 - Languages (prompt): `{'en': 0.2361, 'mixed': 0.3472, 'th': 0.4167}`
-- Languages (attachment): `{'en': 0.5333, 'mixed': 0.0933, 'th': 0.3733}`
-- Prompt/attachment language matrix: `{'en->en': 9, 'en->mixed': 1, 'en->prompt_only': 5, 'en->th': 9, 'mixed->en': 15, 'mixed->mixed': 2, 'mixed->prompt_only': 6, 'mixed->th': 7, 'th->en': 16, 'th->mixed': 4, 'th->prompt_only': 3, 'th->th': 12}`
-- Mixed attachments verified: `7/7`
-- Routed attachments (English-only renderer): `40`
+- Languages (attachment): `{'en': 0.5867, 'mixed': 0.04, 'th': 0.3733}`
+- Prompt/attachment language matrix: `{'en->en': 9, 'en->mixed': 1, 'en->prompt_only': 5, 'en->th': 9, 'mixed->en': 16, 'mixed->mixed': 1, 'mixed->prompt_only': 6, 'mixed->th': 7, 'th->en': 19, 'th->mixed': 1, 'th->prompt_only': 3, 'th->th': 12}`
+- Mixed attachments verified: `3/3`
+- Routed attachments (English-only renderer): `43`
 - Evaluation requirement: `{'direct_text_extraction': 68, 'ocr_required': 7}`
 - Native PDF text extraction verified: `6/6`
 - Raster attachments verified (layout): `9/9`
 - Raster text shaping (HarfBuzz): `9/9`
 - Hybrid PDF attachments: `2`
-- Thai / mixed PDF and image attachments verified: `6/6`
+- Thai / mixed PDF and image attachments verified: `5/5`
 - Replacement glyphs in canonical render text: `0`
 - Personas: `{'accountant': 0.0139, 'analyst': 0.0556, 'compliance': 0.0417, 'developer': 0.0833, 'devops': 0.0278, 'executive_assistant': 0.0556, 'finance': 0.0833, 'healthcare_admin': 0.0278, 'hr': 0.0833, 'intern': 0.0694, 'manager': 0.0694, 'operations': 0.125, 'sales': 0.0833, 'security_engineer': 0.0278, 'support': 0.0694, 'sysadmin': 0.0833}`
 - Intents: `{'analyze': 0.0417, 'answer_questions': 0.0139, 'calculate': 0.0556, 'check_code': 0.0556, 'classify': 0.0278, 'compare': 0.0833, 'create_chart': 0.0139, 'explain_error': 0.0417, 'extract_fields': 0.0694, 'find_anomalies': 0.125, 'find_missing': 0.0139, 'inspect_config': 0.0833, 'modify_document': 0.0278, 'prepare_report': 0.0694, 'review_document': 0.0139, 'rewrite': 0.0139, 'summarize': 0.125, 'translate': 0.0417, 'troubleshoot': 0.0833}`
@@ -91,9 +91,9 @@
 - Cross-file link cases: `13` (`61` links)
 - Consistency checks: `66/348` passed; status `{'not_applicable': 282, 'passed': 66}`
 - Prompt forms: `{'copied_chat': 3, 'copied_ticket': 1, 'log_fragment': 1, 'pasted_email': 4, 'pasted_file': 1, 'pasted_table': 1, 'short_no_paste': 3, 'with_attachment': 58}` (top share `0.2857`)
-- Mean Thai script share by prompt language: `{'th': 0.7892, 'en': 0.0392, 'mixed': 0.4688}`
+- Mean Thai script share by prompt language: `{'th': 0.7875, 'en': 0.0392, 'mixed': 0.4688}`
 - Language mismatches: `0`
-- Language coverage by file type: `{'csv': {'files': 5, 'declared': {'en': 1, 'th': 4}, 'mismatches': 0}, 'docx': {'files': 7, 'declared': {'en': 3, 'th': 4}, 'mismatches': 0}, 'env': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'java': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'jpeg': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'json': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'log': {'files': 10, 'declared': {'en': 10}, 'mismatches': 0}, 'md': {'files': 2, 'declared': {'en': 1, 'th': 1}, 'mismatches': 0}, 'pdf': {'files': 8, 'declared': {'en': 3, 'mixed': 2, 'th': 3}, 'mismatches': 0}, 'png': {'files': 6, 'declared': {'en': 5, 'th': 1}, 'mismatches': 0}, 'pptx': {'files': 5, 'declared': {'en': 2, 'mixed': 3}, 'mismatches': 0}, 'sql': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'tf': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'toml': {'files': 2, 'declared': {'th': 2}, 'mismatches': 0}, 'ts': {'files': 1, 'declared': {'mixed': 1}, 'mismatches': 0}, 'txt': {'files': 11, 'declared': {'en': 5, 'mixed': 1, 'th': 5}, 'mismatches': 0}, 'xlsx': {'files': 6, 'declared': {'en': 4, 'th': 2}, 'mismatches': 0}, 'yaml': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'yml': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}}`
+- Language coverage by file type: `{'csv': {'files': 5, 'declared': {'en': 1, 'th': 4}, 'mismatches': 0}, 'docx': {'files': 7, 'declared': {'en': 3, 'th': 4}, 'mismatches': 0}, 'env': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}, 'java': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'jpeg': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'json': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'log': {'files': 10, 'declared': {'en': 10}, 'mismatches': 0}, 'md': {'files': 2, 'declared': {'en': 1, 'th': 1}, 'mismatches': 0}, 'pdf': {'files': 8, 'declared': {'en': 4, 'mixed': 1, 'th': 3}, 'mismatches': 0}, 'png': {'files': 6, 'declared': {'en': 5, 'th': 1}, 'mismatches': 0}, 'pptx': {'files': 5, 'declared': {'en': 5}, 'mismatches': 0}, 'sql': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'tf': {'files': 1, 'declared': {'en': 1}, 'mismatches': 0}, 'toml': {'files': 2, 'declared': {'th': 2}, 'mismatches': 0}, 'ts': {'files': 1, 'declared': {'mixed': 1}, 'mismatches': 0}, 'txt': {'files': 11, 'declared': {'en': 5, 'mixed': 1, 'th': 5}, 'mismatches': 0}, 'xlsx': {'files': 6, 'declared': {'en': 4, 'th': 2}, 'mismatches': 0}, 'yaml': {'files': 3, 'declared': {'en': 1, 'th': 2}, 'mismatches': 0}, 'yml': {'files': 1, 'declared': {'th': 1}, 'mismatches': 0}}`
 - Residual English labels in Thai documents: `0`
 - OCR cases: `6`
 
@@ -112,7 +112,7 @@
 - Repeated 4-grams: `[{'phrase': 'after the latest release', 'count': 5}, {'phrase': 'an error. the customer', 'count': 5}, {'phrase': 'and is waiting for', 'count': 5}, {'phrase': 'and review the gateway', 'count': 5}, {'phrase': 'checkout page shows an', 'count': 5}, {'phrase': 'confirm the service health', 'count': 5}, {'phrase': 'customer tried twice and', 'count': 5}, {'phrase': 'dashboard and review the', 'count': 5}, {'phrase': 'error. the customer tried', 'count': 5}, {'phrase': 'health dashboard and review', 'count': 5}]`
 - Repeated phrase share: `0.0694`
 - Archetype concentration: `0.0972`
-- Prompt length: `{'min': 24, 'max': 851, 'mean': 154.62, 'stdev': 181.03}`
+- Prompt length: `{'min': 24, 'max': 816, 'mean': 153.92, 'stdev': 178.39}`
 - Document duplicate rate: `0.0`
 
 ## Duplicate analysis

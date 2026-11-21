@@ -3,7 +3,7 @@
   "sections": [
     {
       "kind": "heading",
-      "text": "app_log - synthetic"
+      "text": "app_log"
     },
     {
       "kind": "code",
