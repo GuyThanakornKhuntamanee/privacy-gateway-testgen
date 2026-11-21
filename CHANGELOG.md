@@ -52,6 +52,9 @@ semantic versioning.
   `pyproject.toml` point at the real repository.
 - CI regenerates the committed v2 samples and reports and fails on drift, and the
   gate runs on `feat/**`/`fix/**` pushes as well as `main`.
+- Packaging metadata uses the PEP 639 SPDX licence expression, and
+  `.github/workflows/publish.yml` publishes to PyPI/TestPyPI through Trusted
+  Publishing (no stored token); see `docs/publishing.md`.
 - PDF text verification uses pypdf instead of a regex over the content stream,
   and compares collapsed-whitespace text so `exam ple.com` still fails against
   `example.com`.

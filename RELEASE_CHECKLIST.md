@@ -87,10 +87,16 @@ Run every item before publishing a tag. Do not publish if any gate fails.
 
 - [ ] `python -m build` produces sdist and wheel (requires the `build` package
       only in the release environment; it is not a runtime dependency).
+- [ ] `python -m twine check dist/*` passes and the metadata carries
+      `License-Expression: MIT` and `License-File: LICENSE`.
 - [ ] Install the wheel in a fresh virtual environment and run `generate`,
       `validate`, and `evaluate`.
 - [ ] Tag the release (`vX.Y.Z`) and attach the wheel, sdist, sample dataset,
       evaluation report, and SBOM if applicable.
+- [ ] PyPI: Trusted Publishing is configured once (see
+      [`docs/publishing.md`](docs/publishing.md)); publishing the GitHub release
+      runs `.github/workflows/publish.yml`. Rehearse on TestPyPI first when the
+      packaging metadata changed.
 - [ ] Announce the release with the measured gate results and known
       limitations — not only the feature list.
 
