@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install runtime dependencies (Thai PDF/image rendering)
-        run: python -m pip install --upgrade pip && python -m pip install "Pillow>=10.0,<14" "reportlab>=4.0,<6" "pypdf>=4.0,<8"
+        run: python -m pip install --upgrade pip && python -m pip install -e .
       - name: Check Thai text shaping is available
         env:
           PYTHONPATH: src
@@ -63,7 +63,7 @@ jobs:
           PYTHONHASHSEED: "424242"
         run: >
           python -m privacy_gateway_testgen report-v2
-          --dataset build/v2-dataset --out build/reports-hashseed
+          --dataset build/v2-dataset --out build/reports-hashseed --check-reproducible
       - name: Compare hash-seeded reports
         run: |
           cmp build/reports-hashseed/evaluation.json reports/v2/evaluation.json
