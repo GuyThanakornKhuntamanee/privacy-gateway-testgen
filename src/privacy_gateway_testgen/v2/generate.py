@@ -179,6 +179,17 @@ def _length_class(prompt: str) -> str:
     return "long"
 
 
+def _source_line_count(doc: Doc) -> int:
+    """Canonical text lines, independent of renderer bytes and platform fonts."""
+    total = 0
+    for block in doc.all_blocks():
+        if block.kind == "table":
+            total += 1 + len(block.rows)
+        else:
+            total += max(1, len(block.text.splitlines()))
+    return total
+
+
 def _doc_structure(doc: Doc, rendered) -> dict:
     tables = [block for block in doc.blocks if block.kind == "table"]
     headings = [block.text for block in doc.blocks if block.kind == "heading" and block.text]
@@ -213,7 +224,15 @@ def _doc_structure(doc: Doc, rendered) -> dict:
         "slides": int(rendered.meta.get("slides") or len(doc.slides) or 0),
         "slide_titles": [slide.title for slide in doc.slides],
         "pages": int(rendered.meta.get("pages") or 0),
-        "lines": int(rendered.meta.get("line_count") or rendered.data.count(b"\n")),
+        # Text renderers report their own line count; PDF, Office and raster
+        # containers report canonical source lines.  Counting b"\n" in a
+        # compressed container made this number platform-dependent.
+        "lines": int(
+            rendered.meta.get("line_count")
+            or rendered.meta.get("text_line_count")
+            or (len(rendered.meta["canonical_lines"]) if rendered.meta.get("canonical_lines") else 0)
+            or _source_line_count(doc)
+        ),
         "delimiter": rendered.meta.get("delimiter"),
         "keys": keys,
     }

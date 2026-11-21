@@ -774,7 +774,7 @@
             "database",
             "_language_note"
           ],
-          "lines": 9,
+          "lines": 1,
           "pages": 0,
           "renderer": "toml",
           "rows": 0,
@@ -868,7 +868,7 @@
             "services",
             "_language_note"
           ],
-          "lines": 19,
+          "lines": 1,
           "pages": 0,
           "renderer": "json",
           "rows": 0,
@@ -1477,7 +1477,7 @@
             "3. Signatures"
           ],
           "keys": [],
-          "lines": 216,
+          "lines": 10,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 0,
@@ -1591,7 +1591,7 @@
             "3. ลายเซ็น"
           ],
           "keys": [],
-          "lines": 234,
+          "lines": 11,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 0,
@@ -3714,7 +3714,7 @@
             "ใบแจ้งหนี้"
           ],
           "keys": [],
-          "lines": 15,
+          "lines": 18,
           "pages": 0,
           "renderer": "docx",
           "rows": 10,
@@ -4435,7 +4435,7 @@
             "JWT_SECRET",
             "_language_note"
           ],
-          "lines": 5373,
+          "lines": 11,
           "pages": 0,
           "renderer": "png",
           "rows": 0,
@@ -5023,7 +5023,7 @@
             "Clinic appointment list"
           ],
           "keys": [],
-          "lines": 7,
+          "lines": 9,
           "pages": 0,
           "renderer": "csv",
           "rows": 7,
@@ -8080,7 +8080,7 @@
             "app_log"
           ],
           "keys": [],
-          "lines": 13,
+          "lines": 9,
           "pages": 0,
           "renderer": "json",
           "rows": 0,
@@ -8938,7 +8938,7 @@
             "Application source"
           ],
           "keys": [],
-          "lines": 146,
+          "lines": 15,
           "pages": 0,
           "renderer": "png",
           "rows": 0,
@@ -9403,7 +9403,7 @@
             "ทะเบียนความเสี่ยงด้านปฏิบัติการ"
           ],
           "keys": [],
-          "lines": 18,
+          "lines": 7,
           "pages": 0,
           "renderer": "docx",
           "rows": 3,
@@ -10515,7 +10515,7 @@
             "Purchase Order"
           ],
           "keys": [],
-          "lines": 12,
+          "lines": 16,
           "pages": 0,
           "renderer": "docx",
           "rows": 8,
@@ -11068,7 +11068,7 @@
             "database",
             "_language_note"
           ],
-          "lines": 7,
+          "lines": 1,
           "pages": 0,
           "renderer": "ini",
           "rows": 0,
@@ -11472,7 +11472,7 @@
             "auth_log"
           ],
           "keys": [],
-          "lines": 13,
+          "lines": 9,
           "pages": 0,
           "renderer": "json",
           "rows": 0,
@@ -14514,7 +14514,7 @@
             "Invoice"
           ],
           "keys": [],
-          "lines": 208,
+          "lines": 41,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 9,
@@ -16372,7 +16372,7 @@
             "payment",
             "_language_note"
           ],
-          "lines": 10,
+          "lines": 1,
           "pages": 0,
           "renderer": "xml",
           "rows": 0,
@@ -16874,7 +16874,7 @@
             "รายชื่อพนักงาน"
           ],
           "keys": [],
-          "lines": 240,
+          "lines": 62,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 8,
@@ -18327,7 +18327,7 @@
             "รายการเดินบัญชี"
           ],
           "keys": [],
-          "lines": 13,
+          "lines": 14,
           "pages": 0,
           "renderer": "xlsx",
           "rows": 9,
@@ -18438,7 +18438,7 @@
             "รายการเดินบัญชี"
           ],
           "keys": [],
-          "lines": 8,
+          "lines": 12,
           "pages": 0,
           "renderer": "csv",
           "rows": 8,
@@ -19803,7 +19803,7 @@
             "api_key",
             "database"
           ],
-          "lines": 10,
+          "lines": 1,
           "pages": 0,
           "renderer": "env",
           "rows": 0,
@@ -19899,7 +19899,7 @@
             "database",
             "_language_note"
           ],
-          "lines": 14,
+          "lines": 1,
           "pages": 0,
           "renderer": "yaml",
           "rows": 0,
@@ -20657,7 +20657,7 @@
             "ทักษะ"
           ],
           "keys": [],
-          "lines": 13,
+          "lines": 8,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -20748,7 +20748,7 @@
             "สรุปการเข้ารับบริการ"
           ],
           "keys": [],
-          "lines": 79,
+          "lines": 4,
           "pages": 1,
           "renderer": "pdf_scanned",
           "rows": 0,
@@ -21918,7 +21918,7 @@
             "ไปป์ไลน์การขาย - ไตรมาส 1/2026"
           ],
           "keys": [],
-          "lines": 16,
+          "lines": 6,
           "pages": 0,
           "renderer": "xlsx",
           "rows": 4,
@@ -23142,7 +23142,7 @@
             "ไปป์ไลน์การขาย - ไตรมาส 1/2026"
           ],
           "keys": [],
-          "lines": 304,
+          "lines": 10,
           "pages": 0,
           "renderer": "jpeg",
           "rows": 4,
@@ -24031,7 +24031,7 @@
             "รายชื่อพนักงาน"
           ],
           "keys": [],
-          "lines": 14,
+          "lines": 9,
           "pages": 0,
           "renderer": "xlsx",
           "rows": 5,
@@ -24137,7 +24137,7 @@
             "Action items"
           ],
           "keys": [],
-          "lines": 11,
+          "lines": 12,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -24235,7 +24235,7 @@
             "ทะเบียนเงินเดือน - มีนาคม 2026"
           ],
           "keys": [],
-          "lines": 11,
+          "lines": 6,
           "pages": 0,
           "renderer": "xlsx",
           "rows": 4,
@@ -25908,7 +25908,7 @@
             "ความเสี่ยง"
           ],
           "keys": [],
-          "lines": 220,
+          "lines": 8,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 0,
@@ -26358,7 +26358,7 @@
             "3. Signatures"
           ],
           "keys": [],
-          "lines": 12,
+          "lines": 9,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -26873,7 +26873,7 @@
           "headers": [],
           "headings": [],
           "keys": [],
-          "lines": 24,
+          "lines": 7,
           "pages": 0,
           "renderer": "pptx",
           "rows": 0,
@@ -28963,7 +28963,7 @@
           "headers": [],
           "headings": [],
           "keys": [],
-          "lines": 281,
+          "lines": 12,
           "pages": 4,
           "renderer": "pdf_native",
           "rows": 0,
@@ -29435,7 +29435,7 @@
             "ใบแจ้งหนี้"
           ],
           "keys": [],
-          "lines": 79,
+          "lines": 16,
           "pages": 1,
           "renderer": "pdf_scanned",
           "rows": 7,
@@ -30158,7 +30158,7 @@
             "การติดตามผล"
           ],
           "keys": [],
-          "lines": 12,
+          "lines": 17,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -32609,7 +32609,7 @@
             "รายการธุรกรรม - มีนาคม 2026"
           ],
           "keys": [],
-          "lines": 79,
+          "lines": 9,
           "pages": 0,
           "renderer": "json",
           "rows": 7,
@@ -33970,7 +33970,7 @@
             "บันทึกข้อความภายใน - ตรวจสอบสิทธิ์"
           ],
           "keys": [],
-          "lines": 16,
+          "lines": 5,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -34465,7 +34465,7 @@
             "auth_log"
           ],
           "keys": [],
-          "lines": 1734,
+          "lines": 9,
           "pages": 0,
           "renderer": "png",
           "rows": 0,
@@ -36335,7 +36335,7 @@
             "Action items"
           ],
           "keys": [],
-          "lines": 229,
+          "lines": 11,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 0,
@@ -37792,7 +37792,7 @@
             "Invoice"
           ],
           "keys": [],
-          "lines": 213,
+          "lines": 17,
           "pages": 0,
           "renderer": "png",
           "rows": 8,
@@ -37920,7 +37920,7 @@
             "ใบแจ้งหนี้"
           ],
           "keys": [],
-          "lines": 253,
+          "lines": 19,
           "pages": 0,
           "renderer": "png",
           "rows": 8,
@@ -39043,7 +39043,7 @@
             "Support ticket #75758"
           ],
           "keys": [],
-          "lines": 30,
+          "lines": 6,
           "pages": 0,
           "renderer": "json",
           "rows": 0,
@@ -40724,7 +40724,7 @@
             "ใบแจ้งหนี้"
           ],
           "keys": [],
-          "lines": 11,
+          "lines": 15,
           "pages": 0,
           "renderer": "xlsx",
           "rows": 7,
@@ -41224,7 +41224,7 @@
             "ความเสี่ยง"
           ],
           "keys": [],
-          "lines": 14,
+          "lines": 8,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -43632,7 +43632,7 @@
           "headers": [],
           "headings": [],
           "keys": [],
-          "lines": 273,
+          "lines": 17,
           "pages": 4,
           "renderer": "pdf_native",
           "rows": 0,
@@ -44171,7 +44171,7 @@
             "3. ลายเซ็น"
           ],
           "keys": [],
-          "lines": 11,
+          "lines": 10,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -44264,7 +44264,7 @@
             "3. Signatures"
           ],
           "keys": [],
-          "lines": 211,
+          "lines": 12,
           "pages": 1,
           "renderer": "pdf_native",
           "rows": 0,
@@ -45982,7 +45982,7 @@
             "api_gateway_log"
           ],
           "keys": [],
-          "lines": 2034,
+          "lines": 10,
           "pages": 0,
           "renderer": "png",
           "rows": 0,
@@ -46468,7 +46468,7 @@
             "api_gateway_log"
           ],
           "keys": [],
-          "lines": 2025,
+          "lines": 10,
           "pages": 0,
           "renderer": "png",
           "rows": 0,
@@ -46987,7 +46987,7 @@
             "ความเสี่ยง"
           ],
           "keys": [],
-          "lines": 25,
+          "lines": 7,
           "pages": 0,
           "renderer": "pptx",
           "rows": 0,
@@ -47433,7 +47433,7 @@
             "Support ticket #53256"
           ],
           "keys": [],
-          "lines": 13,
+          "lines": 6,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -48742,7 +48742,7 @@
             "Support ticket #99864"
           ],
           "keys": [],
-          "lines": 12,
+          "lines": 6,
           "pages": 0,
           "renderer": "docx",
           "rows": 0,
@@ -49258,7 +49258,7 @@
             "services",
             "_language_note"
           ],
-          "lines": 9,
+          "lines": 1,
           "pages": 0,
           "renderer": "yaml",
           "rows": 0,
@@ -49350,7 +49350,7 @@
             "version",
             "services"
           ],
-          "lines": 8,
+          "lines": 1,
           "pages": 0,
           "renderer": "yaml",
           "rows": 0,
@@ -49882,7 +49882,7 @@
             "รายชื่อพนักงาน"
           ],
           "keys": [],
-          "lines": 6,
+          "lines": 14,
           "pages": 0,
           "renderer": "csv",
           "rows": 6,
@@ -50713,7 +50713,7 @@
             "Risks"
           ],
           "keys": [],
-          "lines": 22,
+          "lines": 7,
           "pages": 0,
           "renderer": "pptx",
           "rows": 0,
